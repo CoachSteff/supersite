@@ -1,0 +1,120 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: var(--background);
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  gap: var(--spacing-sm);
+}
+
+.searchIcon {
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: var(--font-size-large);
+  padding: var(--spacing-sm);
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  padding: var(--spacing-sm);
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  color: var(--text-color);
+}
+
+.results {
+  max-height: calc(80vh - 100px);
+  overflow-y: auto;
+}
+
+.result {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.result:hover {
+  background-color: var(--background-secondary);
+  text-decoration: none;
+}
+
+.resultIcon {
+  color: var(--text-light);
+  flex-shrink: 0;
+  margin-top: var(--spacing-xs);
+}
+
+.resultContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.resultType {
+  font-size: var(--font-size-small);
+  color: var(--text-light);
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-xs);
+}
+
+.result h3 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-base);
+}
+
+.result p {
+  color: var(--text-light);
+  font-size: var(--font-size-small);
+  margin: 0;
+}
+
+.loading,
+.noResults {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--text-light);
+}

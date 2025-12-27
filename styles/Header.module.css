@@ -1,0 +1,139 @@
+.header {
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+}
+
+.logo {
+  font-size: var(--font-size-large);
+  font-weight: 700;
+}
+
+.logo a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.logo a:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.nav {
+  flex: 1;
+}
+
+.navList {
+  display: flex;
+  list-style: none;
+  gap: var(--spacing-lg);
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  position: relative;
+}
+
+.navItem a {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: var(--spacing-sm) 0;
+  display: block;
+}
+
+.navItem a:hover,
+.navItem a.active {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.subNav {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm);
+  min-width: 200px;
+  list-style: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navItem:hover .subNav {
+  display: block;
+}
+
+.subNav .navItem {
+  margin-bottom: var(--spacing-xs);
+}
+
+.subNav .navItem a {
+  padding: var(--spacing-sm);
+}
+
+.searchButton {
+  background-color: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.searchButton:hover {
+  background-color: var(--border-color);
+}
+
+.searchText {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .searchText {
+    display: inline;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+  
+  .navList {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+  }
+  
+  .subNav {
+    position: static;
+    display: none;
+    box-shadow: none;
+    border: none;
+    padding-left: var(--spacing-md);
+  }
+  
+  .navItem:hover .subNav {
+    display: block;
+  }
+}
