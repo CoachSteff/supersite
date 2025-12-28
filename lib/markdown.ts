@@ -106,7 +106,7 @@ export function getAllMarkdownFiles(dir: string, baseDir: string = dir): string[
   return files;
 }
 
-export async function parseMarkdown(filePath: string): Promise<{ data: any; content: string; htmlContent: string }> {
+export async function parseMarkdown(filePath: string): Promise<{ data: Record<string, unknown>; content: string; htmlContent: string }> {
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const { data, content } = matter(fileContents);
   
@@ -145,17 +145,17 @@ export async function getPageBySlug(slug: string[]): Promise<PageData | null> {
 
   return {
     slug: slugPath,
-    title: data.title || 'Untitled',
-    description: data.description,
+    title: (data.title as string) || 'Untitled',
+    description: data.description as string | undefined,
     content: htmlContent,
     markdown: content,
     path: '/' + slugPath,
-    author: data.author,
-    publishedDate: data.publishedDate,
-    lastModified: data.lastModified,
-    seo: data.seo,
-    chat: data.chat,
-    custom: data.custom,
+    author: data.author as string | undefined,
+    publishedDate: data.publishedDate as string | undefined,
+    lastModified: data.lastModified as string | undefined,
+    seo: data.seo as SEOMetadata | undefined,
+    chat: data.chat as ChatMetadata | undefined,
+    custom: data.custom as Record<string, unknown> | undefined,
   };
 }
 
@@ -181,17 +181,17 @@ export async function getAllPages(): Promise<PageData[]> {
 
     pages.push({
       slug,
-      title: data.title || 'Untitled',
-      description: data.description,
+      title: (data.title as string) || 'Untitled',
+      description: data.description as string | undefined,
       content: htmlContent,
       markdown: content,
       path: slug === 'home' ? '/' : '/' + slug,
-      author: data.author,
-      publishedDate: data.publishedDate,
-      lastModified: data.lastModified,
-      seo: data.seo,
-      chat: data.chat,
-      custom: data.custom,
+      author: data.author as string | undefined,
+      publishedDate: data.publishedDate as string | undefined,
+      lastModified: data.lastModified as string | undefined,
+      seo: data.seo as SEOMetadata | undefined,
+      chat: data.chat as ChatMetadata | undefined,
+      custom: data.custom as Record<string, unknown> | undefined,
     });
   }
 
@@ -214,17 +214,17 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
 
     posts.push({
       slug: fileName,
-      title: data.title || 'Untitled',
-      date: data.date || '',
-      author: data.author,
-      description: data.description,
-      tags: data.tags || [],
+      title: (data.title as string) || 'Untitled',
+      date: (data.date as string) || '',
+      author: data.author as string | undefined,
+      description: data.description as string | undefined,
+      tags: (data.tags as string[]) || [],
       content: htmlContent,
       markdown: content,
       path: `/blog/${fileName}`,
-      seo: data.seo,
-      chat: data.chat,
-      custom: data.custom,
+      seo: data.seo as SEOMetadata | undefined,
+      chat: data.chat as ChatMetadata | undefined,
+      custom: data.custom as Record<string, unknown> | undefined,
     });
   }
 
@@ -250,17 +250,17 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 
   return {
     slug,
-    title: data.title || 'Untitled',
-    date: data.date || '',
-    author: data.author,
-    description: data.description,
-    tags: data.tags || [],
+    title: (data.title as string) || 'Untitled',
+    date: (data.date as string) || '',
+    author: data.author as string | undefined,
+    description: data.description as string | undefined,
+    tags: (data.tags as string[]) || [],
     content: htmlContent,
     markdown: content,
     path: `/blog/${slug}`,
-    seo: data.seo,
-    chat: data.chat,
-    custom: data.custom,
+    seo: data.seo as SEOMetadata | undefined,
+    chat: data.chat as ChatMetadata | undefined,
+    custom: data.custom as Record<string, unknown> | undefined,
   };
 }
 

@@ -1,5 +1,6 @@
 import { getSiteConfig } from './config';
 import type { PageData, BlogPost, SEOMetadata } from './markdown';
+import type { Metadata } from 'next';
 
 export interface SEOProps {
   title?: string;
@@ -12,7 +13,7 @@ export interface SEOProps {
   seo?: SEOMetadata;
 }
 
-export function generateMetadata(props: SEOProps) {
+export function generateMetadata(props: SEOProps): Metadata {
   const config = getSiteConfig();
   
   const pageTitle = props.seo?.title || props.title || config.seo.defaultTitle;
@@ -24,7 +25,7 @@ export function generateMetadata(props: SEOProps) {
   const url = `${config.site.url}${props.path}`;
   const ogImage = `${config.site.url}${config.seo.ogImage}`;
 
-  const metadata: any = {
+  const metadata: Metadata = {
     title: fullTitle,
     description,
     openGraph: {
@@ -34,28 +35,18 @@ export function generateMetadata(props: SEOProps) {
       siteName: config.site.name,
       images: [{ url: ogImage }],
       type: props.type || 'website',
+      ...(props.type === 'article' && props.publishedTime ? { publishedTime: props.publishedTime } : {}),
+      ...(props.type === 'article' && props.author ? { authors: [props.author] } : {}),
+      ...(props.type === 'article' && props.tags && props.tags.length > 0 ? { tags: props.tags } : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title: fullTitle,
       description,
       images: [ogImage],
+      ...(config.seo.twitterHandle ? { creator: config.seo.twitterHandle } : {}),
     },
   };
-
-  if (config.seo.twitterHandle) {
-    metadata.twitter.creator = config.seo.twitterHandle;
-  }
-
-  if (props.type === 'article' && props.publishedTime) {
-    metadata.openGraph.publishedTime = props.publishedTime;
-    if (props.author) {
-      metadata.openGraph.authors = [props.author];
-    }
-    if (props.tags && props.tags.length > 0) {
-      metadata.openGraph.tags = props.tags;
-    }
-  }
 
   if (props.seo?.keywords && props.seo.keywords.length > 0) {
     metadata.keywords = props.seo.keywords;

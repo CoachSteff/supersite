@@ -164,8 +164,8 @@ export default function ChatWindow() {
               </div>
             )}
             
-            {messages.map((message, index) => (
-              <ChatMessage key={index} message={message} />
+            {messages.map((message) => (
+              <ChatMessage key={`${message.timestamp}-${message.role}`} message={message} />
             ))}
             
             {isLoading && (

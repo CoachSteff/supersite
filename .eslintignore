@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+.next/
+
+# Build output
+out/
+dist/
+build/
+
+# Coverage
+coverage/
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Config and setup scripts (allow console.log)
+scripts/

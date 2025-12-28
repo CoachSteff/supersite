@@ -92,7 +92,7 @@ export type ChatWindowPosition = z.infer<typeof ChatWindowPositionSchema>;
 let cachedConfig: SiteConfig | null = null;
 
 // Deep merge utility (simple object merge)
-function deepMerge(target: any, source: any): any {
+function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
   const output = { ...target };
   
   if (isObject(target) && isObject(source)) {
@@ -101,7 +101,7 @@ function deepMerge(target: any, source: any): any {
         if (!(key in target)) {
           output[key] = source[key];
         } else {
-          output[key] = deepMerge(target[key], source[key]);
+          output[key] = deepMerge(target[key] as Record<string, unknown>, source[key] as Record<string, unknown>);
         }
       } else {
         output[key] = source[key];
@@ -112,8 +112,8 @@ function deepMerge(target: any, source: any): any {
   return output;
 }
 
-function isObject(item: any): boolean {
-  return item && typeof item === 'object' && !Array.isArray(item);
+function isObject(item: unknown): item is Record<string, unknown> {
+  return item !== null && typeof item === 'object' && !Array.isArray(item);
 }
 
 export function loadSiteConfig(): SiteConfig {
@@ -131,13 +131,13 @@ export function loadSiteConfig(): SiteConfig {
   }
 
   const templateContents = fs.readFileSync(templateConfigPath, 'utf8');
-  const templateConfig = yaml.load(templateContents);
+  const templateConfig = yaml.load(templateContents) as Record<string, unknown>;
 
   // Load user config (optional)
-  let userConfig = {};
+  let userConfig: Record<string, unknown> = {};
   if (fs.existsSync(userConfigPath)) {
     const userContents = fs.readFileSync(userConfigPath, 'utf8');
-    userConfig = yaml.load(userContents) || {};
+    userConfig = (yaml.load(userContents) as Record<string, unknown>) || {};
   }
 
   // Deep merge: template ← user overrides

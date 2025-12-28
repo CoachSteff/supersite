@@ -56,6 +56,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated `README.md` with new quick start
 
 ### Changed
+- **ESLint configuration** added with strict Next.js rules
+  - Enforces accessibility best practices via `next/core-web-vitals`
+  - Prevents `any` type usage for better type safety
+  - Enforces proper React keys in list operations
+  - Allows only `console.warn` and `console.error` in production code
+- **Code quality improvements**
+  - Fixed array index keys in `components/Search.tsx` and `components/ChatWindow.tsx` to use unique identifiers
+  - Replaced `any` types with proper TypeScript types in `lib/config.ts`, `lib/seo.ts`, and `lib/markdown.ts`
+  - Improved type safety in utility functions (`deepMerge`, `isObject`)
+  - Added `.eslintignore` to exclude setup scripts from linting
 - **ThemeLoader component** completely rewritten (`components/ThemeLoader.tsx`)
   - Now loads full theme objects instead of just branding colors
   - Dynamically injects all CSS custom properties (colors, typography, spacing, layout)
@@ -66,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `ThemeOverridesSchema` for partial theme customization
   - Legacy `primaryColor`, `secondaryColor`, `fontFamily` still supported but deprecated
   - New `getActiveTheme()` function to load and merge themes
+  - Improved type safety in `deepMerge` and `isObject` functions
 - **Client configuration API** updated (`lib/config.ts`)
   - `getClientSafeConfig()` now exposes full theme colors for client use
   - Theme data available to client components for dynamic styling
@@ -77,11 +88,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Dynamic content directory resolution based on config
   - Fallback chain: custom → content-custom → content
   - Warning when configured path doesn't exist
+  - Improved type safety in `parseMarkdown` function
+- **SEO metadata generation** (`lib/seo.ts`)
+  - Proper TypeScript Metadata type instead of `any`
+  - Type-safe metadata object construction
 - Updated `.gitignore` to exclude:
   - `themes-custom/` (user custom themes)
   - `config/site.local.yaml` (user config)
   - `content-custom/` (user content)
-- Updated `.cursorrules` with theme system patterns and architecture
+- Updated `.cursorrules` with theme system patterns and ESLint standards
 
 ### Deprecated
 - **Direct branding colors in config** (still functional but deprecated)

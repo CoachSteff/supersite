@@ -78,9 +78,9 @@ export default function Search({ onClose }: SearchProps) {
         
         {!loading && results.length > 0 && (
           <div className={styles.results}>
-            {results.map((result, index) => (
+            {results.map((result) => (
               <Link
-                key={index}
+                key={result.path}
                 href={result.path}
                 className={styles.result}
                 onClick={onClose}

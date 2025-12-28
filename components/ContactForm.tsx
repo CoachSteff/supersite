@@ -82,7 +82,7 @@ export default function ContactForm() {
 
       {status === 'success' && (
         <div className={styles.successMessage}>
-          Message sent successfully! We'll get back to you soon.
+          Message sent successfully! We&apos;ll get back to you soon.
         </div>
       )}
 
