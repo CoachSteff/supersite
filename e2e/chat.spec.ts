@@ -14,7 +14,8 @@ test.describe('AI Chat', () => {
     const chatButton = page.locator('[aria-label*="chat"]').or(page.locator('button').filter({ hasText: /chat/i }));
     await chatButton.first().click();
     
-    await expect(page.locator('textarea, input[type="text"]').filter({ hasText: /ask/i }).or(page.locator('[placeholder*="ask"]'))).toBeVisible();
+    const chatInput = page.locator('textarea[placeholder*="ask" i], input[placeholder*="ask" i]').first();
+    await expect(chatInput).toBeVisible();
   });
 
   test('should display welcome message', async ({ page }) => {
@@ -23,7 +24,9 @@ test.describe('AI Chat', () => {
     const chatButton = page.locator('[aria-label*="chat"]').or(page.locator('button').filter({ hasText: /chat/i }));
     await chatButton.first().click();
     
-    await expect(page.getByText(/hi/i).or(page.getByText(/help/i))).toBeVisible();
+    const welcomeMessage = page.locator('.Chat_welcomeMessage__dCpjp, [class*="welcomeMessage"]').first();
+    await expect(welcomeMessage).toBeVisible();
+    await expect(welcomeMessage).toContainText(/hi|hello|welcome/i);
   });
 
   test('should close chat window', async ({ page }) => {
@@ -32,12 +35,10 @@ test.describe('AI Chat', () => {
     const chatButton = page.locator('[aria-label*="chat"]').or(page.locator('button').filter({ hasText: /chat/i }));
     await chatButton.first().click();
     
-    const closeButton = page.getByRole('button', { name: /close|minimize/i });
-    if (await closeButton.count() > 0) {
-      await closeButton.click();
-      
-      const chatInput = page.locator('textarea, input[type="text"]').filter({ hasText: /ask/i }).or(page.locator('[placeholder*="ask"]'));
-      await expect(chatInput).not.toBeVisible();
-    }
+    const closeButton = page.getByRole('button', { name: 'Close chat' });
+    await closeButton.click();
+    
+    const chatInput = page.locator('textarea[placeholder*="ask" i], input[placeholder*="ask" i]').first();
+    await expect(chatInput).not.toBeVisible();
   });
 });

@@ -4,23 +4,25 @@ test.describe('Search', () => {
   test('should open search modal', async ({ page }) => {
     await page.goto('/');
     
-    const searchButton = page.getByRole('button', { name: /search/i }).or(page.locator('[aria-label*="search"]'));
+    const searchButton = page.getByRole('button', { name: /search/i }).or(page.locator('[aria-label*="search" i]'));
     
     if (await searchButton.count() > 0) {
       await searchButton.first().click();
-      await expect(page.locator('input[type="search"], input[placeholder*="search"]').first()).toBeVisible();
+      const searchInput = page.locator('input[type="search" i], input[placeholder*="search" i]').first();
+      await expect(searchInput).toBeVisible({ timeout: 10000 });
     }
   });
 
   test('should perform search', async ({ page }) => {
     await page.goto('/');
     
-    const searchButton = page.getByRole('button', { name: /search/i }).or(page.locator('[aria-label*="search"]'));
+    const searchButton = page.getByRole('button', { name: /search/i }).or(page.locator('[aria-label*="search" i]'));
     
     if (await searchButton.count() > 0) {
       await searchButton.first().click();
       
-      const searchInput = page.locator('input[type="search"], input[placeholder*="search"]').first();
+      const searchInput = page.locator('input[type="search" i], input[placeholder*="search" i]').first();
+      await searchInput.waitFor({ state: 'visible', timeout: 10000 });
       await searchInput.fill('AI');
       
       await page.waitForTimeout(500);
@@ -35,13 +37,13 @@ test.describe('Search', () => {
   test('should close search on ESC', async ({ page }) => {
     await page.goto('/');
     
-    const searchButton = page.getByRole('button', { name: /search/i }).or(page.locator('[aria-label*="search"]'));
+    const searchButton = page.getByRole('button', { name: /search/i }).or(page.locator('[aria-label*="search" i]'));
     
     if (await searchButton.count() > 0) {
       await searchButton.first().click();
       
-      const searchInput = page.locator('input[type="search"], input[placeholder*="search"]').first();
-      await expect(searchInput).toBeVisible();
+      const searchInput = page.locator('input[type="search" i], input[placeholder*="search" i]').first();
+      await searchInput.waitFor({ state: 'visible', timeout: 10000 });
       
       await page.keyboard.press('Escape');
       

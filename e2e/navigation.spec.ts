@@ -22,10 +22,11 @@ test.describe('Navigation', () => {
   test('should navigate back to home', async ({ page }) => {
     await page.goto('/about');
     
-    const homeLink = page.getByRole('link', { name: /home/i }).first();
+    // Use the logo or site name link instead of explicit "Home" text
+    const homeLink = page.locator('a[href="/"]').first();
     await homeLink.click();
     
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/', { timeout: 10000 });
   });
 });
 
