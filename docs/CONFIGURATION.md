@@ -4,18 +4,69 @@ This website is fully configuration-driven through YAML files and environment va
 
 ## Table of Contents
 
-1. [Site Configuration](#site-configuration)
-2. [Markdown Frontmatter](#markdown-frontmatter)
-3. [Environment Variables](#environment-variables)
-4. [AI Chat Configuration](#ai-chat-configuration)
-5. [Branding & Styling](#branding--styling)
-6. [SEO Configuration](#seo-configuration)
+1. [Configuration Overview](#configuration-overview)
+2. [Site Configuration](#site-configuration)
+3. [Content Directory Configuration](#content-directory-configuration)
+4. [Markdown Frontmatter](#markdown-frontmatter)
+5. [Environment Variables](#environment-variables)
+6. [AI Chat Configuration](#ai-chat-configuration)
+7. [Branding & Styling](#branding--styling)
+8. [SEO Configuration](#seo-configuration)
+
+---
+
+## Configuration Overview
+
+Supersite uses a **dual-configuration system**:
+
+- **`config/site.yaml`** - Template configuration (git-tracked, receives updates)
+- **`config/site.local.yaml`** - Your overrides (git-ignored, user-owned)
+
+The system merges both files, with your local config taking priority.
+
+### First-Time Setup
+
+Create your local config:
+
+```bash
+npm run setup:config
+```
+
+This creates `config/site.local.yaml` with examples.
+
+### How It Works
+
+1. **Template config** (`site.yaml`) provides all defaults
+2. **Your config** (`site.local.yaml`) overrides specific values
+3. **You only specify what you want to change**
+
+**Example:**
+
+```yaml
+# config/site.local.yaml
+# Only override what you want to change
+
+site:
+  name: "My Company"
+
+branding:
+  primaryColor: "#FF6B35"
+
+# Everything else uses template defaults
+```
+
+### Safe Updates
+
+When you `git pull` template updates:
+- `site.yaml` gets new features and improvements
+- `site.local.yaml` is gitignored (never conflicts)
+- Your overrides continue working
 
 ---
 
 ## Site Configuration
 
-The main configuration file is located at `/config/site.yaml`.
+The template configuration file is located at `/config/site.yaml`. You should override settings in `/config/site.local.yaml`.
 
 ### Complete Schema
 
@@ -71,6 +122,10 @@ features:
   blog: true                               # Enable blog
   contactForm: true                        # Enable contact form
   analytics: false                         # Enable analytics (future)
+
+content:
+  customDirectory: "content-custom"        # User content location (override in site.local.yaml)
+  templateDirectory: "content"              # Template content location (don't change)
 ```
 
 ### Quick Customization Examples
@@ -129,6 +184,231 @@ chat:
     width: 400
     height: 600
 ```
+
+---
+
+## Content Directory Configuration
+
+By default, user content is stored in `content-custom/`. You can customize this path.
+
+### Configure Custom Path
+
+In `config/site.local.yaml`:
+
+```yaml
+content:
+  customDirectory: "my-content"  # Your content directory
+```
+
+### Content Resolution Order
+
+The system checks directories in this order:
+
+1. **Configured custom directory** (from `content.customDirectory`)
+2. **Default custom directory** (`content-custom/`)
+3. **Template directory** (`content/`)
+
+### Example: Organization-Specific Structure
+
+```yaml
+# config/site.local.yaml
+content:
+  customDirectory: "acme-corp-content"
+```
+
+Then:
+```bash
+npm run setup:content  # Copies template to acme-corp-content/
+```
+
+### Multiple Environments
+
+Different configs for different deployments:
+
+**Local development:**
+```yaml
+# config/site.local.yaml
+content:
+  customDirectory: "content-dev"
+```
+
+**Production:**
+```yaml
+# config/site.local.yaml (on production server)
+content:
+  customDirectory: "content-prod"
+```
+
+---
+
+## Theme Configuration
+
+Supersite includes a powerful multi-theme system with 5 built-in themes and support for custom themes.
+
+### Using Built-in Themes
+
+Choose from 5 professionally designed themes:
+
+```yaml
+# config/site.local.yaml
+branding:
+  theme: "default"    # Clean, professional blue theme (default)
+  # OR
+  theme: "modern"     # Contemporary teal/cyan theme
+  # OR
+  theme: "minimal"    # High-contrast black/white minimalist
+  # OR
+  theme: "dark"       # Purple/pink dark-first theme
+  # OR
+  theme: "vibrant"    # Colorful orange/green theme
+```
+
+Each theme includes:
+- **Complete color palettes** for light and dark modes
+- **Typography** settings (font families, sizes)
+- **Spacing** scale (6 levels: xs, sm, md, lg, xl, xxl)
+- **Layout** settings (border radius, max width)
+
+### Creating a Custom Theme
+
+**Step 1:** Copy a template theme to `themes-custom/`:
+
+```bash
+cp themes/default.yaml themes-custom/my-theme.yaml
+```
+
+**Step 2:** Customize your theme:
+
+```yaml
+# themes-custom/my-theme.yaml
+name: "My Custom Theme"
+description: "My brand colors and style"
+
+colors:
+  light:
+    primary: "#FF6B35"
+    secondary: "#004E89"
+    text: "#1f2937"
+    textLight: "#6b7280"
+    background: "#ffffff"
+    backgroundSecondary: "#f9fafb"
+    border: "#e5e7eb"
+    success: "#10b981"
+    error: "#ef4444"
+  dark:
+    primary: "#ff8c5a"
+    secondary: "#0066a8"
+    text: "#f9fafb"
+    textLight: "#d1d5db"
+    background: "#111827"
+    backgroundSecondary: "#1f2937"
+    border: "#374151"
+    success: "#34d399"
+    error: "#f87171"
+
+typography:
+  fontFamily: "'Inter', -apple-system, sans-serif"
+  fontFamilyMono: "'Courier New', Courier, monospace"
+  baseFontSize: "16px"
+
+spacing:
+  xs: "0.25rem"
+  sm: "0.5rem"
+  md: "1rem"
+  lg: "1.5rem"
+  xl: "2rem"
+  xxl: "3rem"
+
+layout:
+  borderRadius: "8px"
+  maxWidth: "1200px"
+```
+
+**Step 3:** Activate your custom theme:
+
+```yaml
+# config/site.local.yaml
+branding:
+  theme: "custom/my-theme"
+```
+
+### Theme Overrides
+
+Override specific theme values without creating a full custom theme:
+
+```yaml
+# config/site.local.yaml
+branding:
+  theme: "default"
+  overrides:
+    colors:
+      light:
+        primary: "#FF6B35"        # Override just the primary color
+        secondary: "#004E89"       # And secondary
+    typography:
+      fontFamily: "'Georgia', serif"  # Change font
+    layout:
+      borderRadius: "12px"        # More rounded corners
+```
+
+This is perfect for quick brand color changes or small tweaks.
+
+### Theme Directory Structure
+
+```
+themes/                          # Built-in template themes (git-tracked)
+├── default.yaml                # Blue professional theme
+├── modern.yaml                 # Teal modern theme
+├── minimal.yaml                # Black/white minimalist
+├── dark.yaml                   # Purple dark-first theme
+└── vibrant.yaml                # Orange colorful theme
+
+themes-custom/                   # Your custom themes (gitignored)
+└── my-theme.yaml               # Your custom theme
+```
+
+### Theme Resolution Order
+
+When you specify a theme, the system checks in this order:
+
+1. **Custom theme** (`themes-custom/{name}.yaml`)
+2. **Template theme** (`themes/{name}.yaml`)
+3. **Default fallback** (`themes/default.yaml`)
+
+### Setup Script
+
+List available themes and get setup instructions:
+
+```bash
+npm run setup:theme
+```
+
+### Legacy Branding Support
+
+Old-style direct color configuration still works but is deprecated:
+
+```yaml
+# DEPRECATED (still works, but use themes instead)
+branding:
+  primaryColor: "#2563eb"
+  secondaryColor: "#1e40af"
+  fontFamily: "Inter, sans-serif"
+
+# RECOMMENDED (use themes)
+branding:
+  theme: "default"
+  overrides:
+    colors:
+      light:
+        primary: "#2563eb"
+        secondary: "#1e40af"
+```
+
+### Complete Theme Documentation
+
+For detailed theme customization, color theory tips, accessibility guidelines, and examples, see:
+
+**[Theme System Guide](THEMES.md)**
 
 ---
 

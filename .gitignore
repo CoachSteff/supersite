@@ -37,6 +37,15 @@ yarn-error.log*
 WARP.md
 *.personal.md
 
+# user configuration (overrides template config)
+config/site.local.yaml
+
+# user content (custom site content, not template)
+content-custom/
+
+# user custom themes
+themes-custom/
+
 # vercel
 .vercel
 

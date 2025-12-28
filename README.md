@@ -40,6 +40,13 @@ Part of the **Super** family: [superskills](https://github.com/coachsteff/supers
 - **Icon Library**: Lucide React for clean, minimal UI
 - **Contact Forms**: Built-in form with validation
 
+### Theming
+- **5 Built-in Themes**: Choose from professional, modern, minimal, dark, or vibrant themes
+- **Custom Themes**: Create your own themes with YAML configuration
+- **Theme Overrides**: Fine-tune specific values without creating a full theme
+- **Automatic Dark Mode**: All themes include light and dark variants
+- **CSS Custom Properties**: Dynamic styling via CSS variables
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -55,29 +62,25 @@ cd supersite
 npm install
 ```
 
-2. **Configure your site:**
-
-Edit `config/site.yaml`:
-```yaml
-site:
-  name: "Your Site Name"
-  description: "Your description"
-  url: "https://yoursite.com"
-
-chat:
-  enabled: true
-  provider: "anthropic"  # or openai, gemini, ollama
-  model: "claude-3-5-sonnet-20241022"
+2. **Set up your site:**
+```bash
+npm run setup
 ```
+This creates your config (`config/site.local.yaml`) and content (`content-custom/`).
 
-3. **Add your API key:**
+3. **Customize:**
+   - **Branding & features**: Edit `config/site.local.yaml`
+   - **Pages & content**: Edit files in `content-custom/`
+   - See [Quick Start Guide](./docs/QUICKSTART.md) for details
+
+4. **Add your API key:**
 
 Create `.env.local`:
 ```bash
 ANTHROPIC_API_KEY=your-key-here
 ```
 
-4. **Start developing:**
+5. **Start developing:**
 ```bash
 npm run dev
 ```

@@ -3,8 +3,37 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
+import { getSiteConfig } from './config';
 
-const contentDirectory = path.join(process.cwd(), 'content');
+// Get content directory with configuration support
+function getContentDirectory(): string {
+  const config = getSiteConfig();
+  const cwd = process.cwd();
+  
+  // Priority 1: User-configured custom directory
+  if (config.content?.customDirectory) {
+    const customPath = path.join(cwd, config.content.customDirectory);
+    if (fs.existsSync(customPath)) {
+      return customPath;
+    }
+    console.warn(`Configured content directory not found: ${customPath}, falling back...`);
+  }
+  
+  // Priority 2: Default custom directory (content-custom/)
+  const defaultCustomDir = path.join(cwd, 'content-custom');
+  if (fs.existsSync(defaultCustomDir)) {
+    return defaultCustomDir;
+  }
+  
+  // Priority 3: Template directory (content/)
+  const templateDir = config.content?.templateDirectory 
+    ? path.join(cwd, config.content.templateDirectory)
+    : path.join(cwd, 'content');
+  
+  return templateDir;
+}
+
+const contentDirectory = getContentDirectory();
 
 export interface SEOMetadata {
   title?: string;

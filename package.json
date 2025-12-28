@@ -1,6 +1,6 @@
 {
   "name": "supersite",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "A universal AI-powered website template built with Next.js",
   "repository": {
     "type": "git",
@@ -28,6 +28,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "setup": "npm run setup:config && npm run setup:content",
+    "setup:config": "node scripts/setup-config.js",
+    "setup:content": "node scripts/setup-content.js",
+    "setup:theme": "node scripts/setup-theme.js",
     "test": "jest --watch",
     "test:ci": "jest --ci --coverage --maxWorkers=2",
     "test:coverage": "jest --coverage",

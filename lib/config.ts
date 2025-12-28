@@ -2,10 +2,27 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import { z } from 'zod';
+import { loadTheme, applyThemeOverrides } from './theme-loader';
+import type { Theme } from './theme-schema';
 
 const ChatButtonPositionSchema = z.enum(['bottom-left', 'bottom-center', 'bottom-right']);
 const ChatWindowPositionSchema = z.enum(['bottom-right', 'bottom-center', 'bottom-left', 'right-docked', 'bottom-docked', 'left-docked']);
 const AIProviderSchema = z.enum(['anthropic', 'openai', 'gemini', 'ollama']);
+
+const ContentConfigSchema = z.object({
+  customDirectory: z.string().optional(),
+  templateDirectory: z.string().default('content'),
+});
+
+const ThemeOverridesSchema = z.object({
+  colors: z.object({
+    light: z.record(z.string(), z.string()).optional(),
+    dark: z.record(z.string(), z.string()).optional(),
+  }).optional(),
+  typography: z.record(z.string(), z.string()).optional(),
+  spacing: z.record(z.string(), z.string()).optional(),
+  layout: z.record(z.string(), z.string()).optional(),
+}).optional();
 
 const SiteConfigSchema = z.object({
   site: z.object({
@@ -16,9 +33,12 @@ const SiteConfigSchema = z.object({
     url: z.string(),
   }),
   branding: z.object({
-    primaryColor: z.string(),
-    secondaryColor: z.string(),
-    fontFamily: z.string(),
+    theme: z.string().default('default'),
+    overrides: ThemeOverridesSchema,
+    // Legacy support (deprecated but functional)
+    primaryColor: z.string().optional(),
+    secondaryColor: z.string().optional(),
+    fontFamily: z.string().optional(),
   }),
   seo: z.object({
     defaultTitle: z.string(),
@@ -61,6 +81,7 @@ const SiteConfigSchema = z.object({
     contactForm: z.boolean(),
     analytics: z.boolean(),
   }),
+  content: ContentConfigSchema.optional(),
 });
 
 export type SiteConfig = z.infer<typeof SiteConfigSchema>;
@@ -70,22 +91,60 @@ export type ChatWindowPosition = z.infer<typeof ChatWindowPositionSchema>;
 
 let cachedConfig: SiteConfig | null = null;
 
+// Deep merge utility (simple object merge)
+function deepMerge(target: any, source: any): any {
+  const output = { ...target };
+  
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target)) {
+          output[key] = source[key];
+        } else {
+          output[key] = deepMerge(target[key], source[key]);
+        }
+      } else {
+        output[key] = source[key];
+      }
+    });
+  }
+  
+  return output;
+}
+
+function isObject(item: any): boolean {
+  return item && typeof item === 'object' && !Array.isArray(item);
+}
+
 export function loadSiteConfig(): SiteConfig {
   if (cachedConfig) {
     return cachedConfig;
   }
 
-  const configPath = path.join(process.cwd(), 'config', 'site.yaml');
+  const configDir = path.join(process.cwd(), 'config');
+  const templateConfigPath = path.join(configDir, 'site.yaml');
+  const userConfigPath = path.join(configDir, 'site.local.yaml');
   
-  if (!fs.existsSync(configPath)) {
-    throw new Error(`Configuration file not found at ${configPath}`);
+  // Load template config (required)
+  if (!fs.existsSync(templateConfigPath)) {
+    throw new Error(`Template configuration file not found at ${templateConfigPath}`);
   }
 
-  const fileContents = fs.readFileSync(configPath, 'utf8');
-  const rawConfig = yaml.load(fileContents);
+  const templateContents = fs.readFileSync(templateConfigPath, 'utf8');
+  const templateConfig = yaml.load(templateContents);
+
+  // Load user config (optional)
+  let userConfig = {};
+  if (fs.existsSync(userConfigPath)) {
+    const userContents = fs.readFileSync(userConfigPath, 'utf8');
+    userConfig = yaml.load(userContents) || {};
+  }
+
+  // Deep merge: template ← user overrides
+  const mergedConfig = deepMerge(templateConfig, userConfig);
 
   try {
-    cachedConfig = SiteConfigSchema.parse(rawConfig);
+    cachedConfig = SiteConfigSchema.parse(mergedConfig);
     return cachedConfig;
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -102,10 +161,15 @@ export function getSiteConfig(): SiteConfig {
 
 export function getClientSafeConfig() {
   const config = getSiteConfig();
+  const theme = getActiveTheme();
   
   return {
     site: config.site,
-    branding: config.branding,
+    branding: {
+      theme: config.branding.theme,
+      // Expose theme colors for client-side use
+      colors: theme.colors,
+    },
     seo: {
       defaultTitle: config.seo.defaultTitle,
       titleTemplate: config.seo.titleTemplate,
@@ -130,4 +194,32 @@ export function validateConfig(): boolean {
     console.error('Configuration validation failed:', error);
     return false;
   }
+}
+
+export function getActiveTheme(): Theme {
+  const config = getSiteConfig();
+  const themeName = config.branding.theme || 'default';
+  let theme = loadTheme(themeName);
+  
+  // Apply user overrides
+  if (config.branding.overrides) {
+    theme = applyThemeOverrides(theme, config.branding.overrides as Partial<Theme>);
+  }
+  
+  // Legacy branding support (deprecated)
+  if (config.branding.primaryColor || config.branding.secondaryColor || config.branding.fontFamily) {
+    console.warn('Direct primaryColor/secondaryColor/fontFamily in config is deprecated. Use branding.theme and branding.overrides instead.');
+    
+    if (config.branding.primaryColor) {
+      theme.colors.light.primary = config.branding.primaryColor;
+    }
+    if (config.branding.secondaryColor) {
+      theme.colors.light.secondary = config.branding.secondaryColor;
+    }
+    if (config.branding.fontFamily) {
+      theme.typography.fontFamily = config.branding.fontFamily;
+    }
+  }
+  
+  return theme;
 }

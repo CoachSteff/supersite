@@ -8,19 +8,38 @@ Get your AI-powered website running in 5 minutes!
 npm install
 ```
 
-## 2. Configure Your Site
+## 2. Set Up Your Configuration and Content
 
-Edit `config/site.yaml`:
+Run the setup command to create your user configuration and content:
+
+```bash
+npm run setup
+```
+
+This creates:
+- `config/site.local.yaml` - Your configuration overrides
+- `content-custom/` - Your site content
+
+## 3. Customize Your Site
+
+### Configuration (branding, features, etc.)
+
+Edit `config/site.local.yaml`:
 
 ```yaml
+# Only add the settings you want to change
+
 site:
   name: "Your Site Name"          # Change this!
   description: "Your description"
-  url: "https://yoursite.com"
 
 branding:
-  primaryColor: "#2563eb"         # Your brand color
-  secondaryColor: "#1e40af"
+  theme: "default"                # Choose: default, modern, minimal, dark, vibrant
+  # OR customize specific colors:
+  # overrides:
+  #   colors:
+  #     light:
+  #       primary: "#FF6B35"
 
 chat:
   enabled: true
@@ -28,7 +47,47 @@ chat:
   welcomeMessage: "Hi! How can I help?"
 ```
 
-## 3. Add Your AI API Key
+**Important:** Edit `config/site.local.yaml` (not `config/site.yaml`). Your local config is gitignored and safe from updates.
+
+### Content (pages, blog posts)
+
+Edit your content files:
+- `content-custom/pages/index.md` - Homepage
+- `content-custom/pages/about/index.md` - About page
+- `content-custom/blog/` - Blog posts
+
+**Important:** Edit files in `content-custom/` (not `content/`). Your custom content is gitignored and safe from updates.
+
+### Optional: Choose a Theme
+
+Supersite includes 5 built-in themes. List them:
+
+```bash
+npm run setup:theme
+```
+
+To change themes, edit `config/site.local.yaml`:
+
+```yaml
+branding:
+  theme: "modern"  # default, modern, minimal, dark, vibrant
+```
+
+Or create a custom theme:
+
+```bash
+cp themes/default.yaml themes-custom/my-theme.yaml
+# Edit my-theme.yaml with your colors
+```
+
+```yaml
+branding:
+  theme: "custom/my-theme"
+```
+
+See [THEMES.md](./THEMES.md) for complete theme documentation.
+
+## 4. Add Your AI API Key
 
 Create `.env.local` in the project root:
 
@@ -52,45 +111,7 @@ ANTHROPIC_API_KEY=your-key-here
 - Google: https://makersuite.google.com/
 - Ollama: https://ollama.ai/ (free, local)
 
-## 4. Add Your Content
-
-Replace the sample content in:
-
-- `content/pages/index.md` - Homepage
-- `content/pages/about/index.md` - About page
-- `content/blog/` - Blog posts
-
-**Page template:**
-```yaml
----
-title: "Page Title"
-description: "Brief description"
-chat:
-  priority: high
-  summary: "What this page is about"
----
-
-# Your content here
-
-Write your markdown content normally!
-```
-
-**Blog post template:**
-```yaml
----
-title: "Post Title"
-date: "2024-12-24"
-author: "Your Name"
-tags: ["AI", "Technology"]
-chat:
-  priority: medium
-  summary: "What this post covers"
----
-
-# Your post content
-```
-
-## 5. Run It!
+## 5. Start Development Server
 
 ```bash
 npm run dev
@@ -139,7 +160,34 @@ Visit http://localhost:3000
 
 That's it! You now have a fully functional AI-powered website. 🎉
 
+## Optional: Custom Content Path
+
+To use a different content directory:
+
+```yaml
+# In config/site.local.yaml
+content:
+  customDirectory: "my-content"
+```
+
+Then run `npm run setup:content` to copy template to `my-content/`.
+
+---
+
+## Keeping Your Site Updated
+
+When we release template improvements:
+
+```bash
+git pull
+```
+
+Your `config/site.local.yaml` and `content-custom/` are gitignored, so **no conflicts**!
+
+---
+
 For complete documentation, see:
-- [README.md](./README.md) - Full overview
+- [README.md](../README.md) - Full overview
 - [CONFIGURATION.md](./CONFIGURATION.md) - Detailed config guide
+- [CONTENT-MANAGEMENT.md](./CONTENT-MANAGEMENT.md) - Content guide
 - [ICONS.md](./ICONS.md) - Icon reference

@@ -6,7 +6,7 @@ import { ChatProvider } from '@/components/ChatProvider';
 import ChatButton from '@/components/ChatButton';
 import ChatWindow from '@/components/ChatWindow';
 import ThemeLoader from '@/components/ThemeLoader';
-import { getSiteConfig } from '@/lib/config';
+import { getSiteConfig, getActiveTheme } from '@/lib/config';
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = getSiteConfig();
@@ -38,6 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const config = getSiteConfig();
+  const theme = getActiveTheme();
   
   return (
     <html lang="en">
@@ -45,7 +46,7 @@ export default function RootLayout({
         <link rel="icon" href={config.site.favicon} />
       </head>
       <body>
-        <ThemeLoader branding={config.branding} />
+        <ThemeLoader theme={theme} />
         <ChatProvider>
           <Header />
           <main className="main-content">
