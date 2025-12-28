@@ -207,8 +207,12 @@ export function getActiveTheme(): Theme {
   }
   
   // Legacy branding support (deprecated)
+  // Only show warning in development and test environments, suppressed in production
   if (config.branding.primaryColor || config.branding.secondaryColor || config.branding.fontFamily) {
-    console.warn('Direct primaryColor/secondaryColor/fontFamily in config is deprecated. Use branding.theme and branding.overrides instead.');
+    if (process.env.NODE_ENV === 'development' && !globalThis.__legacyBrandingWarned) {
+      console.warn('Direct primaryColor/secondaryColor/fontFamily in config is deprecated. Use branding.theme and branding.overrides instead.');
+      globalThis.__legacyBrandingWarned = true;
+    }
     
     if (config.branding.primaryColor) {
       theme.colors.light.primary = config.branding.primaryColor;
