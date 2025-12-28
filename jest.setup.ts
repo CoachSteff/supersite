@@ -42,14 +42,17 @@ const mockReadText = jest.fn(() => Promise.resolve(''))
   readText: mockReadText,
 }
 
-Object.defineProperty(navigator, 'clipboard', {
-  writable: true,
-  configurable: true,
-  value: {
-    writeText: mockWriteText,
-    readText: mockReadText,
-  },
-})
+// Only mock navigator in jsdom environment (not in node environment)
+if (typeof navigator !== 'undefined') {
+  Object.defineProperty(navigator, 'clipboard', {
+    writable: true,
+    configurable: true,
+    value: {
+      writeText: mockWriteText,
+      readText: mockReadText,
+    },
+  })
+}
 
 global.alert = jest.fn()
 
