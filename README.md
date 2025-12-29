@@ -97,22 +97,27 @@ Your `site/` directory is never touched by git!
 
 ```
 supersite/
-├── app/                       # Next.js App Router (framework)
-│   ├── api/                   # API endpoints (chat, search, contact)
-│   ├── blog/                  # Blog pages
-│   ├── [...slug]/             # Dynamic routing
-│   └── layout.tsx             # Root layout
-├── components/                # React components (framework)
-│   ├── ChatWindow.tsx         # Chat interface
-│   ├── Navigation.tsx         # Auto-generated nav
-│   ├── Search.tsx             # Search modal
-│   └── ...
-├── lib/                       # Core utilities (framework)
-│   ├── config.ts              # YAML parser & validation
-│   ├── ai-providers.ts        # AI provider abstraction
-│   ├── markdown.ts            # Markdown processing
-│   └── ...
-├── styles/                    # CSS modules (framework)
+├── src/                       # Application source code
+│   ├── app/                   # Next.js App Router
+│   │   ├── api/               # API endpoints (chat, search, contact)
+│   │   ├── blog/              # Blog pages
+│   │   ├── [...slug]/         # Dynamic routing
+│   │   └── layout.tsx         # Root layout
+│   ├── components/            # React components
+│   │   ├── ChatWindow.tsx     # Chat interface
+│   │   ├── Navigation.tsx     # Auto-generated nav
+│   │   ├── Search.tsx         # Search modal
+│   │   └── ...
+│   ├── lib/                   # Core utilities
+│   │   ├── config.ts          # YAML parser & validation
+│   │   ├── ai-providers.ts    # AI provider abstraction
+│   │   ├── markdown.ts        # Markdown processing
+│   │   └── ...
+│   ├── styles/                # CSS modules
+│   ├── __tests__/             # Unit tests
+│   ├── __mocks__/             # Test mocks
+│   └── e2e/                   # E2E tests
+├── scripts/                   # Build and setup scripts
 ├── templates/                 # Sample content (reference)
 │   ├── content/               # Example markdown files
 │   │   ├── pages/
@@ -288,7 +293,12 @@ module.exports = {
 
 ### File Organization
 
-- **`/app`, `/components`, `/lib`, `/styles`**: Framework code (GitHub-tracked, don't modify)
+- **`/src`**: Application source code (framework)
+  - **`/app`**: Next.js pages and API routes
+  - **`/components`**: React components
+  - **`/lib`**: Utility functions and logic
+  - **`/styles`**: CSS modules
+- **`/scripts`**: Build and setup scripts
 - **`/templates`**: Sample content and themes (reference material)
 - **`/site`**: Your workspace (git-ignored, edit freely)
   - **`/content`**: Your markdown content
@@ -324,12 +334,12 @@ See [TESTING.md](./docs/TESTING.md) for complete testing guide.
 ### Extending Functionality
 
 **Add a new AI provider:**
-1. Create class in `lib/ai-providers.ts` implementing `AIProvider`
+1. Create class in `src/lib/ai-providers.ts` implementing `AIProvider`
 2. Add to `getProvider()` switch statement
-3. Update config schema in `lib/config.ts`
+3. Update config schema in `src/lib/config.ts`
 
 **Add custom page metadata:**
-1. Add fields to frontmatter schema in `lib/markdown.ts`
+1. Add fields to frontmatter schema in `src/lib/markdown.ts`
 2. Update parsing logic
 3. Use in components
 
