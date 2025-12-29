@@ -8,11 +8,11 @@ export function loadTheme(themeName: string): Theme {
   
   // Handle "custom/theme-name" format
   let themeFile = themeName;
-  let searchDirs = ['themes-custom', 'themes'];
+  let searchDirs = ['site/themes', 'templates/themes'];
   
   if (themeName.startsWith('custom/')) {
     themeFile = themeName.replace('custom/', '');
-    searchDirs = ['themes-custom']; // Only search custom directory
+    searchDirs = ['site/themes']; // Only search site directory
   }
   
   // Try each directory in priority order
@@ -31,7 +31,7 @@ export function loadTheme(themeName: string): Theme {
   }
   
   // Fallback to default theme
-  const defaultPath = path.join(cwd, 'themes', 'default.yaml');
+  const defaultPath = path.join(cwd, 'templates/themes', 'default.yaml');
   if (fs.existsSync(defaultPath)) {
     if (themeName !== 'default') {
       console.warn(`Theme "${themeName}" not found, falling back to default`);
@@ -72,7 +72,7 @@ export function listAvailableThemes(): string[] {
   const themes: string[] = [];
   
   // List template themes
-  const themesDir = path.join(cwd, 'themes');
+  const themesDir = path.join(cwd, 'templates/themes');
   if (fs.existsSync(themesDir)) {
     const files = fs.readdirSync(themesDir);
     files
@@ -80,8 +80,8 @@ export function listAvailableThemes(): string[] {
       .forEach(f => themes.push(f.replace('.yaml', '')));
   }
   
-  // List custom themes
-  const customDir = path.join(cwd, 'themes-custom');
+  // List custom themes in site/themes
+  const customDir = path.join(cwd, 'site/themes');
   if (fs.existsSync(customDir)) {
     const files = fs.readdirSync(customDir);
     files

@@ -62,90 +62,85 @@ cd supersite
 npm install
 ```
 
-2. **Set up your site:**
+2. **Initialize your site:**
 ```bash
 npm run setup
 ```
-This creates your config (`config/site.local.yaml`) and content (`content-custom/`).
+This creates your workspace in `site/` with sample content, config, and themes.
 
-3. **Customize:**
-   - **Branding & features**: Edit `config/site.local.yaml`
-   - **Pages & content**: Edit files in `content-custom/`
-   - See [Quick Start Guide](./docs/QUICKSTART.md) for details
-
-4. **Add your API key:**
+3. **Add your API key:**
 
 Create `.env.local`:
 ```bash
 ANTHROPIC_API_KEY=your-key-here
 ```
 
-5. **Start developing:**
+4. **Start developing:**
 ```bash
 npm run dev
 ```
 
 Visit http://localhost:3000
 
+5. **Customize your site:**
+   - **Edit content**: `site/content/pages/*.md`
+   - **Edit config**: `site/config.yaml`
+   - **Customize themes**: `site/themes/`
+
+6. **Update framework:**
+```bash
+git pull
+```
+Your `site/` directory is never touched by git!
+
 ## 📁 Project Structure
 
 ```
 supersite/
-├── config/
-│   └── site.yaml             # Main configuration file
-├── app/
-│   ├── api/
-│   │   ├── chat/             # AI chat endpoint
-│   │   ├── config/           # Configuration API
-│   │   ├── contact/          # Contact form
-│   │   ├── navigation/       # Navigation data
-│   │   └── search/           # Search endpoint
-│   ├── blog/                 # Blog pages
-│   ├── contact/              # Contact page
-│   ├── [...slug]/            # Dynamic routing
-│   ├── layout.tsx            # Root layout with chat
-│   ├── page.tsx              # Homepage
-│   └── globals.css           # Global styles + dark mode
-├── components/
-│   ├── ChatProvider.tsx      # Chat state management
-│   ├── ChatButton.tsx        # Floating chat button
-│   ├── ChatWindow.tsx        # Chat interface
-│   ├── ChatMessage.tsx       # Message display
-│   ├── ThemeLoader.tsx       # Dynamic branding
-│   ├── Header.tsx            # Site header
-│   ├── Footer.tsx            # Site footer
-│   ├── Navigation.tsx        # Auto-generated nav
-│   ├── Search.tsx            # Search modal
-│   ├── ContactForm.tsx       # Contact form
-│   ├── BlogCard.tsx          # Blog post card
-│   └── MarkdownContent.tsx   # Markdown renderer
-├── content/
-│   ├── pages/                # Site pages (markdown)
-│   │   ├── index.md          # Homepage
-│   │   ├── about/index.md
-│   │   └── services/index.md
-│   └── blog/                 # Blog posts (markdown)
-│       └── YYYY-MM-DD-slug.md
-├── lib/
-│   ├── config.ts             # YAML parser & validation
-│   ├── ai-providers.ts       # AI provider abstraction
-│   ├── context-builder.ts    # Build AI context
-│   ├── markdown.ts           # Markdown processing
-│   ├── search.ts             # Search functionality
-│   └── seo.ts                # SEO metadata generation
-└── styles/                   # CSS modules
-    ├── Chat.module.css       # Chat UI styles
-    ├── Header.module.css
-    ├── Footer.module.css
-    └── ...
+├── app/                       # Next.js App Router (framework)
+│   ├── api/                   # API endpoints (chat, search, contact)
+│   ├── blog/                  # Blog pages
+│   ├── [...slug]/             # Dynamic routing
+│   └── layout.tsx             # Root layout
+├── components/                # React components (framework)
+│   ├── ChatWindow.tsx         # Chat interface
+│   ├── Navigation.tsx         # Auto-generated nav
+│   ├── Search.tsx             # Search modal
+│   └── ...
+├── lib/                       # Core utilities (framework)
+│   ├── config.ts              # YAML parser & validation
+│   ├── ai-providers.ts        # AI provider abstraction
+│   ├── markdown.ts            # Markdown processing
+│   └── ...
+├── styles/                    # CSS modules (framework)
+├── templates/                 # Sample content (reference)
+│   ├── content/               # Example markdown files
+│   │   ├── pages/
+│   │   │   └── index.md
+│   │   └── blog/
+│   │       └── 2024-12-24-welcome.md
+│   ├── themes/                # Example themes
+│   │   ├── default.yaml
+│   │   ├── dark.yaml
+│   │   ├── minimal.yaml
+│   │   ├── modern.yaml
+│   │   └── vibrant.yaml
+│   └── config.yaml            # Sample configuration
+├── site/                      # Your workspace (git-ignored)
+│   ├── content/               # Your markdown content
+│   │   ├── pages/
+│   │   └── blog/
+│   ├── themes/                # Your custom themes
+│   └── config.yaml            # Your site configuration
+├── docs/                      # Documentation
+└── [config files]             # TypeScript, Next.js, etc.
 ```
 
 ## 📝 Content Management
-```
 
 ### Adding Pages
 
-Create markdown files in `content/pages/`. Folder structure = URL structure.
+Create markdown files in `site/content/pages/`. Folder structure = URL structure.
 
 ```yaml
 ---
@@ -161,12 +156,12 @@ chat:
 # Your content here
 ```
 
-- `content/pages/about/index.md` → `/about`
-- `content/pages/services/consulting.md` → `/services/consulting`
+- `site/content/pages/about/index.md` → `/about`
+- `site/content/pages/services/consulting.md` → `/services/consulting`
 
 ### Adding Blog Posts
 
-Create files in `content/blog/` with format: `YYYY-MM-DD-slug.md`
+Create files in `site/content/blog/` with format: `YYYY-MM-DD-slug.md`
 
 ```yaml
 ---
@@ -188,7 +183,7 @@ See [CONFIGURATION.md](./docs/CONFIGURATION.md) for complete details.
 
 ### Quick Start
 
-1. **Choose Provider** (edit `config/site.yaml`):
+1. **Choose Provider** (edit `site/config.yaml`):
 ```yaml
 chat:
   provider: "anthropic"  # anthropic | openai | gemini | ollama
@@ -221,7 +216,7 @@ chat:
 
 ### Branding (No Code Required!)
 
-Edit `config/site.yaml`:
+Edit `site/config.yaml`:
 ```yaml
 site:
   name: "Your Company"
@@ -293,12 +288,12 @@ module.exports = {
 
 ### File Organization
 
-- **`/config`**: YAML configuration
-- **`/app`**: Next.js pages and API routes
-- **`/components`**: React components
-- **`/lib`**: Utility functions and logic
-- **`/content`**: Markdown content files
-- **`/styles`**: CSS modules
+- **`/app`, `/components`, `/lib`, `/styles`**: Framework code (GitHub-tracked, don't modify)
+- **`/templates`**: Sample content and themes (reference material)
+- **`/site`**: Your workspace (git-ignored, edit freely)
+  - **`/content`**: Your markdown content
+  - **`/themes`**: Your custom themes
+  - **`config.yaml`**: Your site configuration
 
 ### Testing
 

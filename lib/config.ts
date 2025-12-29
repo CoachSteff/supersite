@@ -121,30 +121,17 @@ export function loadSiteConfig(): SiteConfig {
     return cachedConfig;
   }
 
-  const configDir = path.join(process.cwd(), 'config');
-  const templateConfigPath = path.join(configDir, 'site.yaml');
-  const userConfigPath = path.join(configDir, 'site.local.yaml');
+  const configPath = path.join(process.cwd(), 'site', 'config.yaml');
   
-  // Load template config (required)
-  if (!fs.existsSync(templateConfigPath)) {
-    throw new Error(`Template configuration file not found at ${templateConfigPath}`);
+  if (!fs.existsSync(configPath)) {
+    throw new Error(`Configuration file not found at ${configPath}`);
   }
 
-  const templateContents = fs.readFileSync(templateConfigPath, 'utf8');
-  const templateConfig = yaml.load(templateContents) as Record<string, unknown>;
-
-  // Load user config (optional)
-  let userConfig: Record<string, unknown> = {};
-  if (fs.existsSync(userConfigPath)) {
-    const userContents = fs.readFileSync(userConfigPath, 'utf8');
-    userConfig = (yaml.load(userContents) as Record<string, unknown>) || {};
-  }
-
-  // Deep merge: template ← user overrides
-  const mergedConfig = deepMerge(templateConfig, userConfig);
+  const configContents = fs.readFileSync(configPath, 'utf8');
+  const rawConfig = yaml.load(configContents) as Record<string, unknown>;
 
   try {
-    cachedConfig = SiteConfigSchema.parse(mergedConfig);
+    cachedConfig = SiteConfigSchema.parse(rawConfig);
     return cachedConfig;
   } catch (error) {
     if (error instanceof z.ZodError) {

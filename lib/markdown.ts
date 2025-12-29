@@ -19,16 +19,14 @@ function getContentDirectory(): string {
     console.warn(`Configured content directory not found: ${customPath}, falling back...`);
   }
   
-  // Priority 2: Default custom directory (content-custom/)
-  const defaultCustomDir = path.join(cwd, 'content-custom');
-  if (fs.existsSync(defaultCustomDir)) {
-    return defaultCustomDir;
+  // Priority 2: Default site content directory (site/content/)
+  const siteContentDir = path.join(cwd, 'site', 'content');
+  if (fs.existsSync(siteContentDir)) {
+    return siteContentDir;
   }
   
-  // Priority 3: Template directory (content/)
-  const templateDir = config.content?.templateDirectory 
-    ? path.join(cwd, config.content.templateDirectory)
-    : path.join(cwd, 'content');
+  // Priority 3: Template directory fallback (templates/content/)
+  const templateDir = path.join(cwd, 'templates', 'content');
   
   return templateDir;
 }

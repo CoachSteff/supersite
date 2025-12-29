@@ -15,6 +15,7 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -37,14 +38,13 @@ yarn-error.log*
 WARP.md
 *.personal.md
 
-# user configuration (overrides template config)
-config/site.local.yaml
+# user content workspace (local only)
+site/
 
-# user content (custom site content, not template)
+# legacy (can be removed after migration)
 content-custom/
-
-# user custom themes
 themes-custom/
+config/site.local.yaml
 
 # vercel
 .vercel

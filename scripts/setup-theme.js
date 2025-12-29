@@ -2,22 +2,20 @@
 const fs = require('fs');
 const path = require('path');
 
-const themesCustomDir = path.join(__dirname, '..', 'themes-custom');
-const themesDir = path.join(__dirname, '..', 'themes');
+const siteThemes = path.join(__dirname, '..', 'site', 'themes');
+const templateThemes = path.join(__dirname, '..', 'templates', 'themes');
 
-// Ensure themes-custom directory exists
-if (!fs.existsSync(themesCustomDir)) {
-  fs.mkdirSync(themesCustomDir, { recursive: true });
-  console.log('✓ Created themes-custom/ directory');
+if (!fs.existsSync(siteThemes)) {
+  fs.mkdirSync(siteThemes, { recursive: true });
+  console.log('✓ Created site/themes/ directory');
 }
 
 console.log('\n╔════════════════════════════════════════════════╗');
 console.log('║          Supersite Theme System Setup         ║');
 console.log('╚════════════════════════════════════════════════╝\n');
 
-// List available themes
-if (fs.existsSync(themesDir)) {
-  const themes = fs.readdirSync(themesDir)
+if (fs.existsSync(templateThemes)) {
+  const themes = fs.readdirSync(templateThemes)
     .filter(f => f.endsWith('.yaml'))
     .map(f => f.replace('.yaml', ''));
   
@@ -27,9 +25,8 @@ if (fs.existsSync(themesDir)) {
   });
 }
 
-// List custom themes if any
-if (fs.existsSync(themesCustomDir)) {
-  const customThemes = fs.readdirSync(themesCustomDir)
+if (fs.existsSync(siteThemes)) {
+  const customThemes = fs.readdirSync(siteThemes)
     .filter(f => f.endsWith('.yaml'));
   
   if (customThemes.length > 0) {
@@ -42,13 +39,13 @@ if (fs.existsSync(themesCustomDir)) {
 
 console.log('\n📖 How to use themes:');
 console.log('\n  1. Choose a built-in theme:');
-console.log('     Edit config/site.local.yaml:');
+console.log('     Edit site/config.yaml:');
 console.log('     ');
 console.log('     branding:');
 console.log('       theme: "modern"  # or default, minimal, dark, vibrant');
 console.log('');
 console.log('  2. Create a custom theme:');
-console.log('     cp themes/default.yaml themes-custom/my-theme.yaml');
+console.log('     cp templates/themes/default.yaml site/themes/my-theme.yaml');
 console.log('     # Edit my-theme.yaml with your colors');
 console.log('     ');
 console.log('     branding:');
