@@ -1,4 +1,4 @@
-import { ChatMessage as ChatMessageType } from './ChatProvider';
+import { ChatMessage as ChatMessageType } from './ChatProviderEnhanced';
 import styles from '@/styles/Chat.module.css';
 
 interface ChatMessageProps {
