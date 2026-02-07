@@ -1,7 +1,7 @@
 'use client';
 
-import { MessageCircle } from 'lucide-react';
-import { useChat } from './ChatProvider';
+import { Sparkles, MessageCircle } from 'lucide-react';
+import { useChat } from './ChatProviderEnhanced';
 import { useEffect, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
 
@@ -54,14 +54,18 @@ export default function ChatButton() {
     return styles;
   };
 
+  // Use Sparkles for AI-first feel, MessageCircle as fallback
+  const Icon = config.chat.button?.icon === 'sparkles' ? Sparkles : MessageCircle;
+
   return (
     <button
       className={`${styles.chatButton} ${isOpen ? styles.chatButtonOpen : ''}`}
       onClick={toggleChat}
       style={getPositionStyles()}
-      aria-label="Toggle chat"
+      aria-label="Toggle AI chat"
+      title="Chat with AI (⌘K)"
     >
-      <MessageCircle size={24} />
+      <Icon size={24} />
     </button>
   );
 }

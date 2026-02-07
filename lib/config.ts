@@ -61,6 +61,30 @@ const SiteConfigSchema = z.object({
     systemPrompt: z.string(),
     temperature: z.number(),
     maxTokens: z.number(),
+    // AI-First Features
+    streaming: z.boolean().optional().default(true),
+    voice: z.object({
+      enabled: z.boolean().optional().default(true),
+      language: z.string().optional().default('en-US'),
+    }).optional(),
+    actions: z.object({
+      enabled: z.boolean().optional().default(true),
+      allowNavigation: z.boolean().optional().default(true),
+      allowSearch: z.boolean().optional().default(true),
+      allowExternalLinks: z.boolean().optional().default(true),
+    }).optional(),
+    memory: z.object({
+      enabled: z.boolean().optional().default(true),
+      maxMessages: z.number().optional().default(50),
+    }).optional(),
+    shortcuts: z.object({
+      enabled: z.boolean().optional().default(true),
+      openChat: z.string().optional().default('mod+k'),
+    }).optional(),
+    suggestions: z.object({
+      enabled: z.boolean().optional().default(true),
+      maxSuggestions: z.number().optional().default(3),
+    }).optional(),
     button: z.object({
       position: ChatButtonPositionSchema,
       offsetX: z.number(),
@@ -177,6 +201,12 @@ export function getClientSafeConfig() {
     },
     chat: {
       enabled: config.chat.enabled,
+      streaming: config.chat.streaming,
+      voice: config.chat.voice,
+      actions: config.chat.actions,
+      memory: config.chat.memory,
+      shortcuts: config.chat.shortcuts,
+      suggestions: config.chat.suggestions,
       button: config.chat.button,
       window: config.chat.window,
       welcomeMessage: config.chat.welcomeMessage,

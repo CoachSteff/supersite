@@ -2,9 +2,10 @@ import './globals.css';
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ChatProvider } from '@/components/ChatProvider';
+import { ChatProvider } from '@/components/ChatProviderEnhanced';
 import ChatButton from '@/components/ChatButton';
-import ChatWindow from '@/components/ChatWindow';
+import ChatWindow from '@/components/ChatWindowEnhanced';
+import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import ThemeLoader from '@/components/ThemeLoader';
 import { getSiteConfig, getActiveTheme } from '@/lib/config';
 
@@ -48,6 +49,7 @@ export default function RootLayout({
       <body>
         <ThemeLoader theme={theme} />
         <ChatProvider>
+          <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
           <Header />
           <main className="main-content">
             {children}

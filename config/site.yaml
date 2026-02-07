@@ -31,20 +31,46 @@ chat:
   enabled: true
   provider: "anthropic"
   model: "claude-3-5-sonnet-20241022"
-  systemPrompt: "You are a helpful assistant for the Supersite demo. Answer questions based on the provided context. Be concise and friendly."
+  systemPrompt: "You are a helpful AI assistant for this website. Answer questions based on the provided context. Be concise, friendly, and helpful. You can perform actions on the page - see the AI Actions documentation."
   temperature: 0.7
   maxTokens: 1024
+  
+  # AI-First Features
+  streaming: true                       # Enable streaming responses for better UX
+  
+  voice:
+    enabled: true                       # Enable voice input
+    language: "en-US"                   # Speech recognition language
+  
+  actions:
+    enabled: true                       # Enable AI actions (navigate, search, etc.)
+    allowNavigation: true               # AI can navigate to pages
+    allowSearch: true                   # AI can trigger search
+    allowExternalLinks: true            # AI can open external links
+  
+  memory:
+    enabled: true                       # Persist conversations in localStorage
+    maxMessages: 50                     # Max messages to remember
+  
+  shortcuts:
+    enabled: true                       # Enable keyboard shortcuts
+    openChat: "mod+k"                   # Shortcut to open chat
+  
+  suggestions:
+    enabled: true                       # Show AI-generated follow-up suggestions
+    maxSuggestions: 3                   # Max suggestions to show
+  
   button:
     position: "bottom-center"
     offsetX: 0
     offsetY: 20
-    icon: "message-circle"
+    icon: "sparkles"                    # Changed to sparkles for AI-first feel
   window:
     position: "bottom-right"  # bottom-right | bottom-center | bottom-left | right-docked | bottom-docked | left-docked
-    width: 400
+    width: 420
     height: 600
-  welcomeMessage: "Hi! Welcome to Supersite. How can I help you?"
-  placeholder: "Ask me anything about our site..."
+  welcomeMessage: "👋 Hi! I'm your AI assistant. Ask me anything about this site, or use voice input!"
+  placeholder: "Ask me anything... (or press 🎤 for voice)"
   
 features:
   search: true
