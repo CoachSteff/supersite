@@ -7,7 +7,8 @@ import ChatButton from '@/components/ChatButton';
 import ChatWindow from '@/components/ChatWindowEnhanced';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import { ThemeProvider } from '@/components/ThemeLoader';
-import { getSiteConfig, getActiveTheme } from '@/lib/config';
+import { ThemeContextProvider } from '@/components/ThemeContext';
+import { getSiteConfig, getActiveTheme, getActiveFullTheme } from '@/lib/config';
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = getSiteConfig();
@@ -40,6 +41,11 @@ export default function RootLayout({
 }) {
   const config = getSiteConfig();
   const theme = getActiveTheme();
+  const fullTheme = getActiveFullTheme();
+  
+  // Get structure settings from the full theme
+  const { header, footer } = fullTheme.structure;
+  const features = fullTheme.meta.features;
   
   return (
     <html lang="en" suppressHydrationWarning>
@@ -67,16 +73,25 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider theme={theme}>
-          <ChatProvider>
-            <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
-            <Header />
-            <main className="main-content">
-              {children}
-            </main>
-            <Footer />
-            <ChatButton />
-            <ChatWindow />
-          </ChatProvider>
+          <ThemeContextProvider theme={fullTheme}>
+            <ChatProvider>
+              <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
+              <Header 
+                style={header.style}
+                sticky={header.sticky}
+                showLogo={header.logo}
+                showSearch={header.search && features.search}
+                showThemeToggle={header.themeToggle && features.darkMode}
+                showAuth={header.auth && features.auth}
+              />
+              <main className="main-content">
+                {children}
+              </main>
+              <Footer style={footer.style} />
+              {features.chat && <ChatButton />}
+              {features.chat && <ChatWindow />}
+            </ChatProvider>
+          </ThemeContextProvider>
         </ThemeProvider>
       </body>
     </html>
