@@ -1,0 +1,37 @@
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.toggle:hover {
+  background: var(--background-secondary);
+  border-color: var(--primary-color);
+}
+
+.toggle:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.toggle svg {
+  flex-shrink: 0;
+}
+
+.label {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .label {
+    display: inline;
+  }
+}

@@ -1,5 +1,5 @@
 .blogList {
-  max-width: 800px;
+  max-width: var(--max-width);
   margin: 0 auto;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .blogPost {
-  max-width: 800px;
+  max-width: var(--max-width);
   margin: 0 auto;
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Minimize2, Maximize2, Trash2, Sparkles } from 'lucide-react';
+import { X, Send, Minimize2, Maximize2, Trash2, Sparkles, Mic } from 'lucide-react';
 import { useChatEnhanced } from './ChatProviderEnhanced';
 import ChatMessage from './ChatMessage';
 import VoiceInput from './VoiceInput';
@@ -214,7 +214,7 @@ export default function ChatWindowEnhanced() {
                 <Sparkles size={24} className={styles.welcomeIcon} />
                 <p>{config.chat.welcomeMessage}</p>
                 <p className={styles.welcomeHint}>
-                  Try asking about our services, or use voice input 🎤
+                  Try asking about our services, or use voice input <Mic size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
                 </p>
               </div>
             )}

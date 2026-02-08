@@ -6,11 +6,12 @@ site:
   url: "https://supersite.example.com"
 
 branding:
-  theme: "default"                     # Theme name: default, modern, minimal, dark, vibrant, or custom/your-theme
-  # Legacy support (deprecated - use theme instead)
-  primaryColor: "#2563eb"
-  secondaryColor: "#1e40af"
-  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif"
+  theme: "base"                        # Theme name: base, blog, influencer, business, community, chatbot, or custom/your-theme
+  # Overrides (optional - merge with theme settings)
+  # overrides:
+  #   colors:
+  #     light:
+  #       primary: "#10b981"
 
 seo:
   defaultTitle: "Supersite"
@@ -61,16 +62,16 @@ chat:
     maxSuggestions: 3                   # Max suggestions to show
   
   button:
-    position: "bottom-center"
+    position: "bottom-right"
     offsetX: 0
     offsetY: 20
-    icon: "sparkles"                    # Changed to sparkles for AI-first feel
+    icon: "sparkles"                    # Sparkles icon for AI-first feel
   window:
     position: "bottom-right"  # bottom-right | bottom-center | bottom-left | right-docked | bottom-docked | left-docked
     width: 420
     height: 600
-  welcomeMessage: "👋 Hi! I'm your AI assistant. Ask me anything about this site, or use voice input!"
-  placeholder: "Ask me anything... (or press 🎤 for voice)"
+  welcomeMessage: "Hi! I'm your AI assistant. Ask me anything about this site, or use voice input!"
+  placeholder: "Ask me anything..."
   
 features:
   search: true

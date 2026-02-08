@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import { z } from 'zod';
-import { loadTheme, applyThemeOverrides } from './theme-loader';
+import { loadTheme as loadNewTheme, applyThemeOverrides as applyNewOverrides, toLegacyTheme, type FullTheme } from './theme-system';
+import { loadTheme as loadOldTheme, applyThemeOverrides as applyOldOverrides } from './theme-loader';
 import type { Theme } from './theme-schema';
 
 const ChatButtonPositionSchema = z.enum(['bottom-left', 'bottom-center', 'bottom-right']);
@@ -226,18 +227,38 @@ export function validateConfig(): boolean {
   }
 }
 
+// Cache for loaded theme
+let cachedFullTheme: FullTheme | null = null;
+
 export function getActiveTheme(): Theme {
   const config = getSiteConfig();
-  const themeName = config.branding.theme || 'default';
-  let theme = loadTheme(themeName);
+  const themeName = config.branding.theme || 'base';
   
-  // Apply user overrides
-  if (config.branding.overrides) {
-    theme = applyThemeOverrides(theme, config.branding.overrides as Partial<Theme>);
+  // Try new theme system first (folder-based)
+  const { theme: fullTheme, isLegacy, errors } = loadNewTheme(themeName);
+  
+  if (errors.length > 0 && process.env.NODE_ENV === 'development') {
+    errors.forEach(err => console.warn(`[Theme] ${err}`));
+  }
+
+  // Cache the full theme for getActiveFullTheme()
+  cachedFullTheme = fullTheme;
+
+  // Convert to legacy Theme format for backward compatibility
+  let theme: Theme;
+  
+  if (isLegacy) {
+    // Use old loader for legacy single-file themes
+    theme = loadOldTheme(themeName);
+    if (config.branding.overrides) {
+      theme = applyOldOverrides(theme, config.branding.overrides as Partial<Theme>);
+    }
+  } else {
+    // Convert new theme to legacy format
+    theme = toLegacyTheme(fullTheme);
   }
   
   // Legacy branding support (deprecated)
-  // Only show warning in development and test environments, suppressed in production
   if (config.branding.primaryColor || config.branding.secondaryColor || config.branding.fontFamily) {
     if (process.env.NODE_ENV === 'development' && !globalThis.__legacyBrandingWarned) {
       console.warn('Direct primaryColor/secondaryColor/fontFamily in config is deprecated. Use branding.theme and branding.overrides instead.');
@@ -256,4 +277,16 @@ export function getActiveTheme(): Theme {
   }
   
   return theme;
+}
+
+/**
+ * Get the full theme with structure, blocks, and features
+ * Use this for new theme-aware components
+ */
+export function getActiveFullTheme(): FullTheme {
+  if (!cachedFullTheme) {
+    // Trigger theme loading
+    getActiveTheme();
+  }
+  return cachedFullTheme!;
 }

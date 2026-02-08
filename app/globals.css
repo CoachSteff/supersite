@@ -29,8 +29,9 @@
   --max-width: 1200px;
 }
 
+/* Dark mode via system preference (fallback before JS loads) */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --primary-color: #60a5fa;
     --secondary-color: #93c5fd;
     --text-color: #f9fafb;
@@ -41,6 +42,19 @@
     --success-color: #34d399;
     --error-color: #f87171;
   }
+}
+
+/* Dark mode via explicit data-theme attribute (JS-controlled) */
+:root[data-theme="dark"] {
+  --primary-color: #60a5fa;
+  --secondary-color: #93c5fd;
+  --text-color: #f9fafb;
+  --text-light: #d1d5db;
+  --background: #111827;
+  --background-secondary: #1f2937;
+  --border-color: #374151;
+  --success-color: #34d399;
+  --error-color: #f87171;
 }
 
 * {

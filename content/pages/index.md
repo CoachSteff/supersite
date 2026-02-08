@@ -23,22 +23,22 @@ Supersite is a universal website template built with Next.js that brings togethe
 
 ## Key Features
 
-### 🤖 AI Chat Assistant
+### AI Chat Assistant
 Intelligent chatbot that understands your content and answers questions from your site visitors. Supports multiple AI providers including Anthropic Claude, OpenAI GPT, Google Gemini, and local Ollama.
 
-### ⚙️ Configuration-Driven
+### Configuration-Driven
 Customize everything via YAML files - branding, colors, navigation, features, and AI behavior. No code changes needed.
 
-### 📝 Markdown CMS
+### Markdown CMS
 Manage all your content with simple markdown files. Built-in support for pages, blog posts, and custom content types.
 
-### 🎨 Modern Stack
+### Modern Stack
 Built with Next.js 14, TypeScript, and React. Fully responsive design with dark/light mode support.
 
-### 🔍 Full-Text Search
+### Full-Text Search
 Fast client-side search across all your content with instant results.
 
-### 📱 Mobile-First
+### Mobile-First
 Responsive design optimized for all devices, from phones to desktops.
 
 ## Get Started

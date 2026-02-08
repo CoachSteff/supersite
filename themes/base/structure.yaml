@@ -1,0 +1,28 @@
+header:
+  enabled: true
+  style: "full"
+  sticky: true
+  logo: true
+  search: true
+  themeToggle: true
+  auth: false
+
+navigation:
+  style: "horizontal"
+  position: "header"
+  showIcons: false
+
+layout:
+  type: "full-width"
+  maxWidth: "1200px"
+  contentWidth: "800px"
+  sidebarWidth: "300px"
+
+hero:
+  enabled: false
+  type: "none"
+  height: "auto"
+
+footer:
+  enabled: true
+  style: "minimal"

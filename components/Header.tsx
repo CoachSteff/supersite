@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
 import Navigation from './Navigation';
 import Search from './Search';
+import ThemeToggle from './ThemeToggle';
 import styles from '@/styles/Header.module.css';
 
 export default function Header() {
@@ -17,14 +18,17 @@ export default function Header() {
           <Link href="/">Supersite</Link>
         </div>
         <Navigation />
-        <button 
-          className={styles.searchButton}
-          onClick={() => setSearchOpen(true)}
-          aria-label="Search"
-        >
-          <SearchIcon size={20} />
-          <span className={styles.searchText}>Search</span>
-        </button>
+        <div className={styles.actions}>
+          <ThemeToggle />
+          <button 
+            className={styles.searchButton}
+            onClick={() => setSearchOpen(true)}
+            aria-label="Search"
+          >
+            <SearchIcon size={20} />
+            <span className={styles.searchText}>Search</span>
+          </button>
+        </div>
       </div>
       {searchOpen && <Search onClose={() => setSearchOpen(false)} />}
     </header>

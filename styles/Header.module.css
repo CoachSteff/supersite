@@ -86,6 +86,12 @@
   padding: var(--spacing-sm);
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
 .searchButton {
   background-color: var(--background-secondary);
   border: 1px solid var(--border-color);
@@ -96,6 +102,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  cursor: pointer;
 }
 
 .searchButton:hover {

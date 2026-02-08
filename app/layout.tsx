@@ -6,7 +6,7 @@ import { ChatProvider } from '@/components/ChatProviderEnhanced';
 import ChatButton from '@/components/ChatButton';
 import ChatWindow from '@/components/ChatWindowEnhanced';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
-import ThemeLoader from '@/components/ThemeLoader';
+import { ThemeProvider } from '@/components/ThemeLoader';
 import { getSiteConfig, getActiveTheme } from '@/lib/config';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -42,22 +42,42 @@ export default function RootLayout({
   const theme = getActiveTheme();
   
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href={config.site.favicon} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var mode = localStorage.getItem('theme-mode') || 'system';
+                  var resolved = mode;
+                  if (mode === 'system') {
+                    resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                  }
+                  document.documentElement.setAttribute('data-theme', resolved);
+                  if (resolved === 'dark') {
+                    document.documentElement.style.colorScheme = 'dark';
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body>
-        <ThemeLoader theme={theme} />
-        <ChatProvider>
-          <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
-          <Header />
-          <main className="main-content">
-            {children}
-          </main>
-          <Footer />
-          <ChatButton />
-          <ChatWindow />
-        </ChatProvider>
+        <ThemeProvider theme={theme}>
+          <ChatProvider>
+            <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
+            <Header />
+            <main className="main-content">
+              {children}
+            </main>
+            <Footer />
+            <ChatButton />
+            <ChatWindow />
+          </ChatProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
