@@ -1,0 +1,38 @@
+name: "Blog"
+
+colors:
+  light:
+    primary: "#1a1a1a"
+    secondary: "#4a4a4a"
+    text: "#1a1a1a"
+    textLight: "#6b7280"
+    background: "#ffffff"
+    backgroundSecondary: "#f8f9fa"
+    border: "#e5e7eb"
+    success: "#10b981"
+    error: "#ef4444"
+  dark:
+    primary: "#ffffff"
+    secondary: "#d1d5db"
+    text: "#f9fafb"
+    textLight: "#9ca3af"
+    background: "#0f0f0f"
+    backgroundSecondary: "#1a1a1a"
+    border: "#2d2d2d"
+    success: "#34d399"
+    error: "#f87171"
+
+typography:
+  fontFamily: "Georgia, 'Times New Roman', serif"
+  fontFamilyMono: "'JetBrains Mono', 'Fira Code', monospace"
+  baseFontSize: "18px"
+
+spacing:
+  xs: "0.25rem"
+  sm: "0.5rem"
+  md: "1rem"
+  lg: "1.5rem"
+  xl: "2.5rem"
+  xxl: "4rem"
+
+borderRadius: "2px"

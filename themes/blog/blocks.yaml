@@ -1,0 +1,29 @@
+sidebar:
+  - type: "search"
+  
+  - type: "about"
+    title: "About"
+    content: "Welcome to my blog. I write about technology, design, and life."
+    
+  - type: "categories"
+    title: "Categories"
+    
+  - type: "tags"
+    title: "Topics"
+    limit: 15
+    
+  - type: "recent-posts"
+    title: "Recent Posts"
+    limit: 5
+    
+  - type: "newsletter"
+    title: "Subscribe"
+    description: "Get new posts delivered to your inbox."
+    placeholder: "your@email.com"
+    buttonText: "Subscribe"
+
+sections: []
+
+footerWidgets:
+  - type: "copyright"
+  - type: "social-links"

@@ -1,0 +1,15 @@
+name: "Community"
+description: "Learning and engagement platform theme"
+version: "1.0.0"
+author: "SuperSite"
+
+features:
+  search: true
+  chat: true
+  darkMode: true
+  auth: true
+  newsletter: true
+  comments: true
+  socialShare: true
+
+defaultColors: "colors.yaml"

@@ -1,0 +1,38 @@
+name: "Chatbot"
+
+colors:
+  light:
+    primary: "#111827"
+    secondary: "#374151"
+    text: "#111827"
+    textLight: "#6b7280"
+    background: "#ffffff"
+    backgroundSecondary: "#f3f4f6"
+    border: "#e5e7eb"
+    success: "#10b981"
+    error: "#ef4444"
+  dark:
+    primary: "#f9fafb"
+    secondary: "#e5e7eb"
+    text: "#f9fafb"
+    textLight: "#9ca3af"
+    background: "#111827"
+    backgroundSecondary: "#1f2937"
+    border: "#374151"
+    success: "#34d399"
+    error: "#f87171"
+
+typography:
+  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+  fontFamilyMono: "'SF Mono', 'Fira Code', monospace"
+  baseFontSize: "15px"
+
+spacing:
+  xs: "0.25rem"
+  sm: "0.5rem"
+  md: "1rem"
+  lg: "1.5rem"
+  xl: "2rem"
+  xxl: "3rem"
+
+borderRadius: "12px"

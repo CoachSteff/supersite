@@ -1,0 +1,27 @@
+sidebar:
+  - type: "search"
+  
+  - type: "about"
+    title: "Welcome"
+    content: "Join our community of learners and creators."
+    
+  - type: "categories"
+    title: "Courses"
+    
+  - type: "recent-posts"
+    title: "Latest Discussions"
+    limit: 5
+
+sections:
+  - type: "hero"
+    title: "Learn. Connect. Grow."
+    subtitle: "Join a community of people who share your interests."
+    
+  - type: "features"
+    title: "What's Inside"
+    subtitle: "Everything you need to level up"
+
+footerWidgets:
+  - type: "nav-links"
+  - type: "social-links"
+  - type: "copyright"

@@ -1,0 +1,20 @@
+name: "Blog"
+description: "Content-first theme for writers and publishers"
+version: "1.0.0"
+author: "SuperSite"
+
+features:
+  search: true
+  chat: true
+  darkMode: true
+  auth: false
+  newsletter: true
+  comments: false
+  socialShare: true
+
+blog:
+  readingTime: true
+  tableOfContents: true
+  relatedPosts: true
+
+defaultColors: "colors.yaml"

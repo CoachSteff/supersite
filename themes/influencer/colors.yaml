@@ -1,0 +1,38 @@
+name: "Influencer"
+
+colors:
+  light:
+    primary: "#8b5cf6"
+    secondary: "#a78bfa"
+    text: "#1f2937"
+    textLight: "#6b7280"
+    background: "#faf5ff"
+    backgroundSecondary: "#f3e8ff"
+    border: "#ddd6fe"
+    success: "#10b981"
+    error: "#ef4444"
+  dark:
+    primary: "#a78bfa"
+    secondary: "#c4b5fd"
+    text: "#faf5ff"
+    textLight: "#c4b5fd"
+    background: "#0f0a1a"
+    backgroundSecondary: "#1e1433"
+    border: "#4c1d95"
+    success: "#34d399"
+    error: "#f87171"
+
+typography:
+  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+  fontFamilyMono: "'Fira Code', monospace"
+  baseFontSize: "16px"
+
+spacing:
+  xs: "0.25rem"
+  sm: "0.5rem"
+  md: "1rem"
+  lg: "1.5rem"
+  xl: "2rem"
+  xxl: "3rem"
+
+borderRadius: "12px"

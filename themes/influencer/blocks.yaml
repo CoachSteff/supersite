@@ -1,0 +1,14 @@
+sidebar: []
+
+sections:
+  - type: "hero"
+    title: "Your Name"
+    subtitle: "Creator | Entrepreneur | Speaker"
+    
+  - type: "custom"
+    title: "Links"
+    content: |
+      Featured links go here as cards
+
+footerWidgets:
+  - type: "social-links"

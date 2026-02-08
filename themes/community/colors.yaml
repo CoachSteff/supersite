@@ -1,0 +1,38 @@
+name: "Community"
+
+colors:
+  light:
+    primary: "#059669"
+    secondary: "#047857"
+    text: "#111827"
+    textLight: "#4b5563"
+    background: "#ffffff"
+    backgroundSecondary: "#ecfdf5"
+    border: "#d1fae5"
+    success: "#059669"
+    error: "#dc2626"
+  dark:
+    primary: "#34d399"
+    secondary: "#6ee7b7"
+    text: "#f9fafb"
+    textLight: "#d1d5db"
+    background: "#0f1f1a"
+    backgroundSecondary: "#14332a"
+    border: "#065f46"
+    success: "#34d399"
+    error: "#f87171"
+
+typography:
+  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+  fontFamilyMono: "'Fira Code', monospace"
+  baseFontSize: "16px"
+
+spacing:
+  xs: "0.25rem"
+  sm: "0.5rem"
+  md: "1rem"
+  lg: "1.5rem"
+  xl: "2rem"
+  xxl: "3rem"
+
+borderRadius: "8px"

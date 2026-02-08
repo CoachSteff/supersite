@@ -1,0 +1,28 @@
+header:
+  enabled: true
+  style: "minimal"
+  sticky: true
+  logo: true
+  search: true
+  themeToggle: true
+  auth: false
+
+navigation:
+  style: "horizontal"
+  position: "header"
+  showIcons: false
+
+layout:
+  type: "sidebar-right"
+  maxWidth: "1400px"
+  contentWidth: "800px"
+  sidebarWidth: "320px"
+
+hero:
+  enabled: true
+  type: "featured-post"
+  height: "400px"
+
+footer:
+  enabled: true
+  style: "minimal"

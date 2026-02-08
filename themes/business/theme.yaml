@@ -1,0 +1,15 @@
+name: "Business"
+description: "Conversion-focused theme for products and services"
+version: "1.0.0"
+author: "SuperSite"
+
+features:
+  search: true
+  chat: true
+  darkMode: true
+  auth: false
+  newsletter: true
+  comments: false
+  socialShare: true
+
+defaultColors: "colors.yaml"

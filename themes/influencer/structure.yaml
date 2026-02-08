@@ -1,0 +1,28 @@
+header:
+  enabled: false
+  style: "none"
+  sticky: false
+  logo: false
+  search: false
+  themeToggle: true
+  auth: false
+
+navigation:
+  style: "none"
+  position: "footer"
+  showIcons: true
+
+layout:
+  type: "centered"
+  maxWidth: "480px"
+  contentWidth: "480px"
+  sidebarWidth: "0"
+
+hero:
+  enabled: true
+  type: "profile"
+  height: "auto"
+
+footer:
+  enabled: true
+  style: "centered"

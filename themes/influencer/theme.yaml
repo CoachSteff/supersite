@@ -1,0 +1,15 @@
+name: "Influencer"
+description: "Personal branding theme with link-in-bio style"
+version: "1.0.0"
+author: "SuperSite"
+
+features:
+  search: false
+  chat: false
+  darkMode: true
+  auth: false
+  newsletter: false
+  comments: false
+  socialShare: true
+
+defaultColors: "colors.yaml"

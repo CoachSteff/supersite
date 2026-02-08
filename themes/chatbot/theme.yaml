@@ -1,0 +1,15 @@
+name: "Chatbot"
+description: "AI-first conversational interface theme"
+version: "1.0.0"
+author: "SuperSite"
+
+features:
+  search: false
+  chat: true
+  darkMode: true
+  auth: true
+  newsletter: false
+  comments: false
+  socialShare: false
+
+defaultColors: "colors.yaml"

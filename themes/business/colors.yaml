@@ -1,0 +1,38 @@
+name: "Business"
+
+colors:
+  light:
+    primary: "#0066cc"
+    secondary: "#004999"
+    text: "#111827"
+    textLight: "#4b5563"
+    background: "#ffffff"
+    backgroundSecondary: "#f9fafb"
+    border: "#e5e7eb"
+    success: "#059669"
+    error: "#dc2626"
+  dark:
+    primary: "#3b82f6"
+    secondary: "#60a5fa"
+    text: "#f9fafb"
+    textLight: "#d1d5db"
+    background: "#0f172a"
+    backgroundSecondary: "#1e293b"
+    border: "#334155"
+    success: "#10b981"
+    error: "#f87171"
+
+typography:
+  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+  fontFamilyMono: "'Fira Code', monospace"
+  baseFontSize: "16px"
+
+spacing:
+  xs: "0.25rem"
+  sm: "0.5rem"
+  md: "1rem"
+  lg: "1.5rem"
+  xl: "2rem"
+  xxl: "4rem"
+
+borderRadius: "8px"
