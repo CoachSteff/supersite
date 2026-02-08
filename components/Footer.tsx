@@ -1,12 +1,53 @@
 import styles from '@/styles/Footer.module.css';
 
-export default function Footer() {
+interface FooterProps {
+  style?: 'full' | 'minimal' | 'centered' | 'none';
+}
+
+export default function Footer({ style = 'minimal' }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
+  if (style === 'none') {
+    return null;
+  }
+
+  const footerClasses = [
+    styles.footer,
+    styles[`footer-${style}`],
+  ].filter(Boolean).join(' ');
+
   return (
-    <footer className={styles.footer}>
+    <footer className={footerClasses}>
       <div className={styles.container}>
-        <p>&copy; {currentYear} Supersite. All rights reserved.</p>
+        {style === 'full' ? (
+          <>
+            <div className={styles.footerGrid}>
+              <div className={styles.footerSection}>
+                <h4>Supersite</h4>
+                <p>Built with Next.js and AI</p>
+              </div>
+              <div className={styles.footerSection}>
+                <h4>Links</h4>
+                <ul>
+                  <li><a href="/about">About</a></li>
+                  <li><a href="/contact">Contact</a></li>
+                </ul>
+              </div>
+              <div className={styles.footerSection}>
+                <h4>Legal</h4>
+                <ul>
+                  <li><a href="/privacy">Privacy</a></li>
+                  <li><a href="/terms">Terms</a></li>
+                </ul>
+              </div>
+            </div>
+            <div className={styles.copyright}>
+              <p>&copy; {currentYear} Supersite. All rights reserved.</p>
+            </div>
+          </>
+        ) : (
+          <p>&copy; {currentYear} Supersite. All rights reserved.</p>
+        )}
       </div>
     </footer>
   );

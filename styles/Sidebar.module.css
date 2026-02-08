@@ -1,0 +1,187 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.widget {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+}
+
+.widgetTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-color);
+}
+
+/* Search Widget */
+.searchInput {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.searchInput input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: var(--font-size-small);
+}
+
+.searchInput svg {
+  color: var(--text-light);
+}
+
+/* About Widget */
+.aboutImage {
+  width: 100%;
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-md);
+}
+
+.aboutContent {
+  color: var(--text-light);
+  font-size: var(--font-size-small);
+  line-height: 1.6;
+}
+
+/* Category List */
+.categoryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.categoryList li {
+  margin-bottom: var(--spacing-sm);
+}
+
+.categoryList a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: var(--font-size-small);
+}
+
+.categoryList a:hover {
+  color: var(--primary-color);
+}
+
+/* Tag Cloud */
+.tagCloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.tag {
+  background: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-small);
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Post List */
+.postList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.postList li {
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.postList li:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.postList a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: var(--font-size-small);
+  line-height: 1.4;
+}
+
+.postList a:hover {
+  color: var(--primary-color);
+}
+
+/* Newsletter Widget */
+.newsletterDesc {
+  color: var(--text-light);
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing-md);
+}
+
+.newsletterForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.inputGroup input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: var(--font-size-small);
+}
+
+.inputGroup svg {
+  color: var(--text-light);
+}
+
+.newsletterForm button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.newsletterForm button:hover {
+  background: var(--secondary-color);
+}
+
+/* Social Links */
+.socialLinks {
+  display: flex;
+  gap: var(--spacing-sm);
+}
