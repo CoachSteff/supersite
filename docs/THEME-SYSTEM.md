@@ -281,34 +281,37 @@ Klaar. Geen code, geen builds, gewoon YAML.
 
 ## Implementation Priority
 
-### Phase 1: Theme Loader
-- [ ] Theme schema (Zod validation)
-- [ ] Multi-file theme loader
-- [ ] Site.yaml theme selection
+### Phase 1: Theme Loader ✅ COMPLETE
+- [x] Theme schema (Zod validation)
+- [x] Multi-file theme loader
+- [x] Site.yaml theme selection
+- [x] Backward compatibility with legacy themes
 
-### Phase 2: Structure Rendering
+### Phase 2: All Themes ✅ COMPLETE
+- [x] Base theme
+- [x] Blog theme
+- [x] Influencer theme
+- [x] Business theme
+- [x] Community theme
+- [x] Chatbot theme
+
+### Phase 3: Structure Rendering 🔄 TODO
 - [ ] Layout types (full-width, sidebar, centered)
-- [ ] Header styles
-- [ ] Hero types
-- [ ] Footer styles
+- [ ] Header styles (full, minimal, centered, none)
+- [ ] Hero types (text, image, featured-post, profile, chat)
+- [ ] Footer styles (full, minimal, centered, none)
+- [ ] Navigation styles (horizontal, vertical, hamburger)
 
-### Phase 3: Blocks System
-- [ ] Sidebar widgets
+### Phase 4: Blocks System 🔄 TODO
+- [ ] Sidebar widget rendering
 - [ ] Section blocks (for business)
-- [ ] Footer widgets
+- [ ] Footer widget rendering
 
-### Phase 4: User Authentication
+### Phase 5: User Authentication 🔄 TODO
 - [ ] File-based user storage
 - [ ] Registration/login
 - [ ] Session management
 - [ ] Password reset
-
-### Phase 5: All Themes
-- [ ] Blog theme
-- [ ] Influencer theme
-- [ ] Business theme
-- [ ] Community theme
-- [ ] Chatbot theme
 
 ---
 
