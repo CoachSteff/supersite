@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import { z } from 'zod';
+import { unstable_noStore as noStore } from 'next/cache';
 import { loadTheme as loadNewTheme, applyThemeOverrides as applyNewOverrides, toLegacyTheme, type FullTheme } from './theme-system';
 import { loadTheme as loadOldTheme, applyThemeOverrides as applyOldOverrides } from './theme-loader';
 import type { Theme } from './theme-schema';
@@ -114,9 +115,9 @@ export type AIProvider = z.infer<typeof AIProviderSchema>;
 export type ChatButtonPosition = z.infer<typeof ChatButtonPositionSchema>;
 export type ChatWindowPosition = z.infer<typeof ChatWindowPositionSchema>;
 
-// Cache disabled in development for hot-reload support
-let cachedConfig: SiteConfig | null = null;
+// No caching in development for hot-reload support
 const isDev = process.env.NODE_ENV === 'development';
+let cachedConfig: SiteConfig | null = null;
 
 // Deep merge utility (simple object merge)
 function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
@@ -144,7 +145,15 @@ function isObject(item: unknown): item is Record<string, unknown> {
 }
 
 export function loadSiteConfig(): SiteConfig {
-  if (cachedConfig && !isDev) {
+  // Prevent Next.js from caching this function's result
+  noStore();
+  
+  // Always reload in development
+  if (isDev) {
+    cachedConfig = null;
+  }
+  
+  if (cachedConfig) {
     return cachedConfig;
   }
 
@@ -233,6 +242,14 @@ export function validateConfig(): boolean {
 let cachedFullTheme: FullTheme | null = null;
 
 export function getActiveTheme(): Theme {
+  // Prevent Next.js from caching this function's result
+  noStore();
+  
+  // Always reload in development
+  if (isDev) {
+    cachedFullTheme = null;
+  }
+  
   const config = getSiteConfig();
   const themeName = config.branding.theme || 'base';
   
@@ -286,9 +303,7 @@ export function getActiveTheme(): Theme {
  * Use this for new theme-aware components
  */
 export function getActiveFullTheme(): FullTheme {
-  if (!cachedFullTheme || isDev) {
-    // Trigger theme loading
-    getActiveTheme();
-  }
+  // Trigger theme loading to populate cachedFullTheme
+  getActiveTheme();
   return cachedFullTheme!;
 }
