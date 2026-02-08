@@ -114,7 +114,9 @@ export type AIProvider = z.infer<typeof AIProviderSchema>;
 export type ChatButtonPosition = z.infer<typeof ChatButtonPositionSchema>;
 export type ChatWindowPosition = z.infer<typeof ChatWindowPositionSchema>;
 
+// Cache disabled in development for hot-reload support
 let cachedConfig: SiteConfig | null = null;
+const isDev = process.env.NODE_ENV === 'development';
 
 // Deep merge utility (simple object merge)
 function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
@@ -142,7 +144,7 @@ function isObject(item: unknown): item is Record<string, unknown> {
 }
 
 export function loadSiteConfig(): SiteConfig {
-  if (cachedConfig) {
+  if (cachedConfig && !isDev) {
     return cachedConfig;
   }
 
@@ -284,7 +286,7 @@ export function getActiveTheme(): Theme {
  * Use this for new theme-aware components
  */
 export function getActiveFullTheme(): FullTheme {
-  if (!cachedFullTheme) {
+  if (!cachedFullTheme || isDev) {
     // Trigger theme loading
     getActiveTheme();
   }
