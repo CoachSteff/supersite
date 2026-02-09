@@ -24,7 +24,9 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
+    "dev:stop": "lsof -ti:3001 | xargs kill -9 2>/dev/null || true",
+    "dev:restart": "npm run dev:stop && npm run dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
