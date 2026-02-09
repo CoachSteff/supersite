@@ -302,16 +302,20 @@ Klaar. Geen code, geen builds, gewoon YAML.
 - [ ] Footer styles (full, minimal, centered, none)
 - [ ] Navigation styles (horizontal, vertical, hamburger)
 
-### Phase 4: Blocks System 🔄 TODO
-- [ ] Sidebar widget rendering
-- [ ] Section blocks (for business)
-- [ ] Footer widget rendering
+### Phase 4: Blocks System 🔄 IN PROGRESS
+- [x] Sidebar widget rendering (categories, tags, recent posts, social links, newsletter, custom)
+- [ ] Homepage section blocks for business/landing themes
+- [ ] Footer widget system
+- [ ] Reusable content blocks
 
-### Phase 5: User Authentication 🔄 TODO
+**Current Status:** Sidebar widgets are fully functional and data-driven.
+
+### Phase 5: User Authentication ⏳ TODO
 - [ ] File-based user storage
-- [ ] Registration/login
-- [ ] Session management
-- [ ] Password reset
+- [ ] Registration/login flows
+- [ ] Session management via signed cookies
+- [ ] Password reset functionality
+- [ ] Required for community and chatbot themes
 
 ---
 

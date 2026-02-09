@@ -60,9 +60,21 @@ export default function AuthButton() {
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
     return (
-      <button className={styles.authButton} disabled aria-label="Loading">
-        <User size={20} />
-      </button>
+      <div className={styles.userContainer}>
+        <button className={styles.authButton} disabled aria-label="Loading">
+          <div style={{
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            backgroundColor: 'var(--border-color)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <User size={20} color="var(--text-secondary)" />
+          </div>
+        </button>
+      </div>
     );
   }
 
@@ -100,7 +112,17 @@ export default function AuthButton() {
         onClick={() => setShowModal(true)}
         aria-label="Sign in"
       >
-        <User size={20} />
+        <div style={{
+          width: 40,
+          height: 40,
+          borderRadius: '50%',
+          backgroundColor: 'var(--border-color)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <User size={20} color="var(--text-secondary)" />
+        </div>
       </button>
       {showModal && (
         <AuthModal

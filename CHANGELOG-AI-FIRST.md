@@ -1,7 +1,7 @@
 # SuperSite AI-First Upgrade - Changelog
 
 **Date:** February 7, 2026
-**Version:** 0.2.0-alpha.1
+**Version:** 0.2.0
 
 ## 🚀 Overview
 
@@ -61,8 +61,8 @@ The AI can now perform actions on the page using special markers:
 ## 📁 New Files
 
 ### Components
-- `components/ChatProviderEnhanced.tsx` - Enhanced state management with streaming, actions, memory
-- `components/ChatWindowEnhanced.tsx` - Enhanced chat UI with voice, actions, suggestions
+- `components/ChatProvider.tsx` - Enhanced state management with streaming, actions, memory
+- `components/ChatWindow.tsx` - Enhanced chat UI with voice, actions, suggestions
 - `components/VoiceInput.tsx` - Voice input component
 - `components/KeyboardShortcuts.tsx` - Global keyboard shortcuts
 - `components/ActionButton.tsx` - Action button component
@@ -115,8 +115,8 @@ chat:
 
 ## 🔄 Updated Files
 
-- `app/layout.tsx` - Uses enhanced components
-- `components/ChatButton.tsx` - Sparkles icon, enhanced chat import
+- `app/layout.tsx` - Uses chat components
+- `components/ChatButton.tsx` - Sparkles icon, chat import
 - `lib/config.ts` - New config schema for AI-first features
 - `config/site.yaml` - New AI-first configuration options
 - `styles/Chat.module.css` - New styles for enhanced features

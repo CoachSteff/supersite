@@ -5,7 +5,7 @@ site:
   favicon: /favicon.ico
   url: https://supersite.example.com
 branding:
-  theme: chatbot
+  theme: base
 admin:
   toolbar: true
 auth:

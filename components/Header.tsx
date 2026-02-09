@@ -14,7 +14,6 @@ interface HeaderProps {
   sticky?: boolean;
   showLogo?: boolean;
   showSearch?: boolean;
-  showThemeToggle?: boolean;
   showAuth?: boolean;
 }
 
@@ -23,7 +22,6 @@ export default function Header({
   sticky = true,
   showLogo = true,
   showSearch = true,
-  showThemeToggle = true,
   showAuth = false,
 }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -59,8 +57,6 @@ export default function Header({
         {style !== 'minimal' && <Navigation />}
         
         <div className={styles.actions}>
-          {showThemeToggle && <ThemeToggle />}
-          
           {showSearch && (
             <button 
               className={styles.searchButton}

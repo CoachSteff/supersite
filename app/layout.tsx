@@ -112,7 +112,6 @@ export default async function RootLayout({
                 sticky={header.sticky}
                 showLogo={header.logo}
                 showSearch={header.search && features.search}
-                showThemeToggle={header.themeToggle && features.darkMode}
                 showAuth={authEnabled}
               />
               {hero.enabled && (

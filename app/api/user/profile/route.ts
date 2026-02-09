@@ -16,7 +16,7 @@ const updateSchema = z.object({
     jobTitle: z.string().max(200).optional(),
     organization: z.string().max(200).optional(),
     bio: z.string().max(2000).optional(),
-    avatar: z.string().url().optional(),
+    avatar: z.string().optional(), // Allow base64 or URL
   }).optional(),
   social: z.object({
     twitter: z.string().url().optional().or(z.literal('')),

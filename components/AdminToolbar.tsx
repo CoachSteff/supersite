@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Palette, Settings } from 'lucide-react';
 import ThemeSwitcher from './ThemeSwitcher';
+import ThemeToggle from './ThemeToggle';
 import styles from '@/styles/AdminToolbar.module.css';
 
 interface AdminToolbarProps {
@@ -29,6 +30,11 @@ export default function AdminToolbar({ enabled = false }: AdminToolbarProps) {
         </div>
         
         <div className={styles.right}>
+          <div className={styles.tool}>
+            <span className={styles.toolLabel}>Mode:</span>
+            <ThemeToggle />
+          </div>
+          
           <div className={styles.tool}>
             <span className={styles.toolLabel}>Theme:</span>
             <ThemeSwitcher />

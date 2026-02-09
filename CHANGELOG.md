@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-02-09
+
+### Changed
+- **Architectural Consolidation**: Removed duplicate chat components and legacy theme system
+- Renamed `ChatProviderEnhanced` → `ChatProvider` and `ChatWindowEnhanced` → `ChatWindow`
+- Removed legacy single-file theme system in favor of folder-based themes
+- Completed sidebar implementation with real data sources for categories, tags, and recent posts
+- Version aligned to 0.2.0 (dropping alpha designation)
+- `getActiveTheme()` now returns `FullTheme` directly instead of legacy `Theme` type
+
+### Added
+- Helper functions in `lib/markdown.ts`: `getAllTags()`, `getAllCategories()`, `getRecentBlogPosts()`
+- Social links configuration in `config/site.yaml` and schema
+- Social links widget with icons (Twitter, GitHub, LinkedIn, YouTube, Instagram)
+- Full data wiring for all sidebar widgets
+
+### Fixed
+- Version confusion between package.json and changelogs
+- TODOs in Sidebar component now resolved with real data
+
+### Removed
+- `components/ChatProvider.tsx` (legacy, superseded by Enhanced version)
+- `components/ChatWindow.tsx` (legacy, superseded by Enhanced version)  
+- `lib/theme-loader.ts` (legacy theme system)
+- `lib/theme-schema.ts` (legacy theme types)
+- Single-file themes: `default.yaml`, `modern.yaml`, `minimal.yaml`, `dark.yaml`, `vibrant.yaml`
+- `getActiveFullTheme()` function (merged with `getActiveTheme()`)
+
 ## [0.1.0-alpha.2] - 2024-12-28
 
 ### Added
