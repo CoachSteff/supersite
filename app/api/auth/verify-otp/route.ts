@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { validateOTP, generateJWT, setAuthCookie } from '@/lib/auth';
-import { getUserByEmail, createUser, updateLastLogin, getPublicProfile } from '@/lib/users';
+import { getUserByEmail, createUser, updateLastLogin } from '@/lib/users';
 import { sendWelcomeEmail } from '@/lib/email';
 
 const requestSchema = z.object({
@@ -45,10 +45,10 @@ export async function POST(request: NextRequest) {
     // Generate JWT token
     const token = generateJWT(user.id, user.email, user.username);
 
-    // Create response
+    // Create response with full user data (authenticated context)
     const response = NextResponse.json({
       success: true,
-      user: getPublicProfile(user),
+      user: user,
       isNewUser,
     });
 
