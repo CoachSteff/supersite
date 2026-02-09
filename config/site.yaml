@@ -1,84 +1,88 @@
 site:
-  name: "Supersite"
-  description: "A universal AI-powered website template"
-  logo: "/logo.png"
-  favicon: "/favicon.ico"
-  url: "https://supersite.example.com"
-
+  name: Supersite
+  description: A universal AI-powered website template
+  logo: /logo.png
+  favicon: /favicon.ico
+  url: https://supersite.example.com
 branding:
-  theme: "base"                        # Theme name: base, blog, influencer, business, community, chatbot, or custom/your-theme
-  # Overrides (optional - merge with theme settings)
-  # overrides:
-  #   colors:
-  #     light:
-  #       primary: "#10b981"
-
+  theme: chatbot
+admin:
+  toolbar: true
+auth:
+  enabled: true
+  requireApproval: false
 seo:
-  defaultTitle: "Supersite"
-  titleTemplate: "%s | Supersite"
-  defaultDescription: "Universal AI-powered website template built with Next.js"
-  ogImage: "/og-image.png"
-  twitterHandle: "@supersite"
-
+  defaultTitle: Supersite
+  titleTemplate: '%s | Supersite'
+  defaultDescription: Universal AI-powered website template built with Next.js
+  ogImage: /og-image.png
+  twitterHandle: '@supersite'
 navigation:
   autoGenerate: true
   customLinks:
-    - title: "Blog"
-      path: "/blog"
-    - title: "Contact"
-      path: "/contact"
-
+    - title: Blog
+      path: /blog
+    - title: Contact
+      path: /contact
 chat:
   enabled: true
-  provider: "anthropic"
-  model: "claude-3-5-sonnet-20241022"
-  systemPrompt: "You are a helpful AI assistant for this website. Answer questions based on the provided context. Be concise, friendly, and helpful. You can perform actions on the page - see the AI Actions documentation."
+  provider: anthropic
+  model: claude-3-5-sonnet-20241022
+  systemPrompt: You are a helpful AI assistant for this website. Answer questions based on the provided context. Be concise, friendly, and helpful. You can perform actions on the page - see the AI Actions documentation.
   temperature: 0.7
   maxTokens: 1024
-  
-  # AI-First Features
-  streaming: true                       # Enable streaming responses for better UX
-  
+  streaming: true
   voice:
-    enabled: true                       # Enable voice input
-    language: "en-US"                   # Speech recognition language
-  
+    enabled: true
+    language: en-US
   actions:
-    enabled: true                       # Enable AI actions (navigate, search, etc.)
-    allowNavigation: true               # AI can navigate to pages
-    allowSearch: true                   # AI can trigger search
-    allowExternalLinks: true            # AI can open external links
-  
+    enabled: true
+    allowNavigation: true
+    allowSearch: true
+    allowExternalLinks: true
   memory:
-    enabled: true                       # Persist conversations in localStorage
-    maxMessages: 50                     # Max messages to remember
-  
+    enabled: true
+    maxMessages: 50
   shortcuts:
-    enabled: true                       # Enable keyboard shortcuts
-    openChat: "mod+k"                   # Shortcut to open chat
-  
+    enabled: true
+    openChat: mod+k
   suggestions:
-    enabled: true                       # Show AI-generated follow-up suggestions
-    maxSuggestions: 3                   # Max suggestions to show
-  
+    enabled: true
+    maxSuggestions: 3
   button:
-    position: "bottom-right"
+    position: bottom-right
     offsetX: 0
     offsetY: 20
-    icon: "sparkles"                    # Sparkles icon for AI-first feel
+    icon: sparkles
   window:
-    position: "bottom-right"  # bottom-right | bottom-center | bottom-left | right-docked | bottom-docked | left-docked
+    position: bottom-right
     width: 420
     height: 600
-  welcomeMessage: "Hi! I'm your AI assistant. Ask me anything about this site, or use voice input!"
-  placeholder: "Ask me anything..."
-  
+  welcomeMessage: Hi! I'm your AI assistant. Ask me anything about this site, or use voice input!
+  placeholder: Ask me anything...
 features:
   search: true
   blog: true
   contactForm: true
   analytics: false
-
 content:
-  customDirectory: "content-custom"    # User content location (override in site.local.yaml)
-  templateDirectory: "content"          # Template content location (don't change)
+  customDirectory: content-custom
+  templateDirectory: content
+social:
+  twitter: https://twitter.com/supersite
+  github: https://github.com/coachsteff/supersite
+  linkedin: ''
+  youtube: ''
+  instagram: ''
+profile:
+  name: Your Name
+  title: Developer & Creator
+  bio: Building amazing things with code and AI
+  image: /images/profile.jpg
+  location: San Francisco, CA
+  email: hello@example.com
+hero:
+  heading: Build Amazing Websites with AI
+  subheading: SuperSite is the fastest way to create intelligent, beautiful sites
+  ctaText: Get Started
+  ctaLink: /contact

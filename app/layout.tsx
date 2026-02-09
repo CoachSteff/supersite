@@ -1,14 +1,19 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import AdminToolbar from '@/components/AdminToolbar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ChatProvider } from '@/components/ChatProviderEnhanced';
+import Sidebar from '@/components/Sidebar';
+import { ChatProvider } from '@/components/ChatProvider';
 import ChatButton from '@/components/ChatButton';
-import ChatWindow from '@/components/ChatWindowEnhanced';
+import ChatWindow from '@/components/ChatWindow';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
+import Hero from '@/components/Hero';
 import { ThemeProvider } from '@/components/ThemeLoader';
 import { ThemeContextProvider } from '@/components/ThemeContext';
-import { getSiteConfig, getActiveTheme, getActiveFullTheme } from '@/lib/config';
+import { getSiteConfig, getActiveTheme } from '@/lib/config';
+import { getLayoutComponent, shouldShowSidebar } from '@/lib/layout-renderer';
+import { getAllCategories, getAllTags, getRecentBlogPosts } from '@/lib/markdown';
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = getSiteConfig();
@@ -34,18 +39,43 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const config = getSiteConfig();
   const theme = getActiveTheme();
-  const fullTheme = getActiveFullTheme();
   
   // Get structure settings from the full theme
-  const { header, footer } = fullTheme.structure;
-  const features = fullTheme.meta.features;
+  const { header, footer, hero, layout } = theme.structure;
+  const features = theme.meta.features;
+  
+  // Check if auth is enabled in site config
+  const authEnabled = config.auth?.enabled ?? false;
+  
+  // Determine if sidebar should be shown
+  const showSidebar = shouldShowSidebar(theme);
+  
+  // Fetch sidebar data if needed
+  let sidebarData = null;
+  if (showSidebar) {
+    try {
+      const [categories, tags, recentPosts] = await Promise.all([
+        getAllCategories(),
+        getAllTags(),
+        getRecentBlogPosts(5),
+      ]);
+      sidebarData = { categories, tags, recentPosts };
+    } catch (error) {
+      console.error('Error loading sidebar data:', error);
+      sidebarData = { categories: [], tags: [], recentPosts: [] };
+    }
+  }
+  
+  // Get layout component based on theme
+  const LayoutComponent = getLayoutComponent(layout.type as any);
+  const { maxWidth, contentWidth, sidebarWidth } = layout;
   
   return (
     <html lang="en" suppressHydrationWarning>
@@ -73,8 +103,9 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider theme={theme}>
-          <ThemeContextProvider theme={fullTheme}>
+          <ThemeContextProvider theme={theme}>
             <ChatProvider>
+              <AdminToolbar enabled={config.admin?.toolbar ?? false} />
               <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
               <Header 
                 style={header.style}
@@ -82,11 +113,31 @@ export default function RootLayout({
                 showLogo={header.logo}
                 showSearch={header.search && features.search}
                 showThemeToggle={header.themeToggle && features.darkMode}
-                showAuth={header.auth && features.auth}
+                showAuth={authEnabled}
               />
-              <main className="main-content">
+              {hero.enabled && (
+                <Hero 
+                  type={hero.type as any}
+                  height={hero.height}
+                  config={config}
+                />
+              )}
+              <LayoutComponent
+                maxWidth={maxWidth}
+                contentWidth={contentWidth}
+                sidebarWidth={sidebarWidth}
+                sidebar={showSidebar && sidebarData ? (
+                  <Sidebar 
+                    widgets={theme.blocks.sidebar}
+                    categories={sidebarData.categories}
+                    tags={sidebarData.tags}
+                    recentPosts={sidebarData.recentPosts}
+                    socialLinks={config.social}
+                  />
+                ) : undefined}
+              >
                 {children}
-              </main>
+              </LayoutComponent>
               <Footer style={footer.style} />
               {features.chat && <ChatButton />}
               {features.chat && <ChatWindow />}

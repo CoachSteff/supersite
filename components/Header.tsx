@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { Search as SearchIcon, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search as SearchIcon } from 'lucide-react';
 import Navigation from './Navigation';
 import Search from './Search';
 import ThemeToggle from './ThemeToggle';
+import AuthButton from './AuthButton';
 import styles from '@/styles/Header.module.css';
 
 interface HeaderProps {
@@ -26,6 +27,15 @@ export default function Header({
   showAuth = false,
 }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handleSearchEvent = () => {
+      setSearchOpen(true);
+    };
+
+    window.addEventListener('supersite:search', handleSearchEvent);
+    return () => window.removeEventListener('supersite:search', handleSearchEvent);
+  }, []);
 
   if (style === 'none') {
     return null;
@@ -62,11 +72,7 @@ export default function Header({
             </button>
           )}
           
-          {showAuth && (
-            <button className={styles.authButton} aria-label="Account">
-              <User size={20} />
-            </button>
-          )}
+          {showAuth && <AuthButton />}
         </div>
       </div>
       {searchOpen && <Search onClose={() => setSearchOpen(false)} />}

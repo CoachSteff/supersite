@@ -1,0 +1,34 @@
+.authButton {
+  background-color: var(--primary-color);
+  border: none;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  color: white;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.authButton:hover {
+  background-color: var(--secondary-color);
+}
+
+.authButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.userContainer {
+  position: relative;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}

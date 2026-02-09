@@ -3,9 +3,7 @@ import path from 'path';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 import { unstable_noStore as noStore } from 'next/cache';
-import { loadTheme as loadNewTheme, applyThemeOverrides as applyNewOverrides, toLegacyTheme, type FullTheme } from './theme-system';
-import { loadTheme as loadOldTheme, applyThemeOverrides as applyOldOverrides } from './theme-loader';
-import type { Theme } from './theme-schema';
+import { loadTheme, applyThemeOverrides, type FullTheme } from './theme-system';
 
 const ChatButtonPositionSchema = z.enum(['bottom-left', 'bottom-center', 'bottom-right']);
 const ChatWindowPositionSchema = z.enum(['bottom-right', 'bottom-center', 'bottom-left', 'right-docked', 'bottom-docked', 'left-docked']);
@@ -108,6 +106,35 @@ const SiteConfigSchema = z.object({
     analytics: z.boolean(),
   }),
   content: ContentConfigSchema.optional(),
+  social: z.object({
+    twitter: z.string().optional(),
+    github: z.string().optional(),
+    linkedin: z.string().optional(),
+    youtube: z.string().optional(),
+    instagram: z.string().optional(),
+  }).optional(),
+  profile: z.object({
+    name: z.string(),
+    title: z.string().optional(),
+    bio: z.string().optional(),
+    image: z.string().optional(),
+    location: z.string().optional(),
+    email: z.string().optional(),
+  }).optional(),
+  hero: z.object({
+    heading: z.string().optional(),
+    subheading: z.string().optional(),
+    image: z.string().optional(),
+    ctaText: z.string().optional(),
+    ctaLink: z.string().optional(),
+  }).optional(),
+  admin: z.object({
+    toolbar: z.boolean().optional().default(false),
+  }).optional(),
+  auth: z.object({
+    enabled: z.boolean().default(false),
+    requireApproval: z.boolean().optional().default(false),
+  }).optional(),
 });
 
 export type SiteConfig = z.infer<typeof SiteConfigSchema>;
@@ -225,6 +252,7 @@ export function getClientSafeConfig() {
       placeholder: config.chat.placeholder,
     },
     features: config.features,
+    admin: config.admin,
   };
 }
 
@@ -241,7 +269,7 @@ export function validateConfig(): boolean {
 // Cache for loaded theme
 let cachedFullTheme: FullTheme | null = null;
 
-export function getActiveTheme(): Theme {
+export function getActiveTheme(): FullTheme {
   // Prevent Next.js from caching this function's result
   noStore();
   
@@ -253,57 +281,51 @@ export function getActiveTheme(): Theme {
   const config = getSiteConfig();
   const themeName = config.branding.theme || 'base';
   
-  // Try new theme system first (folder-based)
-  const { theme: fullTheme, isLegacy, errors } = loadNewTheme(themeName);
+  // Load new folder-based theme system
+  const { theme: fullTheme, errors } = loadTheme(themeName);
   
   if (errors.length > 0 && process.env.NODE_ENV === 'development') {
     errors.forEach(err => console.warn(`[Theme] ${err}`));
   }
 
-  // Cache the full theme for getActiveFullTheme()
-  cachedFullTheme = fullTheme;
-
-  // Convert to legacy Theme format for backward compatibility
-  let theme: Theme;
-  
-  if (isLegacy) {
-    // Use old loader for legacy single-file themes
-    theme = loadOldTheme(themeName);
-    if (config.branding.overrides) {
-      theme = applyOldOverrides(theme, config.branding.overrides as Partial<Theme>);
-    }
-  } else {
-    // Convert new theme to legacy format
-    theme = toLegacyTheme(fullTheme);
+  // Apply config overrides if present
+  let finalTheme = fullTheme;
+  if (config.branding.overrides) {
+    finalTheme = applyThemeOverrides(fullTheme, config.branding.overrides);
   }
   
-  // Legacy branding support (deprecated)
+  // Legacy branding support (deprecated but still functional)
   if (config.branding.primaryColor || config.branding.secondaryColor || config.branding.fontFamily) {
     if (process.env.NODE_ENV === 'development' && !globalThis.__legacyBrandingWarned) {
       console.warn('Direct primaryColor/secondaryColor/fontFamily in config is deprecated. Use branding.theme and branding.overrides instead.');
       globalThis.__legacyBrandingWarned = true;
     }
     
+    // Apply legacy branding as overrides
+    const legacyOverrides: Record<string, unknown> = { colors: { light: {}, dark: {} } };
     if (config.branding.primaryColor) {
-      theme.colors.light.primary = config.branding.primaryColor;
+      (legacyOverrides.colors as Record<string, Record<string, string>>).light.primary = config.branding.primaryColor;
     }
     if (config.branding.secondaryColor) {
-      theme.colors.light.secondary = config.branding.secondaryColor;
+      (legacyOverrides.colors as Record<string, Record<string, string>>).light.secondary = config.branding.secondaryColor;
     }
     if (config.branding.fontFamily) {
-      theme.typography.fontFamily = config.branding.fontFamily;
+      legacyOverrides.typography = { fontFamily: config.branding.fontFamily };
     }
+    
+    finalTheme = applyThemeOverrides(finalTheme, legacyOverrides);
   }
+
+  // Cache for getActiveFullTheme()
+  cachedFullTheme = finalTheme;
   
-  return theme;
+  return finalTheme;
 }
 
 /**
  * Get the full theme with structure, blocks, and features
- * Use this for new theme-aware components
+ * Alias for getActiveTheme() for backward compatibility
  */
 export function getActiveFullTheme(): FullTheme {
-  // Trigger theme loading to populate cachedFullTheme
-  getActiveTheme();
-  return cachedFullTheme!;
+  return getActiveTheme();
 }
