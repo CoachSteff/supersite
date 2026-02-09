@@ -21,9 +21,10 @@ export default function AuthButton() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     checkAuthStatus();
   }, []);
 
@@ -37,8 +38,6 @@ export default function AuthButton() {
       }
     } catch (error) {
       console.error('[AuthButton] Failed to check auth status:', error);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -57,7 +56,8 @@ export default function AuthButton() {
     }
   }
 
-  if (loading) {
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
     return (
       <button className={styles.authButton} disabled aria-label="Loading">
         <User size={20} />
