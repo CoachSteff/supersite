@@ -52,3 +52,6 @@ themes-custom/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# user data (authentication system)
+/data/
