@@ -26,7 +26,7 @@ export default function VoiceInput({
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [recognition, setRecognition] = useState<any | null>(null);
 
   useEffect(() => {
     setIsSupported(isSpeechRecognitionSupported());
@@ -42,7 +42,7 @@ export default function VoiceInput({
     recognitionInstance.interimResults = true;
     recognitionInstance.lang = language;
 
-    recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
+    recognitionInstance.onresult = (event: any) => {
       let interim = '';
       let final = '';
 
@@ -63,7 +63,7 @@ export default function VoiceInput({
       }
     };
 
-    recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
+    recognitionInstance.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
       onListeningChange?.(false);
@@ -132,7 +132,7 @@ export default function VoiceInput({
 // Type declarations for Web Speech API
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
   }
 }

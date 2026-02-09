@@ -1,5 +1,6 @@
 import { getBlogPostBySlug, getAllBlogPosts } from '@/lib/markdown';
 import MarkdownContent from '@/components/MarkdownContent';
+import PageActions from '@/components/PageActions';
 import { notFound } from 'next/navigation';
 import styles from '@/styles/Blog.module.css';
 
@@ -39,6 +40,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         content={post.content}
         markdown={post.markdown}
         path={post.path}
+      />
+      <PageActions 
+        title={post.title}
+        markdown={post.markdown || ''}
+        path={post.path}
+        url={`/blog/${params.slug}`}
       />
     </article>
   );

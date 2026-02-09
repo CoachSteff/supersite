@@ -1,0 +1,143 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+.profileCard {
+  background-color: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg, 12px);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+.header {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.avatar {
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 200px;
+}
+
+.name {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-xxlarge, 2rem);
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.username {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: var(--font-size-large);
+  color: var(--text-secondary);
+}
+
+.jobTitle {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.organization {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+}
+
+.bio {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background-color: var(--background-secondary);
+  border-radius: var(--border-radius);
+}
+
+.bio p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-color);
+  white-space: pre-wrap;
+}
+
+.social {
+  margin-bottom: var(--spacing-xl);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-large);
+  font-weight: 600;
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-color);
+}
+
+.socialLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.socialLink:hover {
+  background-color: var(--background);
+  border-color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.externalIcon {
+  margin-left: auto;
+  opacity: 0.5;
+}
+
+.footer {
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.joinDate {
+  margin: 0;
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .avatar {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .name {
+    font-size: var(--font-size-xlarge, 1.5rem);
+  }
+}

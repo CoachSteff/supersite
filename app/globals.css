@@ -27,6 +27,17 @@
   
   --border-radius: 4px;
   --max-width: 1200px;
+  
+  /* Breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  
+  /* Layout */
+  --content-max-width: 800px;
+  --sidebar-width: 300px;
+  --header-height: 60px;
 }
 
 /* Dark mode via system preference (fallback before JS loads) */

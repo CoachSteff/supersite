@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserByUsername, getPublicProfile } from '@/lib/users';
+import { getPublicProfile } from '@/lib/users';
 
 export async function GET(
   request: NextRequest,
@@ -15,17 +15,14 @@ export async function GET(
       );
     }
 
-    const user = getUserByUsername(username);
+    const publicProfile = getPublicProfile(username);
 
-    if (!user) {
+    if (!publicProfile) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
       );
     }
-
-    // Return public profile (respects privacy settings)
-    const publicProfile = getPublicProfile(user);
 
     return NextResponse.json({
       user: publicProfile,

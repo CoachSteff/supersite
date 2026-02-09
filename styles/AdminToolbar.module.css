@@ -1,0 +1,84 @@
+.toolbar {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  color: #fff;
+}
+
+[data-theme="light"] .toolbar {
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  color: #333;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon {
+  opacity: 0.7;
+}
+
+.label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.tool {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toolLabel {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+/* Override ThemeSwitcher styles for toolbar */
+.tool :global(.ThemeSwitcher_trigger) {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.375rem 0.75rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+[data-theme="light"] .tool :global(.ThemeSwitcher_trigger) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.tool :global(.ThemeSwitcher_trigger):hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="light"] .tool :global(.ThemeSwitcher_trigger):hover {
+  background: rgba(0, 0, 0, 0.08);
+}

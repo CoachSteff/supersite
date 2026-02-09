@@ -1,5 +1,6 @@
 import { getPageBySlug, getAllPages } from '@/lib/markdown';
 import MarkdownContent from '@/components/MarkdownContent';
+import PageActions from '@/components/PageActions';
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
@@ -20,11 +21,19 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
   }
 
   return (
-    <MarkdownContent 
-      title={page.title} 
-      content={page.content}
-      markdown={page.markdown}
-      path={page.path}
-    />
+    <>
+      <MarkdownContent 
+        title={page.title} 
+        content={page.content}
+        markdown={page.markdown}
+        path={page.path}
+      />
+      <PageActions 
+        title={page.title}
+        markdown={page.markdown || ''}
+        path={page.path}
+        url={`/${params.slug.join('/')}`}
+      />
+    </>
   );
 }

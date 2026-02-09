@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, createContext, useContext } from 'react';
-import type { Theme } from '@/lib/theme-schema';
+import type { FullTheme } from '@/lib/theme-system';
 
 type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -27,7 +27,7 @@ export function useThemeMode() {
 }
 
 interface ThemeLoaderProps {
-  theme: Theme;
+  theme: FullTheme;
 }
 
 export default function ThemeLoader({ theme }: ThemeLoaderProps) {
@@ -76,9 +76,12 @@ export default function ThemeLoader({ theme }: ThemeLoaderProps) {
   );
 }
 
-function applyTheme(theme: Theme, mode: 'light' | 'dark') {
+function applyTheme(theme: FullTheme, mode: 'light' | 'dark') {
   const root = document.documentElement;
-  const colors = mode === 'dark' ? theme.colors.dark : theme.colors.light;
+  const themeData = theme as any;
+  const colors = mode === 'dark' ? themeData.colors?.colors?.dark : themeData.colors?.colors?.light;
+
+  console.log('[ThemeLoader] Applying theme:', { mode, hasColors: !!colors });
 
   // Set data attribute for CSS selectors
   root.setAttribute('data-theme', mode);
@@ -96,39 +99,45 @@ function applyTheme(theme: Theme, mode: 'light' | 'dark') {
     error: '--error-color',
   };
 
-  // Apply colors
-  Object.entries(colors).forEach(([key, value]) => {
-    const cssVar = colorMapping[key] || `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-    root.style.setProperty(cssVar, value);
-  });
+  // Apply colors if available
+  if (colors && typeof colors === 'object') {
+    try {
+      Object.entries(colors).forEach(([key, value]) => {
+        const cssVar = colorMapping[key] || `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+        root.style.setProperty(cssVar, String(value));
+      });
+    } catch (error) {
+      console.error('[ThemeLoader] Error applying theme colors:', error);
+    }
+  } else {
+    console.warn('[ThemeLoader] No valid color palette found for mode:', mode);
+  }
 
-  // Apply typography
+  // Apply typography if available (from colors.yaml)
   const typographyMapping: Record<string, string> = {
     fontFamily: '--font-family',
     fontFamilyMono: '--font-family-mono',
     baseFontSize: '--font-size-base',
   };
+  
+  if (themeData.typography) {
+    Object.entries(themeData.typography).forEach(([key, value]) => {
+      const cssVar = typographyMapping[key] || `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+      root.style.setProperty(cssVar, String(value));
+    });
+  }
 
-  Object.entries(theme.typography).forEach(([key, value]) => {
-    const cssVar = typographyMapping[key] || `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-    root.style.setProperty(cssVar, value);
-  });
+  // Apply spacing if available
+  if (themeData.spacing) {
+    Object.entries(themeData.spacing).forEach(([key, value]) => {
+      root.style.setProperty(`--spacing-${key}`, String(value));
+    });
+  }
 
-  // Apply spacing
-  Object.entries(theme.spacing).forEach(([key, value]) => {
-    root.style.setProperty(`--spacing-${key}`, value);
-  });
-
-  // Apply layout
-  const layoutMapping: Record<string, string> = {
-    borderRadius: '--border-radius',
-    maxWidth: '--max-width',
-  };
-
-  Object.entries(theme.layout).forEach(([key, value]) => {
-    const cssVar = layoutMapping[key] || `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-    root.style.setProperty(cssVar, value);
-  });
+  // Apply layout if available
+  if (themeData.borderRadius) {
+    root.style.setProperty('--border-radius', String(themeData.borderRadius));
+  }
 }
 
 // Export provider wrapper for layout
@@ -136,7 +145,7 @@ export function ThemeProvider({
   theme, 
   children 
 }: { 
-  theme: Theme; 
+  theme: FullTheme; 
   children: React.ReactNode;
 }) {
   const [mode, setModeState] = useState<ThemeMode>('system');
@@ -176,6 +185,7 @@ export function ThemeProvider({
   }, [mode, theme, mounted]);
 
   const setMode = (newMode: ThemeMode) => {
+    console.log('[ThemeLoader] Setting mode:', newMode);
     setModeState(newMode);
     localStorage.setItem('theme-mode', newMode);
   };

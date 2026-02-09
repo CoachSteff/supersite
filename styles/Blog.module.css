@@ -8,9 +8,19 @@
 }
 
 .posts {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--spacing-xl);
+}
+
+.postsWithSidebar {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 768px) {
+  .posts {
+    grid-template-columns: 1fr;
+  }
 }
 
 .blogCard {

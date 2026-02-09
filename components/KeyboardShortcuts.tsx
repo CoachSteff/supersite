@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
-import { useChat } from './ChatProviderEnhanced';
+import { useChat } from './ChatProvider';
 
 interface KeyboardShortcutsProps {
   enabled?: boolean;

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { User } from 'lucide-react';
+import Avatar from './Avatar';
 import AuthModal from './AuthModal';
 import UserMenu from './UserMenu';
 import styles from '@/styles/AuthButton.module.css';
@@ -66,6 +67,8 @@ export default function AuthButton() {
   }
 
   if (user) {
+    const displayName = user.profile.firstName || user.username;
+    
     return (
       <div className={styles.userContainer}>
         <button
@@ -73,11 +76,11 @@ export default function AuthButton() {
           onClick={() => setShowMenu(!showMenu)}
           aria-label="User menu"
         >
-          {user.profile.avatar ? (
-            <img src={user.profile.avatar} alt={user.username} className={styles.avatar} />
-          ) : (
-            <User size={20} />
-          )}
+          <Avatar
+            src={user.profile.avatar}
+            name={displayName}
+            size={32}
+          />
         </button>
         {showMenu && (
           <UserMenu

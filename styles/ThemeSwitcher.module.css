@@ -1,0 +1,128 @@
+.themeSwitcher {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.trigger:hover {
+  background: var(--background-secondary);
+}
+
+.triggerText {
+  font-size: 0.875rem;
+  text-transform: capitalize;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 999;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  max-width: 320px;
+  z-index: 1000;
+  padding: 1rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.title {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.themeList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.themeOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: var(--background-secondary);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  text-align: left;
+}
+
+.themeOption:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.themeOption.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.themeOption:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.themeInfo {
+  flex: 1;
+}
+
+.themeName {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.themeDesc {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.currentBadge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.loading {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-light);
+  font-style: italic;
+}

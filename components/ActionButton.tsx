@@ -60,7 +60,7 @@ export default function ActionButton({ action, onClick }: ActionButtonProps) {
     }
   };
 
-  const getLabel = () => {
+  const getLabel = (): string => {
     if (action.label) return action.label;
     
     switch (action.type) {
@@ -69,7 +69,7 @@ export default function ActionButton({ action, onClick }: ActionButtonProps) {
       case 'search':
         return `Search: ${action.payload.query}`;
       case 'openLink':
-        return action.payload.label || 'Open link';
+        return (typeof action.payload.label === 'string' ? action.payload.label : null) || 'Open link';
       case 'copyText':
         return 'Copy to clipboard';
       case 'scroll':
@@ -84,7 +84,7 @@ export default function ActionButton({ action, onClick }: ActionButtonProps) {
       className={`${styles.actionButton} ${isComplete ? styles.complete : ''}`}
       onClick={handleClick}
       disabled={isExecuting}
-      title={action.description || getLabel()}
+      title={(action.description as string | undefined) || undefined}
     >
       <span className={styles.icon}>{getIcon()}</span>
       <span className={styles.label}>{getLabel()}</span>

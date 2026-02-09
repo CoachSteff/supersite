@@ -342,15 +342,21 @@ export function getAllUsers(): UserProfile[] {
   return users;
 }
 
-// Get public profile (respects privacy settings)
-export function getPublicProfile(user: UserProfile): Partial<UserProfile> {
+// Get public profile by username (respects privacy settings)
+export function getPublicProfile(username: string): Partial<UserProfile> | null {
+  const user = getUserByUsername(username);
+  
+  if (!user) {
+    return null;
+  }
+  
   if (!user.settings.privacy.profileVisible) {
     return {
       username: user.username,
       profile: {
         firstName: user.profile.firstName,
       },
-    };
+    } as any;
   }
 
   return {

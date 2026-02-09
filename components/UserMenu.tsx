@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { User, Settings, LogOut } from 'lucide-react';
+import Avatar from './Avatar';
 import styles from '@/styles/UserMenu.module.css';
 
 interface UserMenuProps {
@@ -51,11 +52,11 @@ export default function UserMenu({ user, onClose, onLogout }: UserMenuProps) {
     <div ref={menuRef} className={styles.menu}>
       <div className={styles.userInfo}>
         <div className={styles.userAvatar}>
-          {user.profile.avatar ? (
-            <img src={user.profile.avatar} alt={displayName} />
-          ) : (
-            <User size={24} />
-          )}
+          <Avatar
+            src={user.profile.avatar}
+            name={displayName}
+            size={48}
+          />
         </div>
         <div className={styles.userDetails}>
           <div className={styles.userName}>{displayName}</div>

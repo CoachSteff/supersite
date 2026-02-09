@@ -236,8 +236,8 @@ export class ActionExecutor {
 
   private executeHighlight(action: AIAction): ActionResult {
     const text = action.payload.text as string;
-    if (typeof window !== 'undefined' && window.find) {
-      window.find(text);
+    if (typeof window !== 'undefined' && (window as any).find) {
+      (window as any).find(text);
       return { success: true, message: 'Text highlighted' };
     }
     return { success: false, message: 'Highlight not supported' };

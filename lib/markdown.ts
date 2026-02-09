@@ -310,3 +310,39 @@ export function getFolderStructure(): NavItem[] {
 
   return buildTree(pagesDir);
 }
+
+export async function getAllTags(): Promise<{ tag: string; count: number }[]> {
+  const posts = await getAllBlogPosts();
+  const tagMap = new Map<string, number>();
+  
+  posts.forEach(post => {
+    if (post.tags && Array.isArray(post.tags)) {
+      post.tags.forEach(tag => {
+        tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+      });
+    }
+  });
+  
+  return Array.from(tagMap.entries())
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export async function getAllCategories(): Promise<{ category: string; count: number }[]> {
+  const posts = await getAllBlogPosts();
+  const categoryMap = new Map<string, number>();
+  
+  posts.forEach(post => {
+    const category = post.custom?.category as string || 'Uncategorized';
+    categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+  });
+  
+  return Array.from(categoryMap.entries())
+    .map(([category, count]) => ({ category, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export async function getRecentBlogPosts(limit: number = 5): Promise<BlogPost[]> {
+  const posts = await getAllBlogPosts();
+  return posts.slice(0, limit);
+}

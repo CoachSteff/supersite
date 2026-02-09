@@ -1,7 +1,7 @@
 'use client';
 
 import { Sparkles, MessageCircle } from 'lucide-react';
-import { useChat } from './ChatProviderEnhanced';
+import { useChat } from './ChatProvider';
 import { useEffect, useState } from 'react';
 import styles from '@/styles/Chat.module.css';
 
@@ -12,6 +12,7 @@ interface ClientConfig {
       position: string;
       offsetX: number;
       offsetY: number;
+      icon?: string;
     };
   };
 }

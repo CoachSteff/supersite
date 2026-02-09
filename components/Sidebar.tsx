@@ -1,14 +1,19 @@
 'use client';
 
-import { Search, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Mail, Twitter, Github, Linkedin, Youtube, Instagram } from 'lucide-react';
 import type { SidebarWidget } from '@/lib/theme-system';
 import styles from '@/styles/Sidebar.module.css';
 
 interface SidebarProps {
   widgets: SidebarWidget[];
+  categories?: { category: string; count: number }[];
+  tags?: { tag: string; count: number }[];
+  recentPosts?: { slug: string; title: string; date: string }[];
+  socialLinks?: { twitter?: string; github?: string; linkedin?: string; youtube?: string; instagram?: string };
 }
 
-export default function Sidebar({ widgets }: SidebarProps) {
+export default function Sidebar({ widgets, categories, tags, recentPosts, socialLinks }: SidebarProps) {
   if (widgets.length === 0) {
     return null;
   }
@@ -16,24 +21,43 @@ export default function Sidebar({ widgets }: SidebarProps) {
   return (
     <div className={styles.sidebar}>
       {widgets.map((widget, index) => (
-        <SidebarWidgetRenderer key={`${widget.type}-${index}`} widget={widget} />
+        <SidebarWidgetRenderer 
+          key={`${widget.type}-${index}`} 
+          widget={widget}
+          categories={categories}
+          tags={tags}
+          recentPosts={recentPosts}
+          socialLinks={socialLinks}
+        />
       ))}
     </div>
   );
 }
 
-function SidebarWidgetRenderer({ widget }: { widget: SidebarWidget }) {
+function SidebarWidgetRenderer({ 
+  widget, 
+  categories, 
+  tags, 
+  recentPosts,
+  socialLinks 
+}: { 
+  widget: SidebarWidget;
+  categories?: { category: string; count: number }[];
+  tags?: { tag: string; count: number }[];
+  recentPosts?: { slug: string; title: string; date: string }[];
+  socialLinks?: { twitter?: string; github?: string; linkedin?: string; youtube?: string; instagram?: string };
+}) {
   switch (widget.type) {
     case 'search':
       return <SearchWidget />;
     case 'about':
       return <AboutWidget title={widget.title} content={widget.content} image={widget.image} />;
     case 'categories':
-      return <CategoriesWidget title={widget.title} />;
+      return <CategoriesWidget title={widget.title} categories={categories} />;
     case 'tags':
-      return <TagsWidget title={widget.title} limit={widget.limit} />;
+      return <TagsWidget title={widget.title} limit={widget.limit} tags={tags} />;
     case 'recent-posts':
-      return <RecentPostsWidget title={widget.title} limit={widget.limit} />;
+      return <RecentPostsWidget title={widget.title} limit={widget.limit} posts={recentPosts} />;
     case 'newsletter':
       return (
         <NewsletterWidget 
@@ -44,7 +68,7 @@ function SidebarWidgetRenderer({ widget }: { widget: SidebarWidget }) {
         />
       );
     case 'social-links':
-      return <SocialLinksWidget title={widget.title} />;
+      return <SocialLinksWidget title={widget.title} links={socialLinks} />;
     case 'custom':
       return <CustomWidget title={widget.title} content={widget.content} />;
     default:
@@ -73,42 +97,72 @@ function AboutWidget({ title, content, image }: { title?: string; content?: stri
   );
 }
 
-function CategoriesWidget({ title }: { title?: string }) {
-  // TODO: Fetch categories from content
+function CategoriesWidget({ title, categories }: { title?: string; categories?: { category: string; count: number }[] }) {
   return (
     <div className={styles.widget}>
       <h3 className={styles.widgetTitle}>{title || 'Categories'}</h3>
       <ul className={styles.categoryList}>
-        <li><a href="/blog?category=technology">Technology</a></li>
-        <li><a href="/blog?category=design">Design</a></li>
-        <li><a href="/blog?category=business">Business</a></li>
+        {categories && categories.length > 0 ? (
+          categories.map(({ category, count }) => (
+            <li key={category}>
+              <a href={`/blog?category=${encodeURIComponent(category)}`}>
+                {category} ({count})
+              </a>
+            </li>
+          ))
+        ) : (
+          <li>No categories yet</li>
+        )}
       </ul>
     </div>
   );
 }
 
-function TagsWidget({ title, limit = 20 }: { title?: string; limit?: number }) {
-  // TODO: Fetch tags from content
+function TagsWidget({ title, limit = 20, tags }: { title?: string; limit?: number; tags?: { tag: string; count: number }[] }) {
+  const displayTags = tags ? tags.slice(0, limit) : [];
+  
   return (
     <div className={styles.widget}>
       <h3 className={styles.widgetTitle}>{title || 'Tags'}</h3>
       <div className={styles.tagCloud}>
-        <span className={styles.tag}>AI</span>
-        <span className={styles.tag}>Web</span>
-        <span className={styles.tag}>Design</span>
-        <span className={styles.tag}>Next.js</span>
+        {displayTags.length > 0 ? (
+          displayTags.map(({ tag, count }) => (
+            <a 
+              key={tag} 
+              href={`/blog?tag=${encodeURIComponent(tag)}`}
+              className={styles.tag}
+              title={`${count} post${count !== 1 ? 's' : ''}`}
+            >
+              {tag}
+            </a>
+          ))
+        ) : (
+          <span className={styles.tag}>No tags yet</span>
+        )}
       </div>
     </div>
   );
 }
 
-function RecentPostsWidget({ title, limit = 5 }: { title?: string; limit?: number }) {
-  // TODO: Fetch recent posts from content
+function RecentPostsWidget({ title, limit = 5, posts }: { title?: string; limit?: number; posts?: { slug: string; title: string; date: string }[] }) {
+  const displayPosts = posts ? posts.slice(0, limit) : [];
+  
   return (
     <div className={styles.widget}>
       <h3 className={styles.widgetTitle}>{title || 'Recent Posts'}</h3>
       <ul className={styles.postList}>
-        <li><a href="/blog/example">Example Post Title</a></li>
+        {displayPosts.length > 0 ? (
+          displayPosts.map(post => (
+            <li key={post.slug}>
+              <a href={`/blog/${post.slug}`}>{post.title}</a>
+              <span className={styles.postDate}>
+                {new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+              </span>
+            </li>
+          ))
+        ) : (
+          <li>No posts yet</li>
+        )}
       </ul>
     </div>
   );
@@ -140,13 +194,35 @@ function NewsletterWidget({
   );
 }
 
-function SocialLinksWidget({ title }: { title?: string }) {
-  // TODO: Get social links from config
+function SocialLinksWidget({ title, links }: { title?: string; links?: { twitter?: string; github?: string; linkedin?: string; youtube?: string; instagram?: string } }) {
+  if (!links) return null;
+  
+  const socialIcons = [
+    { name: 'twitter', url: links.twitter, Icon: Twitter },
+    { name: 'github', url: links.github, Icon: Github },
+    { name: 'linkedin', url: links.linkedin, Icon: Linkedin },
+    { name: 'youtube', url: links.youtube, Icon: Youtube },
+    { name: 'instagram', url: links.instagram, Icon: Instagram },
+  ].filter(social => social.url);
+  
+  if (socialIcons.length === 0) return null;
+  
   return (
     <div className={styles.widget}>
       {title && <h3 className={styles.widgetTitle}>{title}</h3>}
       <div className={styles.socialLinks}>
-        {/* Social icons would go here */}
+        {socialIcons.map(({ name, url, Icon }) => (
+          <a 
+            key={name} 
+            href={url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            aria-label={name}
+            title={name}
+          >
+            <Icon size={20} />
+          </a>
+        ))}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--overlay-bg, rgba(0, 0, 0, 0.5));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,7 +12,7 @@
 .modal {
   background-color: var(--background);
   border-radius: var(--border-radius-lg, 12px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-xl, 0 20px 60px rgba(0, 0, 0, 0.3));
   max-width: 420px;
   width: 100%;
   padding: var(--spacing-xl);
@@ -165,9 +165,9 @@
 }
 
 .error {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: rgb(239, 68, 68);
+  background-color: var(--error-bg, rgba(239, 68, 68, 0.1));
+  border: 1px solid var(--error-border, rgba(239, 68, 68, 0.3));
+  color: var(--error-color, rgb(239, 68, 68));
   padding: var(--spacing-md);
   border-radius: var(--border-radius);
   font-size: var(--font-size-small);
