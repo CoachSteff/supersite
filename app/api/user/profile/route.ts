@@ -19,14 +19,10 @@ const updateSchema = z.object({
     avatar: z.string().optional(), // Allow base64 or URL
   }).optional(),
   social: z.object({
-    twitter: z.string().url().optional().or(z.literal('')),
+    x: z.string().url().optional().or(z.literal('')),
     linkedin: z.string().url().optional().or(z.literal('')),
     github: z.string().url().optional().or(z.literal('')),
-    facebook: z.string().url().optional().or(z.literal('')),
-    instagram: z.string().url().optional().or(z.literal('')),
-    youtube: z.string().url().optional().or(z.literal('')),
     website: z.string().url().optional().or(z.literal('')),
-    blog: z.string().url().optional().or(z.literal('')),
     custom: z.array(customSocialLinkSchema).optional(),
   }).optional(),
 });

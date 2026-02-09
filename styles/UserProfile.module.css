@@ -1,118 +1,109 @@
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--spacing-xl);
-}
-
-.profileCard {
-  background-color: var(--background);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-lg, 12px);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
-}
-
-.header {
+/* Influencer-style centered layout */
+.influencerContainer {
+  min-height: 100vh;
   display: flex;
-  gap: var(--spacing-lg);
-  align-items: flex-start;
-  margin-bottom: var(--spacing-xl);
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background: var(--background);
 }
 
-.avatar {
-  flex-shrink: 0;
-}
-
-.headerInfo {
-  flex: 1;
-  min-width: 200px;
-}
-
-.name {
-  margin: 0 0 var(--spacing-xs) 0;
-  font-size: var(--font-size-xxlarge, 2rem);
-  font-weight: 700;
-  color: var(--text-color);
-}
-
-.username {
-  margin: 0 0 var(--spacing-sm) 0;
-  font-size: var(--font-size-large);
-  color: var(--text-secondary);
-}
-
-.jobTitle {
-  margin: 0 0 var(--spacing-xs) 0;
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--text-color);
-}
-
-.organization {
-  margin: 0;
-  font-size: var(--font-size-base);
-  color: var(--text-secondary);
-}
-
-.bio {
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-lg);
-  background-color: var(--background-secondary);
-  border-radius: var(--border-radius);
-}
-
-.bio p {
-  margin: 0;
-  line-height: 1.6;
-  color: var(--text-color);
-  white-space: pre-wrap;
-}
-
-.social {
-  margin-bottom: var(--spacing-xl);
-}
-
-.sectionTitle {
-  font-size: var(--font-size-large);
-  font-weight: 600;
-  margin: 0 0 var(--spacing-md) 0;
-  color: var(--text-color);
-}
-
-.socialLinks {
+.influencerContent {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  align-items: center;
+  gap: var(--spacing-lg);
 }
 
-.socialLink {
+.largeAvatar {
+  margin-bottom: var(--spacing-md);
+}
+
+.influencerName {
+  margin: 0;
+  font-size: var(--font-size-xxxlarge, 3rem);
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1.2;
+}
+
+.influencerUsername {
+  margin: 0;
+  font-size: var(--font-size-xlarge, 1.5rem);
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.influencerMeta {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--background-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
+  flex-wrap: wrap;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: var(--font-size-large);
+}
+
+.influencerMeta .jobTitle {
+  font-weight: 600;
   color: var(--text-color);
+}
+
+.influencerMeta .separator {
+  color: var(--text-secondary);
+}
+
+.influencerMeta .organization {
+  color: var(--text-secondary);
+}
+
+.influencerBio {
+  margin: var(--spacing-md) 0;
+  font-size: var(--font-size-large);
+  line-height: 1.6;
+  color: var(--text-color);
+  max-width: 500px;
+  white-space: pre-wrap;
+}
+
+.socialIcons {
+  display: flex;
+  gap: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.socialIconButton {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--background-secondary);
+  border: 2px solid var(--border-color);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
   transition: all 0.2s;
 }
 
-.socialLink:hover {
-  background-color: var(--background);
+.socialIconButton:hover {
+  background-color: var(--primary-color);
   border-color: var(--primary-color);
-  transform: translateX(4px);
-}
-
-.externalIcon {
-  margin-left: auto;
-  opacity: 0.5;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
 }
 
 .footer {
+  margin-top: var(--spacing-xl);
   padding-top: var(--spacing-lg);
   border-top: 1px solid var(--border-color);
+  width: 100%;
 }
 
 .joinDate {
@@ -123,21 +114,48 @@
 }
 
 @media (max-width: 640px) {
-  .container {
-    padding: var(--spacing-md);
+  .influencerContainer {
+    padding: var(--spacing-lg);
+    min-height: auto;
+    padding-top: var(--spacing-xxl);
   }
 
-  .header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  .influencerName {
+    font-size: var(--font-size-xxlarge, 2rem);
   }
 
-  .avatar {
-    margin-bottom: var(--spacing-md);
+  .influencerUsername {
+    font-size: var(--font-size-large);
   }
 
-  .name {
-    font-size: var(--font-size-xlarge, 1.5rem);
+  .influencerMeta {
+    font-size: var(--font-size-base);
   }
+
+  .influencerBio {
+    font-size: var(--font-size-base);
+  }
+
+  .largeAvatar {
+    width: 140px !important;
+    height: 140px !important;
+  }
+}
+
+/* Keep old styles for backward compatibility but hide them */
+.container,
+.profileCard,
+.header,
+.headerInfo,
+.name,
+.username,
+.jobTitle,
+.organization,
+.bio,
+.social,
+.sectionTitle,
+.socialLinks,
+.socialLink,
+.externalIcon {
+  display: none;
 }

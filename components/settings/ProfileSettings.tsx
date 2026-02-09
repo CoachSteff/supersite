@@ -5,6 +5,11 @@ import { Upload, X, Plus } from 'lucide-react';
 import Avatar from '../Avatar';
 import styles from '@/styles/SettingsForm.module.css';
 
+interface CustomSocialLink {
+  name: string;
+  url: string;
+}
+
 interface ProfileSettingsProps {
   user: any;
   onUpdate: (user: any) => void;
@@ -66,20 +71,76 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
       return;
     }
 
-    // Check file size (64KB = 65536 bytes)
-    if (file.size > 65536) {
-      setError('Image must be under 64KB');
-      return;
-    }
-
     try {
-      // Convert to base64
+      setError('Processing image...');
+      
+      // Create image element to load the file
+      const img = new Image();
       const reader = new FileReader();
+      
       reader.onload = (event) => {
-        const base64 = event.target?.result as string;
+        img.src = event.target?.result as string;
+      };
+      
+      img.onload = async () => {
+        // Create canvas for image processing
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          setError('Failed to process image');
+          return;
+        }
+
+        // Calculate crop dimensions (center square crop)
+        const size = Math.min(img.width, img.height);
+        const offsetX = (img.width - size) / 2;
+        const offsetY = (img.height - size) / 2;
+
+        // Start with a reasonable size and downscale if needed
+        let targetSize = Math.min(size, 800);
+        let quality = 0.9;
+        let base64 = '';
+
+        // Iteratively reduce size/quality until under 64KB
+        while (quality > 0.1) {
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+
+          // Draw cropped square image
+          ctx.clearRect(0, 0, targetSize, targetSize);
+          ctx.drawImage(
+            img,
+            offsetX, offsetY, size, size,
+            0, 0, targetSize, targetSize
+          );
+
+          // Convert to base64
+          base64 = canvas.toDataURL('image/jpeg', quality);
+          
+          // Check size (base64 is ~4/3 the actual size, so multiply by 0.75)
+          const sizeInBytes = (base64.length * 0.75);
+          
+          if (sizeInBytes <= 65536) {
+            // Success! Under 64KB
+            break;
+          }
+
+          // Try smaller size or lower quality
+          if (targetSize > 200) {
+            targetSize = Math.floor(targetSize * 0.9);
+          } else {
+            quality -= 0.1;
+          }
+        }
+
         setFormData({ ...formData, avatar: base64 });
         setError('');
       };
+
+      img.onerror = () => {
+        setError('Failed to load image');
+      };
+
       reader.readAsDataURL(file);
     } catch (err) {
       setError('Failed to upload image');
@@ -130,7 +191,7 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
               Remove
             </button>
           )}
-          <p className={styles.hint}>JPG or PNG, max 64KB</p>
+          <p className={styles.hint}>JPG or PNG (auto-resized to square, max 64KB)</p>
         </div>
       </div>
 
@@ -194,16 +255,77 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
       <h3 className={styles.subtitle}>Social Links</h3>
 
       <div className={styles.grid}>
-        {['twitter', 'linkedin', 'github', 'website'].map((platform) => (
+        {['x', 'linkedin', 'github', 'website'].map((platform) => (
           <div key={platform} className={styles.field}>
-            <label htmlFor={platform}>{platform.charAt(0).toUpperCase() + platform.slice(1)}</label>
+            <label htmlFor={platform}>
+              {platform === 'x' ? 'X (Twitter)' : platform.charAt(0).toUpperCase() + platform.slice(1)}
+            </label>
             <input
               id={platform}
               type="url"
               value={socialLinks[platform] || ''}
               onChange={(e) => setSocialLinks({ ...socialLinks, [platform]: e.target.value })}
-              placeholder={`https://${platform}.com/...`}
+              placeholder={`https://${platform === 'x' ? 'x' : platform}.com/...`}
             />
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.customLinksSection}>
+        <div className={styles.customLinksHeader}>
+          <h3 className={styles.subtitle}>Custom Links</h3>
+          <button
+            type="button"
+            onClick={() => {
+              const custom = socialLinks.custom || [];
+              setSocialLinks({
+                ...socialLinks,
+                custom: [...custom, { name: '', url: '' }]
+              });
+            }}
+            className={styles.addButton}
+          >
+            <Plus size={16} />
+            Add Link
+          </button>
+        </div>
+
+        {socialLinks.custom?.map((link: CustomSocialLink, index: number) => (
+          <div key={index} className={styles.customLink}>
+            <div className={styles.field}>
+              <input
+                type="text"
+                value={link.name}
+                onChange={(e) => {
+                  const custom = [...(socialLinks.custom || [])];
+                  custom[index].name = e.target.value;
+                  setSocialLinks({ ...socialLinks, custom });
+                }}
+                placeholder="Link name (e.g., YouTube)"
+              />
+            </div>
+            <div className={styles.field}>
+              <input
+                type="url"
+                value={link.url}
+                onChange={(e) => {
+                  const custom = [...(socialLinks.custom || [])];
+                  custom[index].url = e.target.value;
+                  setSocialLinks({ ...socialLinks, custom });
+                }}
+                placeholder="https://..."
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const custom = socialLinks.custom?.filter((_: any, i: number) => i !== index) || [];
+                setSocialLinks({ ...socialLinks, custom });
+              }}
+              className={styles.removeCustomButton}
+            >
+              <X size={16} />
+            </button>
           </div>
         ))}
       </div>

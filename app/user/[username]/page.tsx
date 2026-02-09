@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { Twitter, Linkedin, Github, Facebook, Instagram, Youtube, Globe, ExternalLink } from 'lucide-react';
+import { X as XIcon, Linkedin, Github, Globe } from 'lucide-react';
 import Avatar from '@/components/Avatar';
 import { getPublicProfile } from '@/lib/users';
 import styles from '@/styles/UserProfile.module.css';
@@ -10,14 +9,17 @@ interface PageProps {
 }
 
 const socialIcons: Record<string, any> = {
-  twitter: Twitter,
+  x: XIcon,
   linkedin: Linkedin,
   github: Github,
-  facebook: Facebook,
-  instagram: Instagram,
-  youtube: Youtube,
   website: Globe,
-  blog: Globe,
+};
+
+const socialLabels: Record<string, string> = {
+  x: 'X',
+  linkedin: 'LinkedIn',
+  github: 'GitHub',
+  website: 'Website',
 };
 
 export default function UserProfilePage({ params }: PageProps) {
@@ -31,70 +33,84 @@ export default function UserProfilePage({ params }: PageProps) {
     ? `${user.profile.firstName}${user.profile.lastName ? ' ' + user.profile.lastName : ''}`
     : user.username;
 
+  // Collect all social links
+  const socialLinks = [];
+  
+  // Add predefined social links
+  Object.entries(user.social || {}).forEach(([platform, url]) => {
+    if (url && platform !== 'custom' && socialIcons[platform]) {
+      socialLinks.push({
+        platform,
+        url: url as string,
+        icon: socialIcons[platform],
+        label: socialLabels[platform] || platform,
+      });
+    }
+  });
+
+  // Add custom links
+  if (user.social?.custom) {
+    user.social.custom.forEach((link) => {
+      if (link.url) {
+        socialLinks.push({
+          platform: 'custom',
+          url: link.url,
+          icon: Globe,
+          label: link.name,
+        });
+      }
+    });
+  }
+
   return (
-    <div className={styles.container}>
-      <div className={styles.profileCard}>
-        <div className={styles.header}>
-          <Avatar
-            src={user.profile.avatar}
-            name={displayName}
-            size={120}
-            className={styles.avatar}
-          />
-          <div className={styles.headerInfo}>
-            <h1 className={styles.name}>{displayName}</h1>
-            <p className={styles.username}>@{user.username}</p>
+    <div className={styles.influencerContainer}>
+      <div className={styles.influencerContent}>
+        <Avatar
+          src={user.profile?.avatar}
+          name={displayName}
+          size={180}
+          className={styles.largeAvatar}
+        />
+
+        <h1 className={styles.influencerName}>{displayName}</h1>
+        <p className={styles.influencerUsername}>@{user.username}</p>
+
+        {(user.profile?.jobTitle || user.profile?.organization) && (
+          <div className={styles.influencerMeta}>
             {user.profile.jobTitle && (
-              <p className={styles.jobTitle}>{user.profile.jobTitle}</p>
+              <span className={styles.jobTitle}>{user.profile.jobTitle}</span>
+            )}
+            {user.profile.jobTitle && user.profile.organization && (
+              <span className={styles.separator}>•</span>
             )}
             {user.profile.organization && (
-              <p className={styles.organization}>{user.profile.organization}</p>
+              <span className={styles.organization}>{user.profile.organization}</span>
             )}
-          </div>
-        </div>
-
-        {user.profile.bio && (
-          <div className={styles.bio}>
-            <p>{user.profile.bio}</p>
           </div>
         )}
 
-        {(Object.values(user.social).some(v => v) || user.social.custom?.length) && (
-          <div className={styles.social}>
-            <h2 className={styles.sectionTitle}>Connect</h2>
-            <div className={styles.socialLinks}>
-              {Object.entries(user.social).map(([platform, url]) => {
-                if (!url || platform === 'custom') return null;
-                const Icon = socialIcons[platform];
-                return (
-                  <a
-                    key={platform}
-                    href={url as string}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.socialLink}
-                    aria-label={platform}
-                  >
-                    <Icon size={20} />
-                    <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
-                    <ExternalLink size={14} className={styles.externalIcon} />
-                  </a>
-                );
-              })}
-              {user.social.custom?.map((link, index) => (
+        {user.profile?.bio && (
+          <p className={styles.influencerBio}>{user.profile.bio}</p>
+        )}
+
+        {socialLinks.length > 0 && (
+          <div className={styles.socialIcons}>
+            {socialLinks.map((link, index) => {
+              const Icon = link.icon;
+              return (
                 <a
                   key={index}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={styles.socialLink}
+                  className={styles.socialIconButton}
+                  aria-label={link.label}
+                  title={link.label}
                 >
-                  <Globe size={20} />
-                  <span>{link.name}</span>
-                  <ExternalLink size={14} className={styles.externalIcon} />
+                  <Icon size={24} />
                 </a>
-              ))}
-            </div>
+              );
+            })}
           </div>
         )}
 

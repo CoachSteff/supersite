@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { User } from 'lucide-react';
 import Avatar from './Avatar';
 import AuthModal from './AuthModal';
 import UserMenu from './UserMenu';
+import Notification from './Notification';
 import styles from '@/styles/AuthButton.module.css';
 
 interface UserProfile {
@@ -19,10 +21,12 @@ interface UserProfile {
 }
 
 export default function AuthButton() {
+  const router = useRouter();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -52,6 +56,8 @@ export default function AuthButton() {
       await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
       setShowMenu(false);
+      setShowNotification(true);
+      router.push('/');
     } catch (error) {
       console.error('[AuthButton] Logout failed:', error);
     }
@@ -128,6 +134,12 @@ export default function AuthButton() {
         <AuthModal
           onClose={() => setShowModal(false)}
           onSuccess={handleAuthSuccess}
+        />
+      )}
+      {showNotification && (
+        <Notification
+          message="You have been signed out successfully"
+          onClose={() => setShowNotification(false)}
         />
       )}
     </>

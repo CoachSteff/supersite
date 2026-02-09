@@ -257,6 +257,71 @@
   color: var(--text-secondary);
 }
 
+.customLinksSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.customLinksHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.customLinksHeader .subtitle {
+  margin: 0;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: var(--secondary-color);
+}
+
+.customLink {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: var(--spacing-sm);
+  align-items: start;
+}
+
+.customLink .field {
+  margin: 0;
+}
+
+.removeCustomButton {
+  padding: var(--spacing-sm);
+  background-color: var(--error-bg, rgba(239, 68, 68, 0.1));
+  color: var(--error-color, rgb(239, 68, 68));
+  border: 1px solid var(--error-border, rgba(239, 68, 68, 0.3));
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.removeCustomButton:hover {
+  background-color: var(--error-color, rgb(239, 68, 68));
+  color: white;
+}
+
 @media (max-width: 640px) {
   .avatarSection {
     flex-direction: column;
@@ -277,5 +342,14 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-xs);
+  }
+
+  .customLink {
+    grid-template-columns: 1fr;
+  }
+
+  .removeCustomButton {
+    margin-top: var(--spacing-sm);
+    width: 100%;
   }
 }

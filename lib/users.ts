@@ -31,14 +31,10 @@ export interface UserProfile {
     avatar?: string;
   };
   social: {
-    twitter?: string;
+    x?: string;
     linkedin?: string;
     github?: string;
-    facebook?: string;
-    instagram?: string;
-    youtube?: string;
     website?: string;
-    blog?: string;
     custom?: CustomSocialLink[];
   };
   settings: {
@@ -147,14 +143,10 @@ export function createUser(email: string, data?: Partial<UserProfile>): UserProf
       avatar: data?.profile?.avatar || '',
     },
     social: {
-      twitter: data?.social?.twitter || '',
+      x: data?.social?.x || '',
       linkedin: data?.social?.linkedin || '',
       github: data?.social?.github || '',
-      facebook: data?.social?.facebook || '',
-      instagram: data?.social?.instagram || '',
-      youtube: data?.social?.youtube || '',
       website: data?.social?.website || '',
-      blog: data?.social?.blog || '',
       custom: data?.social?.custom || [],
     },
     settings: {
