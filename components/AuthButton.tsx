@@ -126,7 +126,7 @@ export default function AuthButton() {
   }
 
   if (user) {
-    const displayName = user.profile.firstName || user.username;
+    const displayName = user.profile.firstName || user.username || 'User';
     
     return (
       <div className={styles.userContainer}>
