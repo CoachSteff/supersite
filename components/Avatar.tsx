@@ -5,61 +5,15 @@ import { User } from 'lucide-react';
 
 interface AvatarProps {
   src?: string;
-  name: string;
+  name?: string;
   size?: number;
   className?: string;
 }
 
-function getInitials(name: string): string | null {
-  // Return null for invalid/missing names
-  if (!name || name.trim() === '') return null;
-  
-  // Check for generic/reserved names
-  const lowerName = name.toLowerCase().trim();
-  if (lowerName === 'anonymous' || lowerName === '?' || lowerName === 'user') {
-    return null;
-  }
-  
-  // Check if name contains at least one alphanumeric character
-  if (!/[a-zA-Z0-9]/.test(name)) return null;
-  
-  // Existing logic for valid names
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
-
-function getColorFromString(str: string): string {
-  const colors = [
-    '#ef4444', // red
-    '#f97316', // orange
-    '#f59e0b', // amber
-    '#84cc16', // lime
-    '#10b981', // emerald
-    '#14b8a6', // teal
-    '#06b6d4', // cyan
-    '#3b82f6', // blue
-    '#6366f1', // indigo
-    '#8b5cf6', // violet
-    '#a855f7', // purple
-    '#ec4899', // pink
-  ];
-  
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  
-  return colors[Math.abs(hash) % colors.length];
-}
-
-export default function Avatar({ src, name, size = 40, className = '' }: AvatarProps) {
+export default function Avatar({ src, name = 'User', size = 40, className = '' }: AvatarProps) {
   const [imageError, setImageError] = useState(false);
-  const initials = getInitials(name);
-  const backgroundColor = initials ? getColorFromString(name) : 'var(--border-color)';
 
+  // Show profile picture if available and loads successfully
   if (src && !imageError) {
     return (
       <img
@@ -77,6 +31,7 @@ export default function Avatar({ src, name, size = 40, className = '' }: AvatarP
     );
   }
 
+  // Default: Show User icon in gray circle
   return (
     <div
       className={className}
@@ -84,18 +39,16 @@ export default function Avatar({ src, name, size = 40, className = '' }: AvatarP
         width: size,
         height: size,
         borderRadius: '50%',
-        backgroundColor,
-        color: initials ? 'white' : 'var(--text-secondary)',
+        backgroundColor: 'var(--border-color)',
+        color: 'var(--text-secondary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontWeight: 600,
-        fontSize: size * 0.4,
         userSelect: 'none',
       }}
-      aria-label={name || 'User'}
+      aria-label={name}
     >
-      {initials ? initials : <User size={size * 0.5} />}
+      <User size={size * 0.5} />
     </div>
   );
 }
