@@ -288,6 +288,7 @@ export function applyThemeOverrides(
       layout: { ...theme.structure.layout, ...overrides.structure?.layout },
       hero: { ...theme.structure.hero, ...overrides.structure?.hero },
       footer: { ...theme.structure.footer, ...overrides.structure?.footer },
+      chatLayout: overrides.structure?.chatLayout ?? theme.structure.chatLayout,
     },
     blocks: {
       ...theme.blocks,

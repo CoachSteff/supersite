@@ -14,6 +14,9 @@ interface ClientConfig {
       offsetY: number;
       icon?: string;
     };
+    window?: {
+      layout?: 'popup' | 'center' | 'sidebar';
+    };
   };
 }
 
@@ -32,7 +35,13 @@ export default function ChatButton() {
     return null;
   }
 
+  // Don't show button for center or sidebar layouts (chat is always visible)
+  if (config && config.chat?.window?.layout && ['center', 'sidebar'].includes(config.chat.window.layout)) {
+    return null;
+  }
+
   const getPositionStyles = () => {
+    if (!config) return {};
     const { position, offsetX, offsetY } = config.chat.button;
     
     const styles: React.CSSProperties = {
@@ -56,7 +65,7 @@ export default function ChatButton() {
   };
 
   // Use Sparkles for AI-first feel, MessageCircle as fallback
-  const Icon = config.chat.button?.icon === 'sparkles' ? Sparkles : MessageCircle;
+  const Icon = config?.chat.button?.icon === 'sparkles' ? Sparkles : MessageCircle;
 
   return (
     <button

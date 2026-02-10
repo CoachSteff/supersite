@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Copy, Star, Share2 } from 'lucide-react';
 import { isFavorite, toggleFavorite } from '@/lib/favorites';
 import SharePopup from './SharePopup';
+import LanguageSwitcher from './LanguageSwitcher';
 import styles from '@/styles/PageActions.module.css';
 
 interface PageActionsProps {
@@ -54,6 +55,8 @@ export default function PageActions({ title, markdown, path, url }: PageActionsP
           <Copy size={18} />
           {showCopied && <span className={styles.feedback}>Copied!</span>}
         </button>
+
+        <LanguageSwitcher compact />
 
         <button 
           className={`${styles.actionButton} ${isFavorited ? styles.starred : ''}`}

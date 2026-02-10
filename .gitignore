@@ -9,6 +9,11 @@
 /test-results/
 /playwright/.cache/
 
+# testing (development only)
+__tests__/
+__mocks__/
+e2e/
+
 # next.js
 /.next/
 /out/
@@ -19,6 +24,9 @@
 # misc
 .DS_Store
 *.pem
+
+# translation cache
+.cache/
 
 # debug
 npm-debug.log*
@@ -36,6 +44,12 @@ yarn-error.log*
 # personal notes
 WARP.md
 *.personal.md
+
+# development documentation
+*TEST*.md
+*REPORT*.md
+test-*.md
+*.bak
 
 # user configuration (overrides template config)
 config/site.local.yaml

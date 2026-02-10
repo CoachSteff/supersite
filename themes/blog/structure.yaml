@@ -1,3 +1,5 @@
+chatLayout: popup
+
 header:
   enabled: true
   style: "minimal"

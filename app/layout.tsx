@@ -7,6 +7,7 @@ import Sidebar from '@/components/Sidebar';
 import { ChatProvider } from '@/components/ChatProvider';
 import ChatButton from '@/components/ChatButton';
 import ChatWindow from '@/components/ChatWindow';
+import CenterChatLayout from '@/components/CenterChatLayout';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import Hero from '@/components/Hero';
 import AnonymousCookieNotice from '@/components/AnonymousCookieNotice';
@@ -84,6 +85,10 @@ export default async function RootLayout({
   const LayoutComponent = getLayoutComponent(layout.type as any);
   const { maxWidth, contentWidth, sidebarWidth } = layout;
   
+  // Check if chat should be in center layout mode
+  // Priority: site config overrides > theme default
+  const chatInCenter = (config.chat?.window?.layout ?? theme.structure.chatLayout) === 'center';
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -108,47 +113,61 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body style={{ paddingTop: config.admin?.toolbar ? '42px' : '0' }}>
         <ThemeProvider theme={theme}>
           <ThemeContextProvider theme={theme}>
             <ChatProvider>
-              <AdminToolbar enabled={config.admin?.toolbar ?? false} />
-              <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
-              <Header 
-                style={header.style}
-                sticky={header.sticky}
-                showLogo={header.logo}
-                showSearch={header.search && features.search}
-                showAuth={authEnabled}
-              />
-              {hero.enabled && (
-                <Hero 
-                  type={hero.type as any}
-                  height={hero.height}
-                  config={config}
-                  user={primaryUser}
-                />
-              )}
-              <LayoutComponent
-                maxWidth={maxWidth}
-                contentWidth={contentWidth}
-                sidebarWidth={sidebarWidth}
-                sidebar={showSidebar && sidebarData ? (
-                  <Sidebar 
-                    widgets={theme.blocks.sidebar}
-                    categories={sidebarData.categories}
-                    tags={sidebarData.tags}
-                    recentPosts={sidebarData.recentPosts}
-                    socialLinks={config.social}
+              {chatInCenter ? (
+                // Center chat layout (ChatGPT-style)
+                <>
+                  <AdminToolbar enabled={config.admin?.toolbar ?? false} />
+                  <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
+                  <CenterChatLayout config={config} user={primaryUser}>
+                    {children}
+                  </CenterChatLayout>
+                </>
+              ) : (
+                // Standard layout with floating/popup chat
+                <>
+                  <AdminToolbar enabled={config.admin?.toolbar ?? false} />
+                  <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
+                  <Header 
+                    style={header.style}
+                    sticky={header.sticky}
+                    showLogo={header.logo}
+                    showSearch={header.search && features.search}
+                    showAuth={authEnabled}
                   />
-                ) : undefined}
-              >
-                {children}
-              </LayoutComponent>
-              <Footer style={footer.style} />
-              {features.chat && <ChatButton />}
-              {features.chat && <ChatWindow />}
-              <AnonymousCookieNotice />
+                  {hero.enabled && (
+                    <Hero 
+                      type={hero.type as any}
+                      height={hero.height}
+                      config={config}
+                      user={primaryUser}
+                    />
+                  )}
+                  <LayoutComponent
+                    maxWidth={maxWidth}
+                    contentWidth={contentWidth}
+                    sidebarWidth={sidebarWidth}
+                    sidebar={showSidebar && sidebarData ? (
+                      <Sidebar 
+                        widgets={theme.blocks.sidebar}
+                        categories={sidebarData.categories}
+                        tags={sidebarData.tags}
+                        recentPosts={sidebarData.recentPosts}
+                        socialLinks={config.social}
+                      />
+                    ) : undefined}
+                  >
+                    {children}
+                  </LayoutComponent>
+                  <Footer style={footer.style} />
+                  {features.chat && <ChatButton />}
+                  {features.chat && <ChatWindow />}
+                  <AnonymousCookieNotice />
+                </>
+              )}
             </ChatProvider>
           </ThemeContextProvider>
         </ThemeProvider>

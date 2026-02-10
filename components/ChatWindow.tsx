@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Minimize2, Maximize2, Trash2, Sparkles, Mic } from 'lucide-react';
+import { X, Send, Trash2, Sparkles, Mic, Plus } from 'lucide-react';
 import { useChat } from './ChatProvider';
 import ChatMessage from './ChatMessage';
 import VoiceInput from './VoiceInput';
@@ -44,7 +44,6 @@ export default function ChatWindow() {
   
   const [input, setInput] = useState('');
   const [config, setConfig] = useState<ClientConfig | null>(null);
-  const [isMinimized, setIsMinimized] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -57,17 +56,27 @@ export default function ChatWindow() {
   }, []);
 
   useEffect(() => {
-    if (messagesEndRef.current && !isMinimized) {
+    if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isMinimized]);
+  }, [messages]);
+
+  // Scroll to bottom when chat opens (including on page navigation)
+  useEffect(() => {
+    if (isOpen && messagesEndRef.current && messages.length > 0) {
+      // Use a small delay to ensure DOM is ready
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [isOpen, messages.length]);
 
   // Focus input when chat opens
   useEffect(() => {
-    if (isOpen && inputRef.current && !isMinimized) {
+    if (isOpen && inputRef.current) {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [isOpen, isMinimized]);
+  }, [isOpen]);
 
   if (!isOpen || !config?.chat.enabled) {
     return null;
@@ -94,7 +103,7 @@ export default function ChatWindow() {
     const { position, width, height } = config.chat.window;
     
     const baseStyles: React.CSSProperties = {
-      maxHeight: isMinimized ? '60px' : `${height}px`,
+      maxHeight: `${height}px`,
     };
 
     const isDocked = position.includes('docked');
@@ -128,7 +137,7 @@ export default function ChatWindow() {
             ...baseStyles,
             width: '100%',
             height: `${height}px`,
-            maxHeight: isMinimized ? '60px' : `${height}px`,
+            maxHeight: `${height}px`,
             bottom: 0,
             left: 0,
             right: 0,
@@ -183,19 +192,12 @@ export default function ChatWindow() {
             <button
               onClick={clearMessages}
               className={styles.controlButton}
-              aria-label="Clear chat"
-              title="Clear conversation"
+              aria-label="New chat"
+              title="Start new conversation"
             >
-              <Trash2 size={16} />
+              <Plus size={16} />
             </button>
           )}
-          <button
-            onClick={() => setIsMinimized(!isMinimized)}
-            className={styles.controlButton}
-            aria-label={isMinimized ? 'Maximize' : 'Minimize'}
-          >
-            {isMinimized ? <Maximize2 size={18} /> : <Minimize2 size={18} />}
-          </button>
           <button
             onClick={toggleChat}
             className={styles.controlButton}
@@ -206,9 +208,7 @@ export default function ChatWindow() {
         </div>
       </div>
 
-      {!isMinimized && (
-        <>
-          <div className={styles.chatMessages}>
+      <div className={styles.chatMessages}>
             {messages.length === 0 && (
               <div className={styles.welcomeMessage}>
                 <Sparkles size={24} className={styles.welcomeIcon} />
@@ -303,8 +303,6 @@ export default function ChatWindow() {
               <kbd>⌘</kbd><kbd>K</kbd> to open • <kbd>Esc</kbd> to close
             </span>
           </div>
-        </>
-      )}
     </div>
   );
 }

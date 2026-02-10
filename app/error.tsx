@@ -24,14 +24,14 @@ export default function Error({
       textAlign: 'center',
     }}>
       <h2 style={{ marginBottom: '1rem' }}>Something went wrong!</h2>
-      <p style={{ marginBottom: '2rem', color: '#666' }}>
+      <p style={{ marginBottom: '2rem', color: 'var(--text-light)' }}>
         {error.message || 'An unexpected error occurred'}
       </p>
       <button
         onClick={reset}
         style={{
           padding: '0.5rem 1rem',
-          backgroundColor: '#2563eb',
+          backgroundColor: 'var(--primary-color)',
           color: 'white',
           border: 'none',
           borderRadius: '4px',

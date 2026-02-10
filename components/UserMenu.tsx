@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { User, Settings, LogOut, Bell } from 'lucide-react';
+import { User, Settings, LogOut, Bell, Star } from 'lucide-react';
 import Avatar from './Avatar';
 import NotificationPanel from './NotificationPanel';
 import styles from '@/styles/UserMenu.module.css';
@@ -166,6 +166,10 @@ export default function UserMenu({
                 <span className={styles.badge}>{unreadCount > 9 ? '9+' : unreadCount}</span>
               )}
             </button>
+            <Link href="/favourites" className={styles.menuItem} onClick={onClose}>
+              <Star size={16} />
+              Favourites
+            </Link>
             <Link href={`/user/${user.username}`} className={styles.menuItem} onClick={onClose}>
               <User size={16} />
               View Profile

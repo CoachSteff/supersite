@@ -121,7 +121,18 @@ features:
   search: true                             # Enable site search
   blog: true                               # Enable blog
   contactForm: true                        # Enable contact form
+  favorites: true                          # Enable favourites/bookmarking system
+  languageSwitcher: true                   # Show language switcher in header
   analytics: false                         # Enable analytics (future)
+
+multilingual:
+  enabled: true                            # Enable multi-language support
+  supportedLanguages: [en, nl, fr, de, es, it, pt]  # Supported language codes
+  defaultLanguage: en                      # Default language
+  useAiTranslation: true                   # Use AI for content translation
+  caching:
+    enabled: true                          # Cache translations
+    directory: .cache/translations         # Cache storage location
 
 content:
   customDirectory: "content-custom"        # User content location (override in site.local.yaml)
@@ -594,6 +605,75 @@ chat:
 - **Medium temperature (0.4-0.7):** Balanced creativity and accuracy
 - **High temperature (0.8-1.0):** More creative, varied responses
 
+### Multilingual Support
+
+The AI assistant automatically detects and responds in the user's language. This feature works out of the box with no additional configuration needed.
+
+**Configuration:**
+```yaml
+chat:
+  multilingual:
+    enabled: true          # Enable auto-detection (default: true)
+    fallbackLanguage: en   # Default language when uncertain (default: en)
+    autoDetect: true       # Auto-detect from user input (default: true)
+```
+
+**How it works:**
+1. **Primary detection:** Analyzes user input using character ranges and language patterns
+2. **Browser fallback:** Uses Accept-Language header when input is ambiguous
+3. **Default fallback:** Falls back to `fallbackLanguage` (usually 'en')
+
+**Supported Languages:**
+
+The system automatically detects and responds in:
+- **European:** English (en), Spanish (es), French (fr), German (de), Portuguese (pt), Italian (it), Dutch (nl), Polish (pl), Turkish (tr), Russian (ru)
+- **Asian:** Japanese (ja), Korean (ko), Chinese - Simplified & Traditional (zh), Thai (th), Hindi (hi)
+- **Middle Eastern:** Arabic (ar), Hebrew (he)
+- **And more:** All languages via automatic detection
+
+**Examples:**
+
+English conversation:
+```
+User: "What services do you offer?"
+AI: "We offer web development, consulting, and AI integration services..."
+```
+
+Spanish conversation:
+```
+User: "¿Qué servicios ofrecen?"
+AI: "Ofrecemos servicios de desarrollo web, consultoría e integración de IA..."
+```
+
+Japanese conversation:
+```
+User: "どんなサービスを提供していますか？"
+AI: "ウェブ開発、コンサルティング、AI統合サービスを提供しています..."
+```
+
+Chinese conversation:
+```
+User: "你们提供什么服务？"
+AI: "我们提供网站开发、咨询和AI集成服务..."
+```
+
+**Technical Details:**
+
+The language detection uses:
+- Unicode character range analysis (CJK, Cyrillic, Arabic, Hebrew, Thai, Devanagari)
+- Common word pattern matching for Latin-based languages
+- Browser language preference as fallback
+- Lightweight, fast detection with no external API calls
+
+**Disabling multilingual support:**
+
+If you want the AI to always respond in English:
+```yaml
+chat:
+  multilingual:
+    enabled: false
+```
+
 ---
 
 ## Branding & Styling
@@ -816,3 +896,220 @@ features:
   blog: false
   contactForm: false
 ```
+```
+
+---
+
+## Per-Theme Chat Layout Configuration
+
+Each theme has a default chat layout (`popup`, `center`, or `sidebar`). You can override this per-theme in your `site.yaml` or `site.local.yaml`.
+
+### Default Chat Layouts by Theme
+
+- **Chatbot:** `center` (full-screen chat UI)
+- **Base, Blog, Business, Community, Influencer:** `popup` (floating chat button + window)
+
+### Override Chatbot Theme to Use Popup Layout
+
+If you want the chatbot theme but prefer a floating chat button instead of the full-screen layout:
+
+```yaml
+# config/site.local.yaml
+branding:
+  theme: chatbot
+  overrides:
+    structure:
+      chatLayout: popup  # Override chatbot's default 'center' layout
+```
+
+### Override Base Theme to Use Center Layout
+
+If you want the base theme but with a full-screen chat interface:
+
+```yaml
+# config/site.local.yaml
+branding:
+  theme: base
+  overrides:
+    structure:
+      chatLayout: center  # Override base's default 'popup' layout
+```
+
+### Global Override (All Themes)
+
+To apply the same layout to all themes regardless of their defaults:
+
+```yaml
+# config/site.yaml
+chat:
+  window:
+    layout: center  # Forces all themes to use center layout
+```
+
+**Note:** The `chat.window.layout` setting takes precedence over theme defaults. Remove or comment out this setting to use per-theme defaults.
+
+### Theme Switching Behavior
+
+When you switch themes using the theme switcher:
+
+1. **Without global override:** Each theme uses its default layout
+   - Switching from Chatbot → Base automatically changes from center to popup layout
+   - Switching from Base → Chatbot automatically changes from popup to center layout
+
+2. **With global override:** All themes use the same layout specified in `chat.window.layout`
+   - Theme switching does not change the chat layout
+
+### Example Configurations
+
+#### Scenario 1: Use Theme Defaults (Recommended)
+
+```yaml
+# config/site.yaml
+branding:
+  theme: chatbot  # Uses center layout automatically
+
+chat:
+  # ... other chat config
+  window:
+    position: bottom-right
+    width: 400
+    height: 600
+    # layout: center  ← Comment out or remove to use theme defaults
+```
+
+When you switch to `theme: base`, it automatically uses `popup` layout.
+
+#### Scenario 2: Custom Per-Theme Configuration
+
+```yaml
+# config/site.local.yaml
+branding:
+  theme: business
+  overrides:
+    structure:
+      chatLayout: center  # Business theme with full-screen chat
+```
+
+#### Scenario 3: Force All Themes to Same Layout
+
+```yaml
+# config/site.yaml
+chat:
+  window:
+    layout: popup  # All themes use floating chat, even chatbot
+```
+
+---
+
+## Internationalization Configuration
+
+SuperSite supports multi-language content with automatic language detection and AI-powered translation.
+
+### Supported Languages
+
+17 languages are supported out of the box:
+- **European**: English (en), Spanish (es), French (fr), German (de), Portuguese (pt), Italian (it), Dutch (nl), Polish (pl), Turkish (tr), Russian (ru)
+- **Asian**: Japanese (ja), Korean (ko), Chinese (zh), Thai (th), Hindi (hi)
+- **Middle Eastern**: Arabic (ar), Hebrew (he)
+
+### Configuration
+
+```yaml
+multilingual:
+  enabled: true                            # Enable multi-language support
+  supportedLanguages: [en, nl, fr, de, es, it, pt]
+  defaultLanguage: en
+  useAiTranslation: true                   # Use AI for content translation
+  caching:
+    enabled: true                          # Cache translations for performance
+    directory: .cache/translations         # Where to store cached translations
+
+features:
+  languageSwitcher: true                   # Show language selector in header
+```
+
+### How It Works
+
+1. **Language Detection**: Automatically detects language from:
+   - User's browser language preference
+   - Text input (for chat responses)
+   - URL path (e.g., `/nl/about`, `/fr/blog`)
+
+2. **AI Translation**: When enabled, content is translated on-demand using your configured AI provider
+
+3. **Caching**: Translations are cached by content hash for fast subsequent loads
+
+4. **URL Routing**: Access translated content via language prefix:
+   - English (default): `/about`, `/blog`
+   - Dutch: `/nl/about`, `/nl/blog`
+   - French: `/fr/about`, `/fr/blog`
+
+### Language Switcher
+
+The language switcher component appears in the header when enabled:
+- Dropdown with flag icons
+- Automatic URL generation for each language
+- Loading state during translation
+- Preserves current page path
+
+### Translation Behavior
+
+- Preserves all markdown formatting
+- Maintains frontmatter structure
+- Keeps URLs and file paths unchanged
+- Uses natural, fluent target language
+- Caches results for performance
+
+### Example: Enable Dutch and French
+
+```yaml
+# config/site.local.yaml
+multilingual:
+  enabled: true
+  supportedLanguages: [en, nl, fr]
+  defaultLanguage: en
+  useAiTranslation: true
+
+features:
+  languageSwitcher: true
+```
+
+Users can now:
+- Click language switcher to select Dutch or French
+- Visit `/nl/` or `/fr/` URLs directly
+- See content translated automatically
+- Experience fast loads thanks to caching
+
+---
+
+## Favourites/Bookmarking System
+
+Users can save and organize their favourite pages and blog posts.
+
+### Configuration
+
+```yaml
+features:
+  favorites: true                          # Enable bookmarking system
+```
+
+### Features
+
+- Star icon on all pages for quick bookmarking
+- `/favourites` page with saved items
+- Search and filter functionality
+- Filter by type (pages vs blog posts)
+- Persistent storage in browser localStorage
+- Remove favourites with one click
+
+### Usage
+
+When enabled:
+1. Star icon appears on every page and blog post
+2. Click to add/remove from favourites
+3. Visit `/favourites` to manage bookmarks
+4. Search, filter, and organize saved items
+
+The favourites system requires no backend—all data is stored locally in the browser.
+
+---

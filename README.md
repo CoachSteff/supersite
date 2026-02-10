@@ -1,4 +1,4 @@
-# Supersite
+# SuperSite
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org/)
@@ -18,8 +18,16 @@ Part of the **Super** family: [superskills](https://github.com/coachsteff/supers
 ### AI-Powered
 - **Intelligent Chat Assistant**: AI chatbot that understands your site content
 - **Multi-Provider Support**: Switch between Anthropic Claude, OpenAI GPT, Google Gemini, or local Ollama
+- **Multilingual Support**: Automatically detects and responds in user's language (17 languages supported)
 - **Context-Aware**: Automatically uses your markdown content to answer questions
 - **Configurable Behavior**: Customize AI personality and behavior via YAML
+
+### User Experience
+- **Favourites/Bookmarking**: Save and organize favourite pages and blog posts
+- **Multi-language Ready**: 17 languages with automatic detection and AI translation
+- **Language Switcher**: Easy language selection with flag icons
+- **Loading States**: Smooth transitions and progress indicators
+- **Translation Caching**: Fast performance with intelligent content caching
 
 ### Configuration-Driven
 - **YAML Configuration**: All settings in one file (`config/site.yaml`)
@@ -208,7 +216,25 @@ chat:
   button:
     position: "bottom-center"  # or bottom-left, bottom-right
   welcomeMessage: "Hi! How can I help?"
+  multilingual:
+    enabled: true          # Auto-detect and respond in user's language
+    fallbackLanguage: en   # Default when detection is uncertain
 ```
+
+### Multilingual Support
+
+The AI assistant automatically detects and responds in the user's language:
+- **Auto-detection**: Analyzes user input to identify language
+- **Browser fallback**: Uses browser language preference when needed
+- **15+ Languages**: English, Spanish, French, German, Portuguese, Italian, Dutch, Polish, Turkish, Russian, Japanese, Korean, Chinese, Arabic, Hebrew, Thai, Hindi
+- **No configuration needed**: Works out of the box
+- **Consistent tone**: Maintains friendly, helpful personality across all languages
+
+Example conversations:
+- User: "Hello, what can you do?" → AI responds in English
+- User: "Hola, ¿qué puedes hacer?" → AI responds in Spanish  
+- User: "こんにちは、何ができますか？" → AI responds in Japanese
+- User: "你好，你能做什么？" → AI responds in Chinese
 
 ### Supported Providers
 
@@ -350,9 +376,11 @@ Perfect for:
 
 ## 📦 What Makes This Special
 
-✅ **True Configuration-Driven**: Change everything via YAML
+✅ **True Configuration-Driven**: Change everything via YAML  
 ✅ **AI-Native**: Built-in AI chat, not an afterthought  
 ✅ **Multi-Provider**: Never locked into one AI service  
+✅ **Multi-language Ready**: 17 languages with AI translation  
+✅ **User Bookmarking**: Built-in favourites system  
 ✅ **Content-First**: Markdown everywhere, no database needed  
 ✅ **Production-Ready**: SEO, dark mode, responsive, fast  
 ✅ **Developer-Friendly**: TypeScript, modular, well-documented  

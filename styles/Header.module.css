@@ -7,6 +7,7 @@
 .sticky {
   position: sticky;
   top: 0;
+  z-index: 200; /* Ensure Header stays above content but below AdminToolbar (9999) */
 }
 
 /* Header styles */

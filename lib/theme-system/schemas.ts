@@ -51,6 +51,7 @@ export const NavigationStyleSchema = z.enum(['horizontal', 'vertical', 'hamburge
 export const NavigationPositionSchema = z.enum(['header', 'sidebar', 'footer']);
 export const HeroTypeSchema = z.enum(['none', 'text', 'image', 'featured-post', 'profile', 'chat']);
 export const FooterStyleSchema = z.enum(['full', 'minimal', 'centered', 'none']);
+export const ChatLayoutSchema = z.enum(['popup', 'center', 'sidebar']);
 
 export const HeaderSchema = z.object({
   enabled: z.boolean().default(true),
@@ -116,6 +117,7 @@ export const StructureSchema = z.object({
   layout: LayoutSchema,
   hero: HeroSchema,
   footer: FooterSchema,
+  chatLayout: ChatLayoutSchema.optional().default('popup'),
 });
 
 export type Structure = z.infer<typeof StructureSchema>;

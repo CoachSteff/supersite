@@ -22,6 +22,24 @@ const ThemeOverridesSchema = z.object({
   typography: z.record(z.string(), z.string()).optional(),
   spacing: z.record(z.string(), z.string()).optional(),
   layout: z.record(z.string(), z.string()).optional(),
+  structure: z.object({
+    chatLayout: z.enum(['popup', 'center', 'sidebar']).optional(),
+  }).optional(),
+}).optional();
+
+const MultilingualConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  defaultLanguage: z.string().default('en'),
+  supportedLanguages: z.array(z.string()).default(['en', 'nl', 'fr']),
+  useAiTranslation: z.boolean().default(true),
+  caching: z.object({
+    enabled: z.boolean().default(true),
+    strategy: z.enum(['memory', 'filesystem']).default('filesystem'),
+    directory: z.string().default('.cache/translations'),
+  }).optional(),
+  seo: z.object({
+    generateHreflang: z.boolean().default(true),
+  }).optional(),
 }).optional();
 
 const SiteConfigSchema = z.object({
@@ -86,6 +104,11 @@ const SiteConfigSchema = z.object({
       enabled: z.boolean().optional().default(true),
       maxSuggestions: z.number().optional().default(3),
     }).optional(),
+    multilingual: z.object({
+      enabled: z.boolean().optional().default(true),
+      fallbackLanguage: z.string().optional().default('en'),
+      autoDetect: z.boolean().optional().default(true),
+    }).optional(),
     button: z.object({
       position: ChatButtonPositionSchema,
       offsetX: z.number(),
@@ -96,6 +119,7 @@ const SiteConfigSchema = z.object({
       position: ChatWindowPositionSchema,
       width: z.number(),
       height: z.number(),
+      layout: z.enum(['popup', 'center', 'sidebar']).optional(),
     }),
     welcomeMessage: z.string(),
     placeholder: z.string(),
@@ -136,6 +160,7 @@ const SiteConfigSchema = z.object({
     enabled: z.boolean().default(false),
     requireApproval: z.boolean().optional().default(false),
   }).optional(),
+  multilingual: MultilingualConfigSchema,
 });
 
 export type SiteConfig = z.infer<typeof SiteConfigSchema>;

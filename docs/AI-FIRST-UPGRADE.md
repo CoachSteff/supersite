@@ -48,6 +48,14 @@ Transform SuperSite from a "website with AI chat" into a truly **AI-first framew
 - Context-aware recommendations
 - One-click interactions
 
+### 9. ✅ Multilingual Support
+- Automatic language detection from user input
+- Browser language preference fallback
+- Responds in user's language automatically
+- Supports all major languages (English, Spanish, French, German, Portuguese, Italian, Japanese, Korean, Chinese, Russian, Arabic, Hebrew, Thai, Hindi, and more)
+- Consistent friendly tone across all languages
+- No configuration needed - works out of the box
+
 ## Architecture Changes
 
 ### New Files
@@ -55,15 +63,18 @@ Transform SuperSite from a "website with AI chat" into a truly **AI-first framew
 - `lib/ai-actions.ts` - Action execution engine
 - `lib/voice.ts` - Voice input/output utilities
 - `lib/intent-detector.ts` - Smart intent detection
+- `lib/language-detector.ts` - Language detection utilities
 - `components/VoiceInput.tsx` - Voice input component
 - `components/ActionSuggestions.tsx` - Quick action UI
 - `components/KeyboardShortcuts.tsx` - Global shortcuts
 
 ### Modified Files
-- `app/api/chat/route.ts` - Streaming support
+- `app/api/chat/route.ts` - Streaming support + language detection
+- `app/api/chat/stream/route.ts` - Language detection
 - `lib/ai-providers.ts` - Streaming methods
+- `lib/config.ts` - Multilingual config schema
 - `components/ChatWindow.tsx` - Voice + actions
-- `config/site.yaml` - New AI options
+- `config/site.yaml` - New AI options + multilingual settings
 
 ## Configuration Example
 
@@ -92,6 +103,10 @@ chat:
   suggestions:
     enabled: true
     maxSuggestions: 3
+  multilingual:
+    enabled: true
+    fallbackLanguage: "en"
+    autoDetect: true
 ```
 
 ## Future Roadmap

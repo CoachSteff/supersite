@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { parseActions, AIAction, actionExecutor } from '@/lib/ai-actions';
 
 export interface ChatMessage {
@@ -38,6 +39,7 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'supersite_chat_history';
+const CHAT_STATE_KEY = 'supersite_chat_open';
 const DEFAULT_CONFIG: ChatConfig = {
   streaming: true,
   memory: { enabled: true, maxMessages: 50 },
@@ -45,13 +47,29 @@ const DEFAULT_CONFIG: ChatConfig = {
 };
 
 export function ChatProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => {
+    // Initialize from localStorage to persist across page navigation
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(CHAT_STATE_KEY);
+      return stored === 'true';
+    }
+    return false;
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [config, setConfig] = useState<ChatConfig>(DEFAULT_CONFIG);
+
+  // Extract current language from pathname
+  const getCurrentLanguage = useCallback(() => {
+    const pathParts = pathname.split('/').filter(Boolean);
+    const supportedLanguages = ['en', 'nl', 'fr'];
+    const firstSegment = pathParts[0];
+    return supportedLanguages.includes(firstSegment) ? firstSegment : 'en';
+  }, [pathname]);
 
   // Load config and messages from storage
   useEffect(() => {
@@ -113,6 +131,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [...messages, userMessage].map(({ role, content }) => ({ role, content })),
+          currentLanguage: getCurrentLanguage(),
         }),
       });
 
@@ -215,6 +234,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [...messages, userMessage].map(({ role, content }) => ({ role, content })),
+          currentLanguage: getCurrentLanguage(),
         }),
       });
 
@@ -260,7 +280,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, [config.streaming, sendMessageStreaming, sendMessageNonStreaming]);
 
   const toggleChat = useCallback(() => {
-    setIsOpen(prev => !prev);
+    setIsOpen(prev => {
+      const newState = !prev;
+      // Persist the open/closed state to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(CHAT_STATE_KEY, String(newState));
+      }
+      return newState;
+    });
   }, []);
 
   const clearMessages = useCallback(() => {

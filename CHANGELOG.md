@@ -7,9 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-02-09
+## [0.2.0] - 2026-02-10
 
-### Changed
+### User Features
+- **Favourites/Bookmarking System**: Save and manage favourite pages and blog posts
+  - `/favourites` page with search and filtering
+  - Filter by type (pages vs blog posts)
+  - Persistent storage in localStorage
+  - Star icon on all pages for quick bookmarking
+- **Loading States**: Smooth loading indicators for page transitions
+  - Global loading component (`app/loading.tsx`)
+  - Blog-specific loading state (`app/blog/loading.tsx`)
+  - Translation loading overlay in language switcher
+
+### Internationalization
+- **Multi-language Support**: 17 languages supported with automatic detection
+  - Languages: English, Spanish, French, German, Portuguese, Italian, Dutch, Polish, Turkish, Russian, Japanese, Korean, Chinese, Arabic, Hebrew, Thai, Hindi
+  - Script-based detection: CJK, Cyrillic, Arabic, Hebrew, Thai, Devanagari, Latin
+  - Browser language preference fallback
+- **AI-Powered Translation Service**:
+  - On-demand content translation using AI providers
+  - Translation caching system (`.cache/translations/`)
+  - Preserves markdown formatting and frontmatter
+  - Content hash-based cache keys for efficiency
+- **Language Routing Middleware**:
+  - URL-based language selection (`/nl/`, `/fr/`, etc.)
+  - Header-based language passing to components
+  - Edge-compatible middleware
+- **Language Switcher Component**:
+  - Dropdown with flag icons for all languages
+  - Loading state during translation
+  - Automatic URL generation for language variants
+  - Click-outside detection and keyboard navigation
+
+### Authentication Enhancements
+- **Avatar System Improvements**:
+  - User icon fallback for missing profile pictures
+  - Light/dark mode adaptation for icons
+  - Consistent avatar component usage across app
+  - Profile page layout enhancements
+- **User Profile Features**:
+  - Auto-resize profile images
+  - Dynamic social links display
+  - Influencer-style profile layouts
+
+### Architectural Changes
 - **Architectural Consolidation**: Removed duplicate chat components and legacy theme system
 - Renamed `ChatProviderEnhanced` → `ChatProvider` and `ChatWindowEnhanced` → `ChatWindow`
 - Removed legacy single-file theme system in favor of folder-based themes
@@ -17,7 +59,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Version aligned to 0.2.0 (dropping alpha designation)
 - `getActiveTheme()` now returns `FullTheme` directly instead of legacy `Theme` type
 
-### Added
+### Added Files
+- `lib/language-detector.ts` - Language detection utilities (17 languages)
+- `lib/translation-service.ts` - AI translation with caching
+- `middleware.ts` - Language routing middleware
+- `components/LanguageSwitcher.tsx` - Language selection UI with flags
+- `components/FavouritesList.tsx` - Favourites management component
+- `components/CenterChatLayout.tsx` - Centered chat layout option
+- `components/ChatSidebar.tsx` - Chat sidebar component
+- `app/favourites/page.tsx` - Favourites management page
+- `app/api/favorites/route.ts` - Favourites API endpoint
+- `app/loading.tsx` - Global loading component
+- `app/blog/loading.tsx` - Blog loading component
+- `styles/Favourites.module.css` - Favourites styling
+- `styles/LanguageSwitcher.module.css` - Language switcher styling
+- `styles/Loading.module.css` - Loading component styling
 - Helper functions in `lib/markdown.ts`: `getAllTags()`, `getAllCategories()`, `getRecentBlogPosts()`
 - Social links configuration in `config/site.yaml` and schema
 - Social links widget with icons (Twitter, GitHub, LinkedIn, YouTube, Instagram)
@@ -26,6 +82,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Version confusion between package.json and changelogs
 - TODOs in Sidebar component now resolved with real data
+- React hydration errors in AuthButton
+- Avatar fallback handling for missing user images
 
 ### Removed
 - `components/ChatProvider.tsx` (legacy, superseded by Enhanced version)
@@ -34,6 +92,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `lib/theme-schema.ts` (legacy theme types)
 - Single-file themes: `default.yaml`, `modern.yaml`, `minimal.yaml`, `dark.yaml`, `vibrant.yaml`
 - `getActiveFullTheme()` function (merged with `getActiveTheme()`)
+- Development test files and artifacts (`__tests__/`, `__mocks__/`, `e2e/`, `coverage/`)
+- Development documentation and test reports
 
 ## [0.1.0-alpha.2] - 2024-12-28
 
@@ -179,7 +239,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Environment variable template (env.template)
 
 ### Changed
-- Replaced example content with generic "Supersite" branding
+- Replaced example content with generic "SuperSite" branding
 - Reorganized documentation into `docs/` and `docs/dev/` directories
 - Updated test suite to 100% pass rate
 - Updated `.gitignore` to exclude sensitive files (.cursorrules, .env)

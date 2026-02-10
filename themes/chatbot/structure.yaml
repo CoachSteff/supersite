@@ -1,28 +1,17 @@
+chatLayout: center
+
 header:
-  enabled: true
-  style: "minimal"
-  sticky: true
-  logo: true
-  search: false
-  themeToggle: true
-  auth: true
+  enabled: false
 
 navigation:
   style: "none"
-  position: "header"
-  showIcons: false
 
 layout:
-  type: "centered"
-  maxWidth: "900px"
-  contentWidth: "900px"
-  sidebarWidth: "0"
+  type: "full-width"
 
 hero:
-  enabled: true
-  type: "chat"
-  height: "calc(100vh - 120px)"
+  enabled: false
+  type: "none"
 
 footer:
   enabled: false
-  style: "none"

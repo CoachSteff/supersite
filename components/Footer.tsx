@@ -23,7 +23,7 @@ export default function Footer({ style = 'minimal' }: FooterProps) {
           <>
             <div className={styles.footerGrid}>
               <div className={styles.footerSection}>
-                <h4>Supersite</h4>
+                <h4>SuperSite</h4>
                 <p>Built with Next.js and AI</p>
               </div>
               <div className={styles.footerSection}>
@@ -42,11 +42,11 @@ export default function Footer({ style = 'minimal' }: FooterProps) {
               </div>
             </div>
             <div className={styles.copyright}>
-              <p>&copy; {currentYear} Supersite. All rights reserved.</p>
+              <p>&copy; {currentYear} SuperSite. All rights reserved.</p>
             </div>
           </>
         ) : (
-          <p>&copy; {currentYear} Supersite. All rights reserved.</p>
+          <p>&copy; {currentYear} SuperSite. All rights reserved.</p>
         )}
       </div>
     </footer>

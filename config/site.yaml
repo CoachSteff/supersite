@@ -1,5 +1,5 @@
 site:
-  name: Supersite
+  name: SuperSite
   description: A universal AI-powered website template
   logo: /logo.png
   favicon: /favicon.ico
@@ -13,8 +13,8 @@ auth:
   enabled: true
   requireApproval: false
 seo:
-  defaultTitle: Supersite
-  titleTemplate: '%s | Supersite'
+  defaultTitle: SuperSite
+  titleTemplate: '%s | SuperSite'
   defaultDescription: Universal AI-powered website template built with Next.js
   ogImage: /og-image.png
   twitterHandle: '@supersite'
@@ -28,7 +28,7 @@ navigation:
 chat:
   enabled: true
   provider: anthropic
-  model: claude-3-5-sonnet-20241022
+  model: claude-sonnet-4-20250514
   systemPrompt: You are a helpful AI assistant for this website. Answer questions based on the provided context. Be concise, friendly, and helpful. You can perform actions on the page - see the AI Actions documentation.
   temperature: 0.7
   maxTokens: 1024
@@ -50,15 +50,19 @@ chat:
   suggestions:
     enabled: true
     maxSuggestions: 3
+  multilingual:
+    enabled: true
+    fallbackLanguage: en
+    autoDetect: true
+  window:
+    position: bottom-right
+    width: 400
+    height: 600
   button:
     position: bottom-right
     offsetX: 0
     offsetY: 20
     icon: sparkles
-  window:
-    position: bottom-right
-    width: 420
-    height: 600
   welcomeMessage: Hi! I'm your AI assistant. Ask me anything about this site, or use voice input!
   placeholder: Ask me anything...
 features:
@@ -80,3 +84,17 @@ hero:
   subheading: SuperSite is the fastest way to create intelligent, beautiful sites
   ctaText: Get Started
   ctaLink: /contact
+multilingual:
+  enabled: true
+  defaultLanguage: en
+  supportedLanguages:
+    - en
+    - nl
+    - fr
+  useAiTranslation: true
+  caching:
+    enabled: true
+    strategy: filesystem
+    directory: .cache/translations
+  seo:
+    generateHreflang: true

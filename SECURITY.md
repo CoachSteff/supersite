@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Supersite, please follow these steps:
+If you discover a security vulnerability in SuperSite, please follow these steps:
 
 1. **Do NOT** open a public issue
 2. **Email** the maintainers (details in package.json or GitHub profile)
@@ -22,7 +22,7 @@ We will respond within 48 hours and work with you to address the issue.
 
 ## Security Best Practices
 
-When using Supersite:
+When using SuperSite:
 
 1. **Never commit `.env` or `.env.local` files** - they contain API keys
 2. **Keep dependencies updated** - run `npm audit` regularly

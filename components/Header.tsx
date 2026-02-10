@@ -50,7 +50,7 @@ export default function Header({
       <div className={styles.container}>
         {showLogo && (
           <div className={styles.logo}>
-            <Link href="/">Supersite</Link>
+            <Link href="/">SuperSite</Link>
           </div>
         )}
         

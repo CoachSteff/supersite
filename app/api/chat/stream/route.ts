@@ -3,6 +3,8 @@ import { getSiteConfig } from '@/lib/config';
 import { getStreamingProvider, StreamingMessage } from '@/lib/ai-streaming';
 import { buildContext, truncateContext } from '@/lib/context-builder';
 import { AI_ACTIONS_PROMPT } from '@/lib/ai-actions';
+import { getBrowserLanguage, determineResponseLanguage } from '@/lib/language-detector';
+import { getLanguageName } from '@/lib/translation-service';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -20,7 +22,7 @@ export async function POST(request: NextRequest) {
   (async () => {
     try {
       const body = await request.json();
-      const { messages } = body;
+      const { messages, currentLanguage } = body;
 
       if (!messages || !Array.isArray(messages)) {
         await sendEvent('error', { error: 'Messages array is required' });
@@ -47,8 +49,21 @@ export async function POST(request: NextRequest) {
       const context = await buildContext(lastMessage.content);
       const truncatedContext = truncateContext(context);
 
-      // Build system prompt with actions if enabled
-      let systemPrompt = config.chat.systemPrompt;
+      // Detect language from user message and browser preference
+      const browserLang = getBrowserLanguage(request.headers.get('accept-language') || '');
+      const detectedLang = determineResponseLanguage(lastMessage.content, browserLang);
+
+      // Build system prompt with language instruction
+      const languageInstruction = `\n\nIMPORTANT: Respond in the same language as the user's message. The user is communicating in ${detectedLang}. Match their language exactly and maintain a friendly, helpful tone.`;
+      
+      let systemPrompt = config.chat.systemPrompt + languageInstruction;
+      
+      // Add multilingual context note if user is viewing translated content
+      if (currentLanguage && currentLanguage !== 'en') {
+        const langName = getLanguageName(currentLanguage);
+        systemPrompt += `\n\nNote: The user is currently viewing this website in ${langName}. The content they see is AI-translated from English. If they ask about page content, be aware that the original source content is in English.`;
+      }
+      
       if (config.chat.actions?.enabled) {
         systemPrompt += '\n\n' + AI_ACTIONS_PROMPT;
       }

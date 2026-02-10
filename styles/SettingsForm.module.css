@@ -107,7 +107,7 @@
   left: 2px;
   width: 24px;
   height: 24px;
-  background-color: white;
+  background-color: var(--background);
   border-radius: 50%;
   transition: transform 0.2s;
 }
