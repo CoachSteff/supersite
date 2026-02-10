@@ -40,7 +40,7 @@ export default function Avatar({ src, name = 'User', size = 40, className = '' }
         height: size,
         borderRadius: '50%',
         backgroundColor: 'var(--border-color)',
-        color: 'var(--text-secondary)',
+        color: 'var(--text-color)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
