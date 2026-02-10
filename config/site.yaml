@@ -6,6 +6,7 @@ site:
   url: https://supersite.example.com
 branding:
   theme: base
+  primaryUser: accounts
 admin:
   toolbar: true
 auth:
@@ -74,13 +75,6 @@ social:
   linkedin: ''
   youtube: ''
   instagram: ''
-profile:
-  name: Your Name
-  title: Developer & Creator
-  bio: Building amazing things with code and AI
-  image: /images/profile.jpg
-  location: San Francisco, CA
-  email: hello@example.com
 hero:
   heading: Build Amazing Websites with AI
   subheading: SuperSite is the fastest way to create intelligent, beautiful sites

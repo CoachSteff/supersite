@@ -9,9 +9,10 @@ import ChatButton from '@/components/ChatButton';
 import ChatWindow from '@/components/ChatWindow';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import Hero from '@/components/Hero';
+import AnonymousCookieNotice from '@/components/AnonymousCookieNotice';
 import { ThemeProvider } from '@/components/ThemeLoader';
 import { ThemeContextProvider } from '@/components/ThemeContext';
-import { getSiteConfig, getActiveTheme } from '@/lib/config';
+import { getSiteConfig, getActiveTheme, getPrimaryUser } from '@/lib/config';
 import { getLayoutComponent, shouldShowSidebar } from '@/lib/layout-renderer';
 import { getAllCategories, getAllTags, getRecentBlogPosts } from '@/lib/markdown';
 
@@ -53,6 +54,12 @@ export default async function RootLayout({
   
   // Check if auth is enabled in site config
   const authEnabled = config.auth?.enabled ?? false;
+  
+  // Get primary user for profile hero type (Influencer theme)
+  let primaryUser = null;
+  if (hero.type === 'profile') {
+    primaryUser = getPrimaryUser();
+  }
   
   // Determine if sidebar should be shown
   const showSidebar = shouldShowSidebar(theme);
@@ -119,6 +126,7 @@ export default async function RootLayout({
                   type={hero.type as any}
                   height={hero.height}
                   config={config}
+                  user={primaryUser}
                 />
               )}
               <LayoutComponent
@@ -140,6 +148,7 @@ export default async function RootLayout({
               <Footer style={footer.style} />
               {features.chat && <ChatButton />}
               {features.chat && <ChatWindow />}
+              <AnonymousCookieNotice />
             </ChatProvider>
           </ThemeContextProvider>
         </ThemeProvider>

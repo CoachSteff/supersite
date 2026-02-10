@@ -1,11 +1,11 @@
-/* Influencer-style centered layout */
+/* Influencer-style centered layout matching Hero component */
 .influencerContainer {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-xl);
-  background: var(--background);
+  padding: 4rem 2rem;
+  background: var(--background-color);
 }
 
 .influencerContent {
@@ -15,80 +15,85 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-lg);
 }
 
 .largeAvatar {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 1.5rem;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .influencerName {
-  margin: 0;
-  font-size: var(--font-size-xxxlarge, 3rem);
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
   font-weight: 700;
   color: var(--text-color);
   line-height: 1.2;
 }
 
-.influencerUsername {
-  margin: 0;
-  font-size: var(--font-size-xlarge, 1.5rem);
-  color: var(--text-secondary);
-  font-weight: 400;
-}
-
-.influencerMeta {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  flex-wrap: wrap;
-  justify-content: center;
-  color: var(--text-secondary);
-  font-size: var(--font-size-large);
-}
-
-.influencerMeta .jobTitle {
+.influencerTitle {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.25rem;
+  color: var(--primary-color);
   font-weight: 600;
-  color: var(--text-color);
-}
-
-.influencerMeta .separator {
-  color: var(--text-secondary);
-}
-
-.influencerMeta .organization {
-  color: var(--text-secondary);
 }
 
 .influencerBio {
-  margin: var(--spacing-md) 0;
-  font-size: var(--font-size-large);
+  margin: 0 0 1.5rem 0;
+  font-size: 1.125rem;
   line-height: 1.6;
-  color: var(--text-color);
-  max-width: 500px;
+  color: var(--text-light);
+  max-width: 600px;
   white-space: pre-wrap;
+}
+
+.profileDetails {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.profileDetail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-light);
+  font-size: 0.9375rem;
+}
+
+.profileDetail a {
+  color: var(--text-light);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.profileDetail a:hover {
+  color: var(--primary-color);
 }
 
 .socialIcons {
   display: flex;
-  gap: var(--spacing-md);
-  margin: var(--spacing-lg) 0;
+  gap: 1rem;
+  margin: 2rem 0;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .socialIconButton {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background-color: var(--background-secondary);
-  border: 2px solid var(--border-color);
+  border: 1px solid var(--border-color);
   color: var(--text-color);
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .socialIconButton:hover {
@@ -96,66 +101,76 @@
   border-color: var(--primary-color);
   color: white;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .footer {
-  margin-top: var(--spacing-xl);
-  padding-top: var(--spacing-lg);
+  margin-top: 3rem;
+  padding-top: 2rem;
   border-top: 1px solid var(--border-color);
   width: 100%;
 }
 
 .joinDate {
   margin: 0;
-  font-size: var(--font-size-small);
-  color: var(--text-secondary);
+  font-size: 0.875rem;
+  color: var(--text-light);
   text-align: center;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .influencerContainer {
-    padding: var(--spacing-lg);
+    padding: 3rem 1.5rem;
     min-height: auto;
-    padding-top: var(--spacing-xxl);
   }
 
   .influencerName {
-    font-size: var(--font-size-xxlarge, 2rem);
+    font-size: 2rem;
   }
 
-  .influencerUsername {
-    font-size: var(--font-size-large);
-  }
-
-  .influencerMeta {
-    font-size: var(--font-size-base);
+  .influencerTitle {
+    font-size: 1.125rem;
   }
 
   .influencerBio {
-    font-size: var(--font-size-base);
+    font-size: 1rem;
   }
 
   .largeAvatar {
-    width: 140px !important;
-    height: 140px !important;
+    width: 120px !important;
+    height: 120px !important;
+  }
+
+  .profileDetails {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .socialIconButton {
+    width: 44px;
+    height: 44px;
   }
 }
 
-/* Keep old styles for backward compatibility but hide them */
-.container,
-.profileCard,
-.header,
-.headerInfo,
-.name,
-.username,
-.jobTitle,
-.organization,
-.bio,
-.social,
-.sectionTitle,
-.socialLinks,
-.socialLink,
-.externalIcon {
-  display: none;
+@media (max-width: 480px) {
+  .influencerContainer {
+    padding: 2rem 1rem;
+  }
+
+  .influencerName {
+    font-size: 1.75rem;
+  }
+
+  .influencerTitle {
+    font-size: 1rem;
+  }
+
+  .influencerBio {
+    font-size: 0.9375rem;
+  }
+
+  .largeAvatar {
+    width: 100px !important;
+    height: 100px !important;
+  }
 }

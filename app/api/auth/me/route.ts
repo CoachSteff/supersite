@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
-import { getUserById } from '@/lib/users';
+import { getUserById, autoMigrateUser } from '@/lib/users';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Load full user profile
-    const user = getUserById(jwtPayload.userId);
+    let user = getUserById(jwtPayload.userId);
 
     if (!user) {
       return NextResponse.json(
@@ -22,6 +22,9 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    // Auto-migrate user data if needed
+    user = autoMigrateUser(user);
 
     // Return full profile (user is authenticated)
     return NextResponse.json({ user });

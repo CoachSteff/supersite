@@ -34,6 +34,7 @@ const SiteConfigSchema = z.object({
   }),
   branding: z.object({
     theme: z.string().default('default'),
+    primaryUser: z.string().optional(),
     overrides: ThemeOverridesSchema,
     // Legacy support (deprecated but functional)
     primaryColor: z.string().optional(),
@@ -328,4 +329,49 @@ export function getActiveTheme(): FullTheme {
  */
 export function getActiveFullTheme(): FullTheme {
   return getActiveTheme();
+}
+
+/**
+ * Validate if a username exists and return validation result
+ */
+export function validatePrimaryUser(username: string): { valid: boolean; error?: string } {
+  if (!username || username.trim() === '') {
+    return { valid: false, error: 'Primary user cannot be empty' };
+  }
+
+  // Import getUserByUsername dynamically to avoid circular dependency
+  const { getUserByUsername } = require('./users');
+  const user = getUserByUsername(username);
+  
+  if (!user) {
+    return { valid: false, error: `User "${username}" does not exist. Create this user account first.` };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Get the primary user profile for the site (used by Influencer theme homepage)
+ * Returns null if no primary user is set or if the user doesn't exist
+ */
+export function getPrimaryUser(): any | null {
+  const config = getSiteConfig();
+  const primaryUsername = config.branding.primaryUser;
+
+  if (!primaryUsername) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[Config] No primaryUser set in branding config. Influencer theme homepage will show fallback message.');
+    }
+    return null;
+  }
+
+  const validation = validatePrimaryUser(primaryUsername);
+  if (!validation.valid) {
+    console.error(`[Config] Primary user validation failed: ${validation.error}`);
+    return null;
+  }
+
+  // Import getPublicProfile dynamically to avoid circular dependency
+  const { getPublicProfile } = require('./users');
+  return getPublicProfile(primaryUsername);
 }

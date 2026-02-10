@@ -1,0 +1,142 @@
+.container {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 1000;
+  max-width: 400px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.notice {
+  background-color: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.15));
+  padding: var(--spacing-md);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.icon {
+  color: var(--primary-color, #3b82f6);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.content {
+  flex: 1;
+}
+
+.title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.description {
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.closeButton,
+.backButton {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.closeButton:hover,
+.backButton:hover {
+  color: var(--text-color);
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.button {
+  flex: 1;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-align: center;
+}
+
+.primary {
+  background-color: var(--primary-color, #3b82f6);
+  color: white;
+}
+
+.primary:hover {
+  background-color: var(--primary-hover, #2563eb);
+}
+
+.secondary {
+  background-color: var(--background-secondary);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.secondary:hover {
+  background-color: var(--border-color);
+}
+
+.formWrapper {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.formHeader .title {
+  flex: 1;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .container {
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+    left: var(--spacing-sm);
+    max-width: none;
+  }
+}

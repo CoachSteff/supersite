@@ -1,26 +1,14 @@
 import { notFound } from 'next/navigation';
-import { X as XIcon, Linkedin, Github, Globe } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { MapPin, Mail, Globe } from 'lucide-react';
 import Avatar from '@/components/Avatar';
 import { getPublicProfile } from '@/lib/users';
+import { detectPlatform, sortLinks } from '@/lib/link-utils';
 import styles from '@/styles/UserProfile.module.css';
 
 interface PageProps {
   params: { username: string };
 }
-
-const socialIcons: Record<string, any> = {
-  x: XIcon,
-  linkedin: Linkedin,
-  github: Github,
-  website: Globe,
-};
-
-const socialLabels: Record<string, string> = {
-  x: 'X',
-  linkedin: 'LinkedIn',
-  github: 'GitHub',
-  website: 'Website',
-};
 
 export default function UserProfilePage({ params }: PageProps) {
   const user = getPublicProfile(params.username);
@@ -29,38 +17,12 @@ export default function UserProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const displayName = user.profile.firstName
+  const displayName = user.profile?.firstName
     ? `${user.profile.firstName}${user.profile.lastName ? ' ' + user.profile.lastName : ''}`
-    : user.username;
+    : (user.username || 'Anonymous');
 
-  // Collect all social links
-  const socialLinks = [];
-  
-  // Add predefined social links
-  Object.entries(user.social || {}).forEach(([platform, url]) => {
-    if (url && platform !== 'custom' && socialIcons[platform]) {
-      socialLinks.push({
-        platform,
-        url: url as string,
-        icon: socialIcons[platform],
-        label: socialLabels[platform] || platform,
-      });
-    }
-  });
-
-  // Add custom links
-  if (user.social?.custom) {
-    user.social.custom.forEach((link) => {
-      if (link.url) {
-        socialLinks.push({
-          platform: 'custom',
-          url: link.url,
-          icon: Globe,
-          label: link.name,
-        });
-      }
-    });
-  }
+  // Use unified links array
+  const sortedLinks = user.links ? sortLinks(user.links) : [];
 
   return (
     <div className={styles.influencerContainer}>
@@ -68,35 +30,50 @@ export default function UserProfilePage({ params }: PageProps) {
         <Avatar
           src={user.profile?.avatar}
           name={displayName}
-          size={180}
+          size={150}
           className={styles.largeAvatar}
         />
 
         <h1 className={styles.influencerName}>{displayName}</h1>
-        <p className={styles.influencerUsername}>@{user.username}</p>
-
-        {(user.profile?.jobTitle || user.profile?.organization) && (
-          <div className={styles.influencerMeta}>
-            {user.profile.jobTitle && (
-              <span className={styles.jobTitle}>{user.profile.jobTitle}</span>
-            )}
-            {user.profile.jobTitle && user.profile.organization && (
-              <span className={styles.separator}>•</span>
-            )}
-            {user.profile.organization && (
-              <span className={styles.organization}>{user.profile.organization}</span>
-            )}
-          </div>
+        
+        {user.profile?.jobTitle && (
+          <p className={styles.influencerTitle}>
+            {user.profile.jobTitle}
+          </p>
         )}
 
         {user.profile?.bio && (
           <p className={styles.influencerBio}>{user.profile.bio}</p>
         )}
 
-        {socialLinks.length > 0 && (
+        {(user.profile?.location || user.profile?.email) && (
+          <div className={styles.profileDetails}>
+            {user.profile?.location && (
+              <span className={styles.profileDetail}>
+                <MapPin size={16} />
+                {user.profile.location}
+              </span>
+            )}
+            {user.profile?.email && (
+              <span className={styles.profileDetail}>
+                <Mail size={16} />
+                <a href={`mailto:${user.profile.email}`}>
+                  {user.profile.email}
+                </a>
+              </span>
+            )}
+          </div>
+        )}
+
+        {sortedLinks.length > 0 && (
           <div className={styles.socialIcons}>
-            {socialLinks.map((link, index) => {
-              const Icon = link.icon;
+            {sortedLinks.map((link, index) => {
+              const platformInfo = detectPlatform(link.url);
+              const IconComponent = platformInfo?.icon 
+                ? (LucideIcons as any)[platformInfo.icon] 
+                : Globe;
+              const label = link.label || platformInfo?.label || 'Link';
+
               return (
                 <a
                   key={index}
@@ -104,10 +81,10 @@ export default function UserProfilePage({ params }: PageProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.socialIconButton}
-                  aria-label={link.label}
-                  title={link.label}
+                  aria-label={label}
+                  title={label}
                 >
-                  <Icon size={24} />
+                  <IconComponent size={20} />
                 </a>
               );
             })}
@@ -116,7 +93,7 @@ export default function UserProfilePage({ params }: PageProps) {
 
         <div className={styles.footer}>
           <p className={styles.joinDate}>
-            Member since {new Date(user.metadata.createdAt).toLocaleDateString('en-US', {
+            Member since {new Date(user.metadata?.createdAt || new Date()).toLocaleDateString('en-US', {
               month: 'long',
               year: 'numeric'
             })}

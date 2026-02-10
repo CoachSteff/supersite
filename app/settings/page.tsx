@@ -1,30 +1,33 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { redirect } from 'next/navigation';
-import { User, Lock, Bell, Activity } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { User, Lock, Bell, Activity, Cookie } from 'lucide-react';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import PrivacySettings from '@/components/settings/PrivacySettings';
 import NotificationSettings from '@/components/settings/NotificationSettings';
 import ActivitySettings from '@/components/settings/ActivitySettings';
+import CookieSettings from '@/components/settings/CookieSettings';
 import styles from '@/styles/Settings.module.css';
 
-type Tab = 'profile' | 'privacy' | 'notifications' | 'activity';
+type Tab = 'profile' | 'privacy' | 'notifications' | 'cookies' | 'activity';
 
 interface TabConfig {
   id: Tab;
   label: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: React.ComponentType<any>;
 }
 
 const tabs: TabConfig[] = [
   { id: 'profile', label: 'Profile', icon: User },
   { id: 'privacy', label: 'Privacy', icon: Lock },
   { id: 'notifications', label: 'Notifications', icon: Bell },
+  { id: 'cookies', label: 'Cookies', icon: Cookie },
   { id: 'activity', label: 'Activity', icon: Activity },
 ];
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -39,14 +42,14 @@ export default function SettingsPage() {
       const data = await response.json();
 
       if (!data.user) {
-        redirect('/');
+        router.push('/');
         return;
       }
 
       setUser(data.user);
     } catch (error) {
       console.error('[Settings] Auth check failed:', error);
-      redirect('/');
+      router.push('/');
     } finally {
       setLoading(false);
     }
@@ -101,6 +104,9 @@ export default function SettingsPage() {
           )}
           {activeTab === 'notifications' && (
             <NotificationSettings user={user} onUpdate={handleUserUpdate} />
+          )}
+          {activeTab === 'cookies' && (
+            <CookieSettings user={user} />
           )}
           {activeTab === 'activity' && (
             <ActivitySettings user={user} />

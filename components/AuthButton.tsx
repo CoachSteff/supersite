@@ -7,7 +7,9 @@ import Avatar from './Avatar';
 import AuthModal from './AuthModal';
 import UserMenu from './UserMenu';
 import Notification from './Notification';
+import NotificationBadge from './NotificationBadge';
 import styles from '@/styles/AuthButton.module.css';
+import '@/styles/NotificationBadge.module.css';
 
 interface UserProfile {
   id: string;
@@ -27,11 +29,25 @@ export default function AuthButton() {
   const [showMenu, setShowMenu] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     setMounted(true);
     checkAuthStatus();
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    ensureCookieNotification();
+    fetchUnreadCount();
+
+    const interval = setInterval(() => {
+      fetchUnreadCount();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [user]);
 
   async function checkAuthStatus() {
     try {
@@ -43,6 +59,31 @@ export default function AuthButton() {
       }
     } catch (error) {
       console.error('[AuthButton] Failed to check auth status:', error);
+    }
+  }
+
+  async function fetchUnreadCount() {
+    try {
+      const response = await fetch('/api/notifications?limit=1');
+      const data = await response.json();
+      
+      if (data.unreadCount !== undefined) {
+        setUnreadCount(data.unreadCount);
+      }
+    } catch (error) {
+      console.error('[AuthButton] Failed to fetch unread count:', error);
+    }
+  }
+
+  async function ensureCookieNotification() {
+    try {
+      const hasCreated = localStorage.getItem('auth_cookie_notification_created');
+      if (hasCreated) return;
+
+      await fetch('/api/notifications/cookie-prompt', { method: 'POST' });
+      localStorage.setItem('auth_cookie_notification_created', 'true');
+    } catch (error) {
+      console.error('[AuthButton] Failed to create cookie notification:', error);
     }
   }
 
@@ -93,18 +134,22 @@ export default function AuthButton() {
           className={styles.authButton}
           onClick={() => setShowMenu(!showMenu)}
           aria-label="User menu"
+          style={{ position: 'relative' }}
         >
           <Avatar
             src={user.profile.avatar}
             name={displayName}
             size={32}
           />
+          <NotificationBadge count={unreadCount} show={true} />
         </button>
         {showMenu && (
           <UserMenu
             user={user}
+            unreadCount={unreadCount}
             onClose={() => setShowMenu(false)}
             onLogout={handleLogout}
+            onNotificationsUpdate={fetchUnreadCount}
           />
         )}
       </div>

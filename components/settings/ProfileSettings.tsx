@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Upload, X, Plus } from 'lucide-react';
 import Avatar from '../Avatar';
+import DynamicLinksEditor from '../DynamicLinksEditor';
+import type { Link } from '@/lib/users';
+import { sortLinks } from '@/lib/link-utils';
 import styles from '@/styles/SettingsForm.module.css';
 
 interface CustomSocialLink {
@@ -23,12 +26,27 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
     organization: user.profile.organization || '',
     bio: user.profile.bio || '',
     avatar: user.profile.avatar || '',
+    location: user.profile.location || '',
+    email: user.profile.email || '',
   });
+  const [links, setLinks] = useState<Link[]>(
+    user.links && user.links.length > 0 
+      ? sortLinks(user.links) 
+      : [{ url: '', order: 0, platform: undefined, label: undefined, icon: undefined }]
+  );
   const [socialLinks, setSocialLinks] = useState(user.social || {});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Update links when user prop changes (after migration)
+  useEffect(() => {
+    if (user.links && user.links.length > 0) {
+      const sorted: Link[] = sortLinks(user.links);
+      setLinks(sorted);
+    }
+  }, [user.links]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,12 +54,15 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
     setSuccess('');
     setLoading(true);
 
+    const linksToSave = links.filter(link => link.url.trim() !== '');
+
     try {
       const response = await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profile: formData,
+          links: linksToSave,
           social: socialLinks,
         }),
       });
@@ -242,6 +263,29 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
       </div>
 
       <div className={styles.field}>
+        <label htmlFor="location">Location</label>
+        <input
+          id="location"
+          type="text"
+          value={formData.location}
+          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+          placeholder="San Francisco, CA"
+        />
+      </div>
+
+      <div className={styles.field}>
+        <label htmlFor="contactEmail">Public Email</label>
+        <input
+          id="contactEmail"
+          type="email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          placeholder="hello@example.com"
+        />
+        <p className={styles.hint}>Optional public contact email (different from your login email)</p>
+      </div>
+
+      <div className={styles.field}>
         <label htmlFor="bio">Bio</label>
         <textarea
           id="bio"
@@ -252,83 +296,7 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
         />
       </div>
 
-      <h3 className={styles.subtitle}>Social Links</h3>
-
-      <div className={styles.grid}>
-        {['x', 'linkedin', 'github', 'website'].map((platform) => (
-          <div key={platform} className={styles.field}>
-            <label htmlFor={platform}>
-              {platform === 'x' ? 'X (Twitter)' : platform.charAt(0).toUpperCase() + platform.slice(1)}
-            </label>
-            <input
-              id={platform}
-              type="url"
-              value={socialLinks[platform] || ''}
-              onChange={(e) => setSocialLinks({ ...socialLinks, [platform]: e.target.value })}
-              placeholder={`https://${platform === 'x' ? 'x' : platform}.com/...`}
-            />
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.customLinksSection}>
-        <div className={styles.customLinksHeader}>
-          <h3 className={styles.subtitle}>Custom Links</h3>
-          <button
-            type="button"
-            onClick={() => {
-              const custom = socialLinks.custom || [];
-              setSocialLinks({
-                ...socialLinks,
-                custom: [...custom, { name: '', url: '' }]
-              });
-            }}
-            className={styles.addButton}
-          >
-            <Plus size={16} />
-            Add Link
-          </button>
-        </div>
-
-        {socialLinks.custom?.map((link: CustomSocialLink, index: number) => (
-          <div key={index} className={styles.customLink}>
-            <div className={styles.field}>
-              <input
-                type="text"
-                value={link.name}
-                onChange={(e) => {
-                  const custom = [...(socialLinks.custom || [])];
-                  custom[index].name = e.target.value;
-                  setSocialLinks({ ...socialLinks, custom });
-                }}
-                placeholder="Link name (e.g., YouTube)"
-              />
-            </div>
-            <div className={styles.field}>
-              <input
-                type="url"
-                value={link.url}
-                onChange={(e) => {
-                  const custom = [...(socialLinks.custom || [])];
-                  custom[index].url = e.target.value;
-                  setSocialLinks({ ...socialLinks, custom });
-                }}
-                placeholder="https://..."
-              />
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                const custom = socialLinks.custom?.filter((_: any, i: number) => i !== index) || [];
-                setSocialLinks({ ...socialLinks, custom });
-              }}
-              className={styles.removeCustomButton}
-            >
-              <X size={16} />
-            </button>
-          </div>
-        ))}
-      </div>
+      <DynamicLinksEditor links={links} onChange={setLinks} />
 
       <button type="submit" disabled={loading} className={styles.submitButton}>
         {loading ? 'Saving...' : 'Save Changes'}

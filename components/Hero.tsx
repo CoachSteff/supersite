@@ -1,17 +1,26 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Mail, Twitter, Github, Linkedin, Youtube, Instagram } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { 
+  MapPin, 
+  Mail, 
+  Globe,
+} from 'lucide-react';
 import type { SiteConfig } from '@/lib/config';
 import { getRecentBlogPosts, type BlogPost } from '@/lib/markdown';
+import { detectPlatform, sortLinks } from '@/lib/link-utils';
+import type { Link as LinkType } from '@/lib/users';
+import Avatar from '@/components/Avatar';
 import styles from '@/styles/Hero.module.css';
 
 interface HeroProps {
   type: 'none' | 'text' | 'image' | 'featured-post' | 'profile' | 'chat';
   height: string;
   config: SiteConfig;
+  user?: any;
 }
 
-export default async function Hero({ type, height, config }: HeroProps) {
+export default async function Hero({ type, height, config, user }: HeroProps) {
   if (type === 'none') {
     return null;
   }
@@ -28,7 +37,7 @@ export default async function Hero({ type, height, config }: HeroProps) {
     case 'featured-post':
       return <FeaturedPostHero style={heroStyle} />;
     case 'profile':
-      return <ProfileHero config={config} style={heroStyle} />;
+      return <ProfileHero config={config} style={heroStyle} user={user} />;
     case 'chat':
       return <ChatHero style={heroStyle} />;
     default:
@@ -143,78 +152,84 @@ async function FeaturedPostHero({ style }: { style: React.CSSProperties }) {
   );
 }
 
-function ProfileHero({ config, style }: { config: SiteConfig; style: React.CSSProperties }) {
-  const profile = config.profile;
-  
-  if (!profile) {
+function ProfileHero({ config, style, user }: { config: SiteConfig; style: React.CSSProperties; user?: any }) {
+  if (!user) {
     return (
       <div className={styles.profileHero} style={style}>
         <div className={styles.heroContent}>
           <p className={styles.noProfileMessage}>
-            Profile not configured. Add profile section to config/site.yaml
+            No primary user configured. Set <code>branding.primaryUser</code> in config/site.yaml to display a profile.
           </p>
         </div>
       </div>
     );
   }
 
-  const socialIcons = [
-    { name: 'twitter', url: config.social?.twitter, Icon: Twitter },
-    { name: 'github', url: config.social?.github, Icon: Github },
-    { name: 'linkedin', url: config.social?.linkedin, Icon: Linkedin },
-    { name: 'youtube', url: config.social?.youtube, Icon: Youtube },
-    { name: 'instagram', url: config.social?.instagram, Icon: Instagram },
-  ].filter(social => social.url);
+  const displayName = user.profile?.firstName 
+    ? `${user.profile.firstName}${user.profile.lastName ? ' ' + user.profile.lastName : ''}`
+    : user.username || 'Anonymous';
+
+  // Use unified links array, sorted by order
+  const sortedLinks: LinkType[] = user.links ? sortLinks(user.links) : [];
 
   return (
     <div className={styles.profileHero} style={style}>
       <div className={styles.heroContent}>
-        {profile.image && (
-          <div className={styles.profileImage}>
-            <Image 
-              src={profile.image} 
-              alt={profile.name} 
-              width={150} 
-              height={150}
-              className={styles.profileImg}
-            />
-          </div>
+        <Avatar
+          src={user.profile?.avatar}
+          name={displayName}
+          size={150}
+          className={styles.profileImg}
+        />
+        <h1 className={styles.profileName}>{displayName}</h1>
+        {user.profile?.jobTitle && (
+          <p className={styles.profileTitle}>
+            {user.profile.jobTitle}
+          </p>
         )}
-        <h1 className={styles.profileName}>{profile.name}</h1>
-        {profile.title && (
-          <p className={styles.profileTitle}>{profile.title}</p>
-        )}
-        {profile.bio && (
-          <p className={styles.profileBio}>{profile.bio}</p>
+        {user.profile?.bio && (
+          <p className={styles.profileBio}>
+            {user.profile.bio}
+          </p>
         )}
         <div className={styles.profileDetails}>
-          {profile.location && (
+          {user.profile?.location && (
             <span className={styles.profileDetail}>
               <MapPin size={16} />
-              {profile.location}
+              {user.profile.location}
             </span>
           )}
-          {profile.email && (
+          {user.profile?.email && (
             <span className={styles.profileDetail}>
               <Mail size={16} />
-              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+              <a href={`mailto:${user.profile.email}`}>
+                {user.profile.email}
+              </a>
             </span>
           )}
         </div>
-        {socialIcons.length > 0 && (
+        {sortedLinks.length > 0 && (
           <div className={styles.profileSocial}>
-            {socialIcons.map(({ name, url, Icon }) => (
-              <a 
-                key={name}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={name}
-                className={styles.socialLink}
-              >
-                <Icon size={20} />
-              </a>
-            ))}
+            {sortedLinks.map((link, index) => {
+              const platformInfo = detectPlatform(link.url);
+              const IconComponent = platformInfo?.icon 
+                ? (LucideIcons as any)[platformInfo.icon] 
+                : Globe;
+              const label = link.label || platformInfo?.label || 'Link';
+
+              return (
+                <a 
+                  key={index}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className={styles.socialLink}
+                >
+                  <IconComponent size={20} />
+                </a>
+              );
+            })}
           </div>
         )}
       </div>

@@ -124,7 +124,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
             </button>
 
             <p className={styles.notice}>
-              We'll send you a verification code. No password needed!
+              We&apos;ll send you a verification code. No password needed!
             </p>
           </form>
         ) : (
@@ -161,7 +161,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
             </button>
 
             <p className={styles.notice}>
-              Didn't receive the code? Check your spam folder or try again.
+              Didn&apos;t receive the code? Check your spam folder or try again.
             </p>
           </form>
         )}

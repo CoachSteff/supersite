@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getUserFromRequest, generateJWT, setAuthCookie } from '@/lib/auth';
-import { updateUser, getUserById } from '@/lib/users';
+import { updateUser, getUserById, autoMigrateUser } from '@/lib/users';
 
 const customSocialLinkSchema = z.object({
   name: z.string().min(1).max(50),
   url: z.string().url(),
+});
+
+const linkSchema = z.object({
+  url: z.string().url(),
+  platform: z.string().optional(),
+  label: z.string().optional(),
+  icon: z.string().optional(),
+  order: z.number(),
 });
 
 const updateSchema = z.object({
@@ -16,12 +24,21 @@ const updateSchema = z.object({
     jobTitle: z.string().max(200).optional(),
     organization: z.string().max(200).optional(),
     bio: z.string().max(2000).optional(),
-    avatar: z.string().optional(), // Allow base64 or URL
+    avatar: z.string().optional(),
+    location: z.string().max(200).optional(),
+    email: z.string().email().optional().or(z.literal('')),
   }).optional(),
+  links: z.array(linkSchema).optional(),
   social: z.object({
     x: z.string().url().optional().or(z.literal('')),
+    twitter: z.string().url().optional().or(z.literal('')),
     linkedin: z.string().url().optional().or(z.literal('')),
     github: z.string().url().optional().or(z.literal('')),
+    facebook: z.string().url().optional().or(z.literal('')),
+    instagram: z.string().url().optional().or(z.literal('')),
+    youtube: z.string().url().optional().or(z.literal('')),
+    spotify: z.string().url().optional().or(z.literal('')),
+    blog: z.string().url().optional().or(z.literal('')),
     website: z.string().url().optional().or(z.literal('')),
     custom: z.array(customSocialLinkSchema).optional(),
   }).optional(),
@@ -69,7 +86,7 @@ export async function PATCH(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors?.[0]?.message || 'Invalid input' },
+        { error: error.issues?.[0]?.message || 'Invalid input' },
         { status: 400 }
       );
     }
@@ -100,7 +117,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const user = getUserById(jwtPayload.userId);
+    let user = getUserById(jwtPayload.userId);
 
     if (!user) {
       return NextResponse.json(
@@ -108,6 +125,9 @@ export async function GET(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    // Auto-migrate user data if needed
+    user = autoMigrateUser(user);
 
     return NextResponse.json({ user });
   } catch (error) {

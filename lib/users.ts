@@ -13,6 +13,14 @@ const USERS_DIR = join(DATA_DIR, 'users');
   }
 });
 
+export interface Link {
+  url: string;
+  platform?: string;
+  label?: string;
+  icon?: string;
+  order: number;
+}
+
 export interface CustomSocialLink {
   name: string;
   url: string;
@@ -29,11 +37,20 @@ export interface UserProfile {
     organization?: string;
     bio?: string;
     avatar?: string;
+    location?: string;
+    email?: string;
   };
+  links: Link[];
   social: {
     x?: string;
+    twitter?: string;
     linkedin?: string;
     github?: string;
+    facebook?: string;
+    instagram?: string;
+    youtube?: string;
+    spotify?: string;
+    blog?: string;
     website?: string;
     custom?: CustomSocialLink[];
   };
@@ -141,11 +158,22 @@ export function createUser(email: string, data?: Partial<UserProfile>): UserProf
       organization: data?.profile?.organization || '',
       bio: data?.profile?.bio || '',
       avatar: data?.profile?.avatar || '',
+      location: data?.profile?.location || '',
+      email: data?.profile?.email || '',
     },
+    links: data?.links || [
+      { url: '', order: 0 }
+    ],
     social: {
       x: data?.social?.x || '',
+      twitter: data?.social?.twitter || '',
       linkedin: data?.social?.linkedin || '',
       github: data?.social?.github || '',
+      facebook: data?.social?.facebook || '',
+      instagram: data?.social?.instagram || '',
+      youtube: data?.social?.youtube || '',
+      spotify: data?.social?.spotify || '',
+      blog: data?.social?.blog || '',
       website: data?.social?.website || '',
       custom: data?.social?.custom || [],
     },
@@ -222,7 +250,11 @@ export function getUserByUsername(username: string): UserProfile | null {
     return null;
   }
 
-  return getUserById(userId);
+  const user = getUserById(userId);
+  if (user) {
+    return autoMigrateUser(user);
+  }
+  return null;
 }
 
 // Update user
@@ -238,6 +270,7 @@ export function updateUser(userId: string, updates: Partial<UserProfile>): UserP
     ...user,
     profile: { ...user.profile, ...updates.profile },
     social: { ...user.social, ...updates.social },
+    links: updates.links !== undefined ? updates.links : user.links,
     settings: updates.settings ? {
       ...user.settings,
       ...updates.settings,
@@ -357,10 +390,82 @@ export function getPublicProfile(username: string): Partial<UserProfile> | null 
     email: user.settings.privacy.emailVisible ? user.email : undefined,
     profile: user.profile,
     social: user.social,
+    links: user.links || [],
     metadata: {
       createdAt: user.metadata.createdAt,
       lastLoginAt: user.metadata.lastLoginAt,
       emailVerified: user.metadata.emailVerified,
     },
   };
+}
+
+/**
+ * Migrate old social fields to unified links array
+ */
+export function migrateSocialToLinks(user: UserProfile): Link[] {
+  const links: Link[] = [];
+  let order = 0;
+
+  // Migrate predefined social fields
+  const socialFields: Array<keyof UserProfile['social']> = [
+    'website', 'x', 'twitter', 'linkedin', 'github', 'facebook', 
+    'instagram', 'youtube', 'spotify', 'blog'
+  ];
+
+  for (const field of socialFields) {
+    const url = user.social?.[field];
+    if (url && typeof url === 'string' && url.trim()) {
+      links.push({
+        url,
+        order: order++,
+      });
+    }
+  }
+
+  // Migrate custom links
+  if (user.social?.custom && Array.isArray(user.social.custom)) {
+    for (const customLink of user.social.custom) {
+      if (customLink.url && customLink.url.trim()) {
+        links.push({
+          url: customLink.url,
+          label: customLink.name || undefined,
+          order: order++,
+        });
+      }
+    }
+  }
+
+  return links;
+}
+
+/**
+ * Auto-migrate user data on load if needed
+ */
+export function autoMigrateUser(user: UserProfile): UserProfile {
+  // Check if migration is needed (has old social data but no links)
+  const needsMigration = 
+    (!user.links || user.links.length === 0) && 
+    user.social && 
+    Object.values(user.social).some(val => val && (typeof val === 'string' ? val.trim() : (Array.isArray(val) && val.length > 0)));
+
+  if (needsMigration) {
+    console.log(`[Users] Auto-migrating user ${user.username} to unified links structure`);
+    user.links = migrateSocialToLinks(user);
+    
+    // Save migrated data to file
+    try {
+      const userFile = join(USERS_DIR, `${user.id}.yaml`);
+      writeFileSync(userFile, yaml.dump(user), 'utf-8');
+      console.log(`[Users] Migration saved for user ${user.username}`);
+    } catch (error) {
+      console.error(`[Users] Failed to save migration for user ${user.username}:`, error);
+    }
+  }
+
+  // Ensure links array exists
+  if (!user.links) {
+    user.links = [];
+  }
+
+  return user;
 }

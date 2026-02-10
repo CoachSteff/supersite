@@ -37,7 +37,6 @@ export default function ThemedLayout({ children }: ThemedLayoutProps) {
           sticky={header.sticky}
           showLogo={header.logo}
           showSearch={header.search && features.search}
-          showThemeToggle={header.themeToggle && features.darkMode}
           showAuth={header.auth && features.auth}
         />
       )}

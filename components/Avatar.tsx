@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import { User } from 'lucide-react';
+
 interface AvatarProps {
   src?: string;
   name: string;
@@ -7,9 +10,20 @@ interface AvatarProps {
   className?: string;
 }
 
-function getInitials(name: string): string {
-  if (!name) return '?';
+function getInitials(name: string): string | null {
+  // Return null for invalid/missing names
+  if (!name || name.trim() === '') return null;
   
+  // Check for generic/reserved names
+  const lowerName = name.toLowerCase().trim();
+  if (lowerName === 'anonymous' || lowerName === '?' || lowerName === 'user') {
+    return null;
+  }
+  
+  // Check if name contains at least one alphanumeric character
+  if (!/[a-zA-Z0-9]/.test(name)) return null;
+  
+  // Existing logic for valid names
   const parts = name.trim().split(/\s+/);
   if (parts.length >= 2) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
@@ -42,10 +56,11 @@ function getColorFromString(str: string): string {
 }
 
 export default function Avatar({ src, name, size = 40, className = '' }: AvatarProps) {
+  const [imageError, setImageError] = useState(false);
   const initials = getInitials(name);
-  const backgroundColor = getColorFromString(name);
+  const backgroundColor = initials ? getColorFromString(name) : 'var(--border-color)';
 
-  if (src) {
+  if (src && !imageError) {
     return (
       <img
         src={src}
@@ -57,6 +72,7 @@ export default function Avatar({ src, name, size = 40, className = '' }: AvatarP
           borderRadius: '50%',
           objectFit: 'cover',
         }}
+        onError={() => setImageError(true)}
       />
     );
   }
@@ -69,7 +85,7 @@ export default function Avatar({ src, name, size = 40, className = '' }: AvatarP
         height: size,
         borderRadius: '50%',
         backgroundColor,
-        color: 'white',
+        color: initials ? 'white' : 'var(--text-secondary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -77,9 +93,9 @@ export default function Avatar({ src, name, size = 40, className = '' }: AvatarP
         fontSize: size * 0.4,
         userSelect: 'none',
       }}
-      aria-label={name}
+      aria-label={name || 'User'}
     >
-      {initials}
+      {initials ? initials : <User size={size * 0.5} />}
     </div>
   );
 }
