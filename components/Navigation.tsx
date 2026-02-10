@@ -48,12 +48,6 @@ export default function Navigation() {
     <nav className={styles.nav}>
       <ul className={styles.navList}>
         {renderNavItems(navItems)}
-        <li className={styles.navItem}>
-          <Link href="/blog">Blog</Link>
-        </li>
-        <li className={styles.navItem}>
-          <Link href="/contact">Contact</Link>
-        </li>
       </ul>
     </nav>
   );
