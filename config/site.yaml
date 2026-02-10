@@ -23,6 +23,8 @@ navigation:
   customLinks:
     - title: Blog
       path: /blog
+    - title: Markdown Showcase
+      path: /markdown-showcase
     - title: Contact
       path: /contact
 chat:
