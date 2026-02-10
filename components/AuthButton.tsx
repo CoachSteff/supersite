@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User } from 'lucide-react';
 import Avatar from './Avatar';
 import AuthModal from './AuthModal';
 import UserMenu from './UserMenu';
@@ -109,17 +108,7 @@ export default function AuthButton() {
     return (
       <div className={styles.userContainer}>
         <button className={styles.authButton} disabled aria-label="Loading">
-          <div style={{
-            width: 40,
-            height: 40,
-            borderRadius: '50%',
-            backgroundColor: 'var(--border-color)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <User size={20} color="var(--text-secondary)" />
-          </div>
+          <Avatar size={40} />
         </button>
       </div>
     );
@@ -163,17 +152,7 @@ export default function AuthButton() {
         onClick={() => setShowModal(true)}
         aria-label="Sign in"
       >
-        <div style={{
-          width: 40,
-          height: 40,
-          borderRadius: '50%',
-          backgroundColor: 'var(--border-color)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <User size={20} color="var(--text-secondary)" />
-        </div>
+        <Avatar size={40} />
       </button>
       {showModal && (
         <AuthModal
