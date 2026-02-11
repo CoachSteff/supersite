@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import type React from 'react';
 import styles from '@/styles/CodeBlock.module.css';
 
@@ -30,6 +30,13 @@ interface CodeBlockProps {
 
 export default function CodeBlock({ code, language, className, children }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const preRef = useRef<HTMLPreElement>(null);
+
+  // Only mount toolbar on client side after hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Extract the actual code string from React nodes
   const codeString = extractTextFromChildren(children) || 
@@ -50,55 +57,57 @@ export default function CodeBlock({ code, language, className, children }: CodeB
   const displayLang = lang.toUpperCase();
 
   return (
-    <div className={styles.codeBlockWrapper}>
-      <pre className={className}>
+    <>
+      <pre ref={preRef} className={`${className || ''} ${styles.codeBlock}`}>
         <code>{children || code}</code>
       </pre>
-      <div className={styles.codeBlockToolbar}>
-        <span className={styles.languageLabel}>{displayLang}</span>
-        <button
-          onClick={handleCopy}
-          className={styles.copyButton}
-          aria-label={copied ? 'Copied!' : 'Copy code'}
-        >
-          {copied ? (
-            <>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <span>Copied!</span>
-            </>
-          ) : (
-            <>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
-                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
-              </svg>
-              <span>Copy</span>
-            </>
-          )}
-        </button>
-      </div>
-    </div>
+      {isMounted && (
+        <div className={styles.codeBlockToolbar}>
+          <span className={styles.languageLabel}>{displayLang}</span>
+          <button
+            onClick={handleCopy}
+            className={styles.copyButton}
+            aria-label={copied ? 'Copied!' : 'Copy code'}
+          >
+            {copied ? (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Copied!</span>
+              </>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <span>Copy</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+    </>
   );
 }

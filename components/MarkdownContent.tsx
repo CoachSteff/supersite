@@ -26,20 +26,21 @@ export default function MarkdownContent({ title, content, markdown, path, siteUr
         rehypePlugins={[rehypeHighlight]}
         components={{
           p: ({ node, children, ...props }: any) => {
-            // Check if paragraph contains a code block
+            // Check if paragraph contains a code block component
             const hasCodeBlock = Array.isArray(children) && children.some((child: any) => 
               child?.type?.name === 'CodeBlock' || 
               (child?.props?.className?.includes('language-'))
             );
             
-            // If it has a code block, render as div instead of p to avoid nesting issues
+            // If it has a code block, render as fragment to avoid nesting issues
             if (hasCodeBlock) {
-              return <div {...props}>{children}</div>;
+              return <>{children}</>;
             }
             
             return <p {...props}>{children}</p>;
           },
           pre: ({ node, children, ...props }: any) => {
+            // Don't render pre wrapper, CodeBlock handles it
             return <>{children}</>;
           },
           code: ({ node, inline, className, children, ...props }: any) => {
