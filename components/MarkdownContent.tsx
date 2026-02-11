@@ -25,6 +25,20 @@ export default function MarkdownContent({ title, content, markdown, path, siteUr
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
         components={{
+          p: ({ node, children, ...props }: any) => {
+            // Check if paragraph contains a code block
+            const hasCodeBlock = Array.isArray(children) && children.some((child: any) => 
+              child?.type?.name === 'CodeBlock' || 
+              (child?.props?.className?.includes('language-'))
+            );
+            
+            // If it has a code block, render as div instead of p to avoid nesting issues
+            if (hasCodeBlock) {
+              return <div {...props}>{children}</div>;
+            }
+            
+            return <p {...props}>{children}</p>;
+          },
           pre: ({ node, children, ...props }: any) => {
             return <>{children}</>;
           },
