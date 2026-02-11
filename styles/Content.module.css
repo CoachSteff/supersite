@@ -147,3 +147,40 @@
   border-top: 1px solid var(--border-color);
   margin: var(--spacing-xl) 0;
 }
+
+/* Task list checkboxes */
+.content ul.contains-task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.content ul.contains-task-list li {
+  position: relative;
+  padding-left: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+}
+
+.content ul.contains-task-list li input[type="checkbox"] {
+  margin-top: 0.25em;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.content ul.contains-task-list li.task-list-item {
+  margin-bottom: var(--spacing-sm);
+}
+
+.content ul.contains-task-list li input[type="checkbox"]:checked + p,
+.content ul.contains-task-list li input[type="checkbox"]:checked {
+  opacity: 0.7;
+}
+
+/* Nested task lists */
+.content ul.contains-task-list ul.contains-task-list {
+  margin-top: var(--spacing-sm);
+  padding-left: var(--spacing-lg);
+}

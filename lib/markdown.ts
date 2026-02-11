@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
 import { getSiteConfig } from './config';
 
 // Get content directory with configuration support
@@ -111,6 +112,7 @@ export async function parseMarkdown(filePath: string): Promise<{ data: Record<st
   const { data, content } = matter(fileContents);
   
   const processedContent = await remark()
+    .use(remarkGfm)
     .use(html, { sanitize: false })
     .process(content);
   
@@ -121,6 +123,7 @@ export async function parseMarkdown(filePath: string): Promise<{ data: Record<st
 
 export async function markdownToHtml(markdown: string): Promise<string> {
   const result = await remark()
+    .use(remarkGfm)
     .use(html, { sanitize: false })
     .process(markdown);
   
