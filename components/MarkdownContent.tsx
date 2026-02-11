@@ -25,6 +25,9 @@ export default function MarkdownContent({ title, content, markdown, path, siteUr
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
         components={{
+          pre: ({ node, children, ...props }: any) => {
+            return <>{children}</>;
+          },
           code: ({ node, inline, className, children, ...props }: any) => {
             const code = String(children).replace(/\n$/, '');
             
