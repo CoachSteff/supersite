@@ -1,7 +1,25 @@
 'use client';
 
 import { useState, ReactNode } from 'react';
+import type React from 'react';
 import styles from '@/styles/CodeBlock.module.css';
+
+function extractTextFromChildren(children: ReactNode): string {
+  if (typeof children === 'string') {
+    return children;
+  }
+  
+  if (Array.isArray(children)) {
+    return children.map(extractTextFromChildren).join('');
+  }
+  
+  if (children && typeof children === 'object' && 'props' in children) {
+    const element = children as React.ReactElement;
+    return extractTextFromChildren(element.props.children);
+  }
+  
+  return '';
+}
 
 interface CodeBlockProps {
   code: string | ReactNode;
@@ -13,8 +31,9 @@ interface CodeBlockProps {
 export default function CodeBlock({ code, language, className, children }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
-  // Extract the actual code string
-  const codeString = typeof code === 'string' ? code : String(code);
+  // Extract the actual code string from React nodes
+  const codeString = extractTextFromChildren(children) || 
+                     (typeof code === 'string' ? code : String(code));
 
   const handleCopy = async () => {
     try {
