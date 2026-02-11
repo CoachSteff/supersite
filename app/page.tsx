@@ -37,6 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   const headersList = headers();
   const language = headersList.get('x-supersite-lang') || 'en';
+  const config = getSiteConfig();
   
   const page = await getPageBySlug([]);
   
@@ -61,6 +62,7 @@ export default async function HomePage() {
       content={translatedPage.content}
       markdown={translatedPage.markdown}
       path={translatedPage.path}
+      siteUrl={config.site.url}
     />
   );
 }

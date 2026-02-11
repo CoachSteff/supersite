@@ -48,6 +48,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const headersList = headers();
   const language = headersList.get('x-supersite-lang') || 'en';
+  const config = getSiteConfig();
   
   const post = await getBlogPostBySlug(params.slug);
 
@@ -87,6 +88,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         content={translatedPost.content}
         markdown={translatedPost.markdown}
         path={translatedPost.path}
+        siteUrl={config.site.url}
       />
       <PageActions 
         title={translatedPost.title}

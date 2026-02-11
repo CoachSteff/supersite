@@ -51,6 +51,7 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
 export default async function Page({ params }: { params: { slug: string[] } }) {
   const headersList = headers();
   const language = headersList.get('x-supersite-lang') || 'en';
+  const config = getSiteConfig();
   
   const page = await getPageBySlug(params.slug);
 
@@ -76,6 +77,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
         content={translatedPage.content}
         markdown={translatedPage.markdown}
         path={translatedPage.path}
+        siteUrl={config.site.url}
       />
       <PageActions 
         title={translatedPage.title}
