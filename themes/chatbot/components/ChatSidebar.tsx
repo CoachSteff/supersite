@@ -3,16 +3,15 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Plus, Search, Clock, User, MessageSquare, Settings, LogOut, Bell, Star } from 'lucide-react';
-
 import { useRouter } from 'next/navigation';
-import { useChat } from './ChatProvider';
-import Avatar from './Avatar';
-import AuthModal from './AuthModal';
-import NotificationBadge from './NotificationBadge';
-import NotificationModal from './modals/NotificationModal';
-import SettingsModal from './modals/SettingsModal';
-import ProfileModal from './modals/ProfileModal';
-import FavouritesModal from './modals/FavouritesModal';
+import { useChat } from '@/components/ChatProvider';
+import Avatar from '@/components/Avatar';
+import AuthModal from '@/components/AuthModal';
+import NotificationBadge from '@/components/NotificationBadge';
+import NotificationModal from '@/components/modals/NotificationModal';
+import SettingsModal from '@/components/modals/SettingsModal';
+import ProfileModal from '@/components/modals/ProfileModal';
+import FavouritesModal from '@/components/modals/FavouritesModal';
 import styles from '@/styles/Chat.module.css';
 
 interface UserProfile {
@@ -83,6 +82,8 @@ export default function ChatSidebar({ siteTitle = 'SuperSite' }: ChatSidebarProp
   }
 
   async function fetchUnreadCount() {
+    if (!user) return;
+    
     try {
       const response = await fetch('/api/notifications?limit=1');
       const data = await response.json();

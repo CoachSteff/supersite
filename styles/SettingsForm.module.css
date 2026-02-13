@@ -122,11 +122,40 @@
 
 .avatarSection {
   display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl) 0;
+}
+
+.profilePreview {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background-color: var(--background-secondary);
-  border-radius: var(--border-radius);
+  text-align: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl);
+}
+
+.previewName {
+  margin: 0;
+  font-size: var(--font-size-xlarge);
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.previewTitle {
+  margin: 0;
+  font-size: var(--font-size-large);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.previewBio {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 400px;
 }
 
 .avatarActions {
@@ -324,9 +353,23 @@
 
 @media (max-width: 640px) {
   .avatarSection {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    padding: var(--spacing-lg);
+  }
+
+  .profilePreview {
+    padding: var(--spacing-md);
+  }
+
+  .previewName {
+    font-size: var(--font-size-large);
+  }
+
+  .previewTitle {
+    font-size: var(--font-size-base);
+  }
+
+  .previewBio {
+    font-size: var(--font-size-small);
   }
 
   .grid {

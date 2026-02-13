@@ -5,7 +5,7 @@ import { getSiteConfig } from '@/lib/config';
 export async function GET() {
   try {
     const config = getSiteConfig();
-    let items = [];
+    let items: any[] = [];
     
     if (config.navigation?.autoGenerate) {
       items = getFolderStructure();

@@ -12,15 +12,35 @@ import styles from '@/styles/Chat.module.css';
 interface CenterChatLayoutProps {
   config?: any;
   user?: any;
+  themeName?: string;
   children?: React.ReactNode;
 }
 
-export default function CenterChatLayout({ config, user, children }: CenterChatLayoutProps) {
+export default function CenterChatLayout({ config, user, themeName, children }: CenterChatLayoutProps) {
   const { messages, sendMessage, isLoading, isStreaming, suggestions } = useChat();
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [SidebarComponent, setSidebarComponent] = useState<React.ComponentType<any>>(() => ChatSidebar);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Dynamically load theme-specific ChatSidebar component
+  useEffect(() => {
+    async function loadThemeComponent() {
+      if (themeName) {
+        try {
+          const themeComponents = await import(`@/themes/${themeName}/components`);
+          if (themeComponents.ChatSidebar) {
+            setSidebarComponent(() => themeComponents.ChatSidebar);
+          }
+        } catch (error) {
+          // Theme doesn't have custom components, use base ChatSidebar
+          console.log(`[CenterChatLayout] Using base ChatSidebar for theme: ${themeName}`);
+        }
+      }
+    }
+    loadThemeComponent();
+  }, [themeName]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -56,9 +76,8 @@ export default function CenterChatLayout({ config, user, children }: CenterChatL
   return (
     <div className={styles.centerChatLayout}>
       {/* Sidebar */}
-      <ChatSidebar 
+      <SidebarComponent 
         siteTitle={config?.site?.name || 'SuperSite'}
-        user={user}
       />
 
       {/* Main Chat Area */}

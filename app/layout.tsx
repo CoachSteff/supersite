@@ -122,7 +122,7 @@ export default async function RootLayout({
                 <>
                   <AdminToolbar enabled={config.admin?.toolbar ?? false} />
                   <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
-                  <CenterChatLayout config={config} user={primaryUser}>
+                  <CenterChatLayout config={config} user={primaryUser} themeName={theme.themeFolder || 'base'}>
                     {children}
                   </CenterChatLayout>
                 </>

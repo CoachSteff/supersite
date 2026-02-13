@@ -175,7 +175,9 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
     }
   }
 
-  const displayName = formData.firstName || user.username;
+  const displayName = formData.firstName
+    ? `${formData.firstName}${formData.lastName ? ' ' + formData.lastName : ''}`
+    : user.username;
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
@@ -185,7 +187,16 @@ export default function ProfileSettings({ user, onUpdate }: ProfileSettingsProps
       {success && <div className={styles.success}>{success}</div>}
 
       <div className={styles.avatarSection}>
-        <Avatar src={formData.avatar} name={displayName} size={100} />
+        <div className={styles.profilePreview}>
+          <Avatar src={formData.avatar} name={displayName} size={120} />
+          <h3 className={styles.previewName}>{displayName}</h3>
+          {formData.jobTitle && (
+            <p className={styles.previewTitle}>{formData.jobTitle}</p>
+          )}
+          {formData.bio && (
+            <p className={styles.previewBio}>{formData.bio}</p>
+          )}
+        </div>
         <div className={styles.avatarActions}>
           <input
             ref={fileInputRef}

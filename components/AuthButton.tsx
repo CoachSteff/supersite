@@ -128,7 +128,7 @@ export default function AuthButton() {
           <Avatar
             src={user.profile.avatar}
             name={displayName}
-            size={32}
+            size={40}
           />
           <NotificationBadge count={unreadCount} show={true} />
         </button>

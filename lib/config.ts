@@ -308,16 +308,16 @@ export function getActiveTheme(): FullTheme {
   const themeName = config.branding.theme || 'base';
   
   // Load new folder-based theme system
-  const { theme: fullTheme, errors } = loadTheme(themeName);
+  const { theme: fullTheme, themeFolder, errors } = loadTheme(themeName);
   
   if (errors.length > 0 && process.env.NODE_ENV === 'development') {
     errors.forEach(err => console.warn(`[Theme] ${err}`));
   }
 
   // Apply config overrides if present
-  let finalTheme = fullTheme;
+  let finalTheme = { ...fullTheme, themeFolder };
   if (config.branding.overrides) {
-    finalTheme = applyThemeOverrides(fullTheme, config.branding.overrides);
+    finalTheme = { ...applyThemeOverrides(fullTheme, config.branding.overrides), themeFolder };
   }
   
   // Legacy branding support (deprecated but still functional)
@@ -339,7 +339,7 @@ export function getActiveTheme(): FullTheme {
       legacyOverrides.typography = { fontFamily: config.branding.fontFamily };
     }
     
-    finalTheme = applyThemeOverrides(finalTheme, legacyOverrides);
+    finalTheme = { ...applyThemeOverrides(finalTheme, legacyOverrides), themeFolder };
   }
 
   // Cache for getActiveFullTheme()

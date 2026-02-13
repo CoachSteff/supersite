@@ -251,6 +251,8 @@ export type Spacing = z.infer<typeof SpacingSchema>;
 // COMBINED THEME
 // ============================================
 
+export type ComponentMap = Record<string, React.ComponentType<any>>;
+
 export const FullThemeSchema = z.object({
   meta: ThemeMetaSchema,
   structure: StructureSchema,
@@ -258,4 +260,7 @@ export const FullThemeSchema = z.object({
   colors: ColorsSchema,
 });
 
-export type FullTheme = z.infer<typeof FullThemeSchema>;
+export type FullTheme = z.infer<typeof FullThemeSchema> & {
+  components?: ComponentMap;
+  themeFolder?: string;
+};

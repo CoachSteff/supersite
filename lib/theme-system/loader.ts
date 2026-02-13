@@ -11,6 +11,7 @@ import {
   type Structure,
   type Blocks,
   type Colors,
+  type ComponentMap,
 } from './schemas';
 
 const THEME_FILES = {
@@ -23,6 +24,8 @@ const THEME_FILES = {
 interface ThemeLoadResult {
   theme: FullTheme;
   themePath: string;
+  themeName: string;
+  themeFolder: string;
   errors: string[];
   isLegacy: boolean;
 }
@@ -63,6 +66,8 @@ export function loadTheme(themeName: string): ThemeLoadResult {
         return {
           theme: getDefaultTheme(),
           themePath: '',
+          themeName: 'default',
+          themeFolder: 'base',
           errors: [`Theme "${themeName}" not found, using defaults`],
           isLegacy: false,
         };
@@ -85,9 +90,11 @@ export function loadTheme(themeName: string): ThemeLoadResult {
     structure: structure || StructureSchema.parse({}),
     blocks: blocks || BlocksSchema.parse({}),
     colors: colors || getDefaultColors(),
+    // Components will be loaded dynamically on the client side
+    // to support 'use client' directives
   };
 
-  return { theme, themePath, errors, isLegacy: false };
+  return { theme, themePath, themeName, themeFolder: themeName, errors, isLegacy: false };
 }
 
 /**
@@ -120,7 +127,7 @@ function loadLegacyTheme(themeName: string, themePath: string): ThemeLoadResult 
       colors,
     };
 
-    return { theme, themePath, errors, isLegacy: true };
+    return { theme, themePath, themeName, themeFolder: themeName, errors, isLegacy: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     errors.push(`Error loading legacy theme: ${message}`);
@@ -128,6 +135,8 @@ function loadLegacyTheme(themeName: string, themePath: string): ThemeLoadResult 
     return {
       theme: getDefaultTheme(),
       themePath,
+      themeName,
+      themeFolder: themeName,
       errors,
       isLegacy: true,
     };
