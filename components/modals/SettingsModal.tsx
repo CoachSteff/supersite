@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User, Lock, Bell, Activity, Cookie } from 'lucide-react';
 import Modal from '../Modal';
 import ProfileSettings from '../settings/ProfileSettings';
@@ -61,6 +61,26 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     setUser(updatedUser);
   }
 
+  const handleTabKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const currentIndex = tabs.findIndex(t => t.id === activeTab);
+    let newIndex = currentIndex;
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      newIndex = currentIndex + 1 < tabs.length ? currentIndex + 1 : 0;
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+      event.preventDefault();
+      newIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : tabs.length - 1;
+    } else {
+      return;
+    }
+
+    setActiveTab(tabs[newIndex].id);
+    // Focus the new tab button
+    const tabButton = document.getElementById(`settings-tab-${tabs[newIndex].id}`);
+    tabButton?.focus();
+  }, [activeTab]);
+
   if (!isOpen) {
     return null;
   }
@@ -68,15 +88,20 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Settings" size="lg">
       {loading ? (
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.loading} aria-busy="true">Loading...</div>
       ) : user ? (
         <div className={styles.content}>
-          <nav className={styles.sidebar}>
+          <nav className={styles.sidebar} role="tablist" aria-label="Settings sections" onKeyDown={handleTabKeyDown}>
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
+                  id={`settings-tab-${tab.id}`}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`settings-panel-${tab.id}`}
+                  tabIndex={activeTab === tab.id ? 0 : -1}
                   onClick={() => setActiveTab(tab.id)}
                   className={`${styles.tabButton} ${activeTab === tab.id ? styles.tabButtonActive : ''}`}
                 >
@@ -87,7 +112,12 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             })}
           </nav>
 
-          <main className={styles.main}>
+          <main
+            id={`settings-panel-${activeTab}`}
+            role="tabpanel"
+            aria-labelledby={`settings-tab-${activeTab}`}
+            className={styles.main}
+          >
             {activeTab === 'profile' && (
               <ProfileSettings user={user} onUpdate={handleUserUpdate} />
             )}

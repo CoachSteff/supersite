@@ -92,7 +92,7 @@ export default function NotificationModal({ isOpen, onClose, onNotificationsUpda
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Notifications" size="md">
       {loading ? (
-        <div style={{ padding: '2rem', textAlign: 'center' }}>Loading...</div>
+        <div style={{ padding: '2rem', textAlign: 'center' }} aria-busy="true">Loading...</div>
       ) : (
         <NotificationPanel
           notifications={notifications}

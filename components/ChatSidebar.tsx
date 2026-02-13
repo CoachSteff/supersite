@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { Plus, Search, Clock, User, MessageSquare, Settings, LogOut, Bell, Star } from 'lucide-react';
 
@@ -40,6 +40,25 @@ export default function ChatSidebar({ siteTitle = 'SuperSite' }: ChatSidebarProp
   const [unreadCount, setUnreadCount] = useState(0);
   const [activeModal, setActiveModal] = useState<'notifications' | 'settings' | 'profile' | 'favourites' | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuListRef = useRef<HTMLDivElement>(null);
+
+  const handleMenuKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (!menuListRef.current) return;
+    const items = menuListRef.current.querySelectorAll<HTMLElement>('[role="menuitem"]');
+    const currentIndex = Array.from(items).indexOf(document.activeElement as HTMLElement);
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      const next = currentIndex + 1 < items.length ? currentIndex + 1 : 0;
+      items[next]?.focus();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      const prev = currentIndex - 1 >= 0 ? currentIndex - 1 : items.length - 1;
+      items[prev]?.focus();
+    } else if (event.key === 'Escape') {
+      setShowUserMenu(false);
+    }
+  }, []);
 
   useEffect(() => {
     checkAuthStatus();
@@ -65,6 +84,15 @@ export default function ChatSidebar({ siteTitle = 'SuperSite' }: ChatSidebarProp
 
     if (showUserMenu) {
       document.addEventListener('mousedown', handleClickOutside);
+
+      // Focus first menu item when menu opens
+      requestAnimationFrame(() => {
+        if (menuListRef.current) {
+          const first = menuListRef.current.querySelector<HTMLElement>('[role="menuitem"]');
+          first?.focus();
+        }
+      });
+
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showUserMenu]);
@@ -184,6 +212,8 @@ export default function ChatSidebar({ siteTitle = 'SuperSite' }: ChatSidebarProp
             <button
               className={styles.userProfile}
               onClick={() => setShowUserMenu(!showUserMenu)}
+              aria-expanded={showUserMenu}
+              aria-haspopup="menu"
             >
               <div style={{ position: 'relative' }}>
                 <Avatar
@@ -204,8 +234,15 @@ export default function ChatSidebar({ siteTitle = 'SuperSite' }: ChatSidebarProp
             </button>
 
             {showUserMenu && (
-              <div className={styles.chatUserMenu}>
+              <div
+                ref={menuListRef}
+                role="menu"
+                aria-label="User menu"
+                className={styles.chatUserMenu}
+                onKeyDown={handleMenuKeyDown}
+              >
                 <button
+                  role="menuitem"
                   onClick={() => handleMenuItemClick('notifications')}
                   className={styles.chatMenuItem}
                 >
@@ -216,6 +253,7 @@ export default function ChatSidebar({ siteTitle = 'SuperSite' }: ChatSidebarProp
                   )}
                 </button>
                 <button
+                  role="menuitem"
                   onClick={() => handleMenuItemClick('favourites')}
                   className={styles.chatMenuItem}
                 >
@@ -223,6 +261,7 @@ export default function ChatSidebar({ siteTitle = 'SuperSite' }: ChatSidebarProp
                   <span>Favourites</span>
                 </button>
                 <button
+                  role="menuitem"
                   onClick={() => handleMenuItemClick('profile')}
                   className={styles.chatMenuItem}
                 >
@@ -230,15 +269,16 @@ export default function ChatSidebar({ siteTitle = 'SuperSite' }: ChatSidebarProp
                   <span>View Profile</span>
                 </button>
                 <button
+                  role="menuitem"
                   onClick={() => handleMenuItemClick('settings')}
                   className={styles.chatMenuItem}
                 >
                   <Settings size={18} />
                   <span>Settings</span>
                 </button>
-                {/* TODO: Add Security & Privacy section with Cookie Preferences (see docs/SECURITY_PRIVACY_MENU.md) */}
-                <div className={styles.menuDivider}></div>
+                <div className={styles.menuDivider} role="separator"></div>
                 <button
+                  role="menuitem"
                   onClick={handleLogout}
                   className={`${styles.chatMenuItem} ${styles.logoutMenuItem}`}
                 >
