@@ -44,9 +44,11 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
     "@google/generative-ai": "^0.24.1",
+    "@types/dompurify": "^3.0.5",
     "@types/js-yaml": "^4.0.9",
     "flexsearch": "^0.7.43",
     "gray-matter": "^4.0.3",
+    "isomorphic-dompurify": "^3.0.0-rc.2",
     "js-yaml": "^4.1.1",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.562.0",

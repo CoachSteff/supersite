@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, unlinkSync, readdirSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import { createHash } from 'crypto';
+import { createHash, randomInt } from 'crypto';
 import jwt from 'jsonwebtoken';
 import yaml from 'js-yaml';
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,7 +17,15 @@ const USERS_DIR = join(DATA_DIR, 'users');
   }
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET
+    || (process.env.NODE_ENV === 'development' ? 'dev-secret-change-in-production' : undefined);
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required in production');
+  }
+  return secret;
+}
+const JWT_SECRET: string = getJwtSecret();
 const OTP_EXPIRY_MINUTES = 15;
 const MAX_OTP_ATTEMPTS = 3;
 const JWT_EXPIRY_DAYS = 30;
@@ -38,9 +46,9 @@ export interface JWTPayload {
   exp?: number;
 }
 
-// Generate a 6-digit OTP code
+// Generate a 6-digit OTP code (cryptographically secure)
 export function generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return randomInt(100000, 999999).toString();
 }
 
 // Hash email for filename (SHA-256)
@@ -198,9 +206,25 @@ export function getUserFromRequest(request: NextRequest): JWTPayload | null {
 
 // Rate limiting helper (simple in-memory)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+let rateLimitCallCount = 0;
 
-export function checkRateLimit(email: string, maxRequests: number = 5, windowMinutes: number = 60): boolean {
-  const key = hashEmail(email);
+function cleanupRateLimitMap(): void {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap) {
+    if (now > entry.resetAt) {
+      rateLimitMap.delete(key);
+    }
+  }
+}
+
+export function checkRateLimit(identifier: string, maxRequests: number = 5, windowMinutes: number = 60): boolean {
+  // Periodic cleanup to prevent unbounded growth
+  rateLimitCallCount += 1;
+  if (rateLimitCallCount % 100 === 0) {
+    cleanupRateLimitMap();
+  }
+
+  const key = hashEmail(identifier);
   const now = Date.now();
   const limit = rateLimitMap.get(key);
 

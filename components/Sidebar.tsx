@@ -229,10 +229,18 @@ function SocialLinksWidget({ title, links }: { title?: string; links?: { twitter
 }
 
 function CustomWidget({ title, content }: { title?: string; content: string }) {
+  const [sanitized, setSanitized] = useState('');
+
+  useEffect(() => {
+    import('isomorphic-dompurify').then(({ default: DOMPurify }) => {
+      setSanitized(DOMPurify.sanitize(content));
+    });
+  }, [content]);
+
   return (
     <div className={styles.widget}>
       {title && <h3 className={styles.widgetTitle}>{title}</h3>}
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <div dangerouslySetInnerHTML={{ __html: sanitized }} />
     </div>
   );
 }

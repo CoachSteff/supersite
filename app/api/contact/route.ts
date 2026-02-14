@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 
 export async function POST(request: NextRequest) {
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const logEntry = `\n--- Contact Form Submission ---\nDate: ${timestamp}\nName: ${name}\nEmail: ${email}\nMessage: ${message}\n\n`;
 
     const logPath = path.join(process.cwd(), 'contact-submissions.log');
-    fs.appendFileSync(logPath, logEntry);
+    await fs.appendFile(logPath, logEntry);
 
     return NextResponse.json({ success: true, message: 'Message sent successfully' });
   } catch (error) {

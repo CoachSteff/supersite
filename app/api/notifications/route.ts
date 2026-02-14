@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { getUserFromRequest } from '@/lib/auth';
 import { getUserNotifications, getUnreadCount } from '@/lib/notifications';
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('session');
+    const user = getUserFromRequest(request);
 
-    if (!sessionCookie?.value) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = sessionCookie.value;
+    const userId = user.userId;
 
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '20');

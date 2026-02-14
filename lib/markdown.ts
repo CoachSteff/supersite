@@ -113,7 +113,7 @@ export async function parseMarkdown(filePath: string): Promise<{ data: Record<st
   
   const processedContent = await remark()
     .use(remarkGfm)
-    .use(html, { sanitize: false })
+    .use(html, { sanitize: true })
     .process(content);
   
   const htmlContent = processedContent.toString();
@@ -124,7 +124,7 @@ export async function parseMarkdown(filePath: string): Promise<{ data: Record<st
 export async function markdownToHtml(markdown: string): Promise<string> {
   const result = await remark()
     .use(remarkGfm)
-    .use(html, { sanitize: false })
+    .use(html, { sanitize: true })
     .process(markdown);
   
   return result.toString();

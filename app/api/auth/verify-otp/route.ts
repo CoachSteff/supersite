@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { validateOTP, generateJWT, setAuthCookie } from '@/lib/auth';
+import { validateOTP, generateJWT, setAuthCookie, checkRateLimit } from '@/lib/auth';
 import { getUserByEmail, createUser, updateLastLogin } from '@/lib/users';
 import { sendWelcomeEmail } from '@/lib/email';
 
@@ -11,6 +11,17 @@ const requestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // IP-based rate limiting to prevent brute-force across multiple emails
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown';
+    if (!checkRateLimit(`ip:${ip}`, 10, 15)) {
+      return NextResponse.json(
+        { error: 'Too many attempts. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { email, code } = requestSchema.parse(body);
 
