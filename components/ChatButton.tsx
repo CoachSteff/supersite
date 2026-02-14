@@ -3,7 +3,7 @@
 import { Sparkles, MessageCircle } from 'lucide-react';
 import { useChat } from './ChatProvider';
 import { useEffect, useState } from 'react';
-import styles from '@/styles/Chat.module.css';
+import styles from '@/styles/ChatButton.module.css';
 
 interface ClientConfig {
   chat: {

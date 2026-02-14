@@ -13,7 +13,7 @@ import NotificationModal from './modals/NotificationModal';
 import SettingsModal from './modals/SettingsModal';
 import ProfileModal from './modals/ProfileModal';
 import FavouritesModal from './modals/FavouritesModal';
-import styles from '@/styles/Chat.module.css';
+import styles from '@/styles/ChatSidebar.module.css';
 
 interface UserProfile {
   id: string;

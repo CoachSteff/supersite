@@ -173,3 +173,16 @@
   font-size: var(--font-size-small);
   margin-bottom: var(--spacing-md);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .modal {
+    animation: none;
+  }
+
+  .closeButton,
+  .input,
+  .submitButton,
+  .backButton {
+    transition: none;
+  }
+}

@@ -74,6 +74,16 @@
   white-space: nowrap;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .codeBlock + .codeBlockToolbar {
+    animation: none;
+  }
+
+  .copyButton {
+    transition: none;
+  }
+}
+
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .codeBlockToolbar {

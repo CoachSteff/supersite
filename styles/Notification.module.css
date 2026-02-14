@@ -69,3 +69,14 @@
   opacity: 1;
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .notification,
+  .fadeOut {
+    animation: none;
+  }
+
+  .closeButton {
+    transition: none;
+  }
+}

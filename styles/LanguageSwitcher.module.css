@@ -208,3 +208,12 @@
   font-weight: 500;
   margin: 0;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .dropdown,
+  .loadingOverlay,
+  .loadingSpinner {
+    animation: none;
+  }
+}

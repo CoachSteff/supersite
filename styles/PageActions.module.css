@@ -79,3 +79,13 @@
     max-width: 120px;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .actionButton {
+    transition: none;
+  }
+
+  .feedback {
+    animation: none;
+  }
+}

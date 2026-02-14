@@ -52,6 +52,12 @@
   font-weight: 500;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .spinnerRing {
+    animation: none;
+  }
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .spinnerRing {

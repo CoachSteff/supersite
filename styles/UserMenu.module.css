@@ -126,3 +126,14 @@
 .logoutButton:hover {
   background-color: var(--error-bg, rgba(239, 68, 68, 0.1));
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .menu {
+    animation: none;
+  }
+
+  .menuItem,
+  .logoutButton {
+    transition: none;
+  }
+}
