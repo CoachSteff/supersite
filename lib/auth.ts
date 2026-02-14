@@ -17,15 +17,18 @@ const USERS_DIR = join(DATA_DIR, 'users');
   }
 });
 
+let _jwtSecret: string | null = null;
 function getJwtSecret(): string {
-  const secret = process.env.JWT_SECRET
-    || (process.env.NODE_ENV === 'development' ? 'dev-secret-change-in-production' : undefined);
-  if (!secret) {
-    throw new Error('JWT_SECRET environment variable is required in production');
+  if (!_jwtSecret) {
+    const secret = process.env.JWT_SECRET
+      || (process.env.NODE_ENV === 'development' ? 'dev-secret-change-in-production' : undefined);
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable is required in production');
+    }
+    _jwtSecret = secret;
   }
-  return secret;
+  return _jwtSecret;
 }
-const JWT_SECRET: string = getJwtSecret();
 const OTP_EXPIRY_MINUTES = 15;
 const MAX_OTP_ATTEMPTS = 3;
 const JWT_EXPIRY_DAYS = 30;
@@ -159,7 +162,7 @@ export function generateJWT(userId: string, email: string, username: string): st
     username,
   };
 
-  return jwt.sign(payload, JWT_SECRET, {
+  return jwt.sign(payload, getJwtSecret(), {
     expiresIn: `${JWT_EXPIRY_DAYS}d`,
   });
 }
@@ -167,7 +170,7 @@ export function generateJWT(userId: string, email: string, username: string): st
 // Verify JWT token
 export function verifyJWT(token: string): JWTPayload | null {
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    const payload = jwt.verify(token, getJwtSecret()) as JWTPayload;
     return payload;
   } catch (error) {
     console.error('[Auth] JWT verification failed:', error);
