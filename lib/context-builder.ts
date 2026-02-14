@@ -72,11 +72,47 @@ export function prioritizeContent(
   });
 }
 
+function scoreRelevance(item: ContentItem, queryTerms: string[]): number {
+  let score = 0;
+  const titleLower = item.title.toLowerCase();
+  const contentLower = item.content.toLowerCase();
+  const summaryLower = (item.summary || '').toLowerCase();
+
+  for (const term of queryTerms) {
+    if (titleLower.includes(term)) score += 10;
+    if (summaryLower.includes(term)) score += 5;
+    if (contentLower.includes(term)) score += 1;
+  }
+
+  // Boost by priority
+  const priorityBoost = { high: 3, medium: 1, low: 0 };
+  score += priorityBoost[item.priority || 'medium'];
+
+  return score;
+}
+
 export async function buildContext(query: string): Promise<string> {
   const allContent = await getAllContent();
-  
-  const highPriorityContent = prioritizeContent(allContent, 'high');
-  const contentToUse = highPriorityContent.length > 0 ? highPriorityContent : allContent;
+
+  // Always include high-priority content
+  const highPriority = allContent.filter(item => item.priority === 'high');
+
+  // Score and rank remaining content by relevance to query
+  const queryTerms = query.toLowerCase().split(/\s+/).filter(t => t.length > 2);
+  const scored = allContent
+    .filter(item => item.priority !== 'high')
+    .map(item => ({ item, score: scoreRelevance(item, queryTerms) }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map(({ item }) => item);
+
+  const contentToUse = [...highPriority, ...scored];
+
+  // Fallback: if nothing matched, use all content (small site)
+  if (contentToUse.length === 0) {
+    return formatContextForAI(allContent);
+  }
 
   return formatContextForAI(contentToUse);
 }

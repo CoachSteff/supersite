@@ -10,6 +10,8 @@ export interface SearchResult {
 
 let searchIndex: FlexSearch.Index | null = null;
 let searchData: SearchResult[] = [];
+let indexBuiltAt: number = 0;
+const INDEX_TTL_MS = 5 * 60 * 1000; // Cache for 5 minutes
 
 export async function buildSearchIndex() {
   const index = new FlexSearch.Index({
@@ -48,11 +50,13 @@ export async function buildSearchIndex() {
   }
 
   searchIndex = index;
+  indexBuiltAt = Date.now();
   return index;
 }
 
 export async function searchContent(query: string): Promise<SearchResult[]> {
-  if (!searchIndex) {
+  const isStale = !searchIndex || (Date.now() - indexBuiltAt > INDEX_TTL_MS);
+  if (isStale) {
     await buildSearchIndex();
   }
 

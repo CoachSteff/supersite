@@ -1,5 +1,8 @@
 import '@testing-library/jest-dom'
 
+// Set test environment variables
+process.env.JWT_SECRET = 'test-secret-for-jest'
+
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
