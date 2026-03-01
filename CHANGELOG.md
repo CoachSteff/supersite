@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Markdown showcase page with GitHub-flavored markdown checkbox support
+- Code block toolbar with copy button
+- Modal-based UI system with theme component customization
+- WCAG 2.1 accessibility improvements
+- `prefers-reduced-motion` support and improved CSS architecture
+- Relevance-based AI context selection and search index TTL cache
+
+### Fixed
+- React hydration errors in code blocks (plain text extraction, paragraph nesting, client-only toolbar)
+- Security hardening across auth, headers, and input sanitization
+- JWT_SECRET deferred to runtime for Next.js build compatibility
+- Navigation duplicate entries
+
+### Changed
+- Removed development test files and artifacts from repository
+
 ## [0.2.0] - 2026-02-10
 
 ### User Features

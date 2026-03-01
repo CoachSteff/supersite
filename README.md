@@ -11,7 +11,7 @@ A universal, AI-powered website template built with Next.js. Fully configuration
 
 Part of the **Super** family: [superskills](https://github.com/coachsteff/superskills)
 
-📖 **[Read the Release Notes](./RELEASE_NOTES.md)** | 🚀 **[Quick Start Guide](./QUICKSTART.md)** | 📚 **[Full Documentation](./CONFIGURATION.md)**
+📖 **[Read the Release Notes](./docs/dev/RELEASE_NOTES.md)** | 🚀 **[Quick Start Guide](./QUICK-START.md)** | 📚 **[Full Documentation](./docs/CONFIGURATION.md)**
 
 ## ✨ Key Features
 

@@ -35,7 +35,6 @@ export default function CenterChatLayout({ config, user, themeName, children }: 
           }
         } catch (error) {
           // Theme doesn't have custom components, use base ChatSidebar
-          console.log(`[CenterChatLayout] Using base ChatSidebar for theme: ${themeName}`);
         }
       }
     }

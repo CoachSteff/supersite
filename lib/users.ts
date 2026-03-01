@@ -449,14 +449,18 @@ export function autoMigrateUser(user: UserProfile): UserProfile {
     Object.values(user.social).some(val => val && (typeof val === 'string' ? val.trim() : (Array.isArray(val) && val.length > 0)));
 
   if (needsMigration) {
-    console.log(`[Users] Auto-migrating user ${user.username} to unified links structure`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Users] Auto-migrating user ${user.username} to unified links structure`);
+    }
     user.links = migrateSocialToLinks(user);
-    
+
     // Save migrated data to file
     try {
       const userFile = join(USERS_DIR, `${user.id}.yaml`);
       writeFileSync(userFile, yaml.dump(user), 'utf-8');
-      console.log(`[Users] Migration saved for user ${user.username}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[Users] Migration saved for user ${user.username}`);
+      }
     } catch (error) {
       console.error(`[Users] Failed to save migration for user ${user.username}:`, error);
     }

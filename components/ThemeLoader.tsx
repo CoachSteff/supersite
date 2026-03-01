@@ -81,8 +81,6 @@ function applyTheme(theme: FullTheme, mode: 'light' | 'dark') {
   const themeData = theme as any;
   const colors = mode === 'dark' ? themeData.colors?.colors?.dark : themeData.colors?.colors?.light;
 
-  console.log('[ThemeLoader] Applying theme:', { mode, hasColors: !!colors });
-
   // Set data attribute for CSS selectors
   root.setAttribute('data-theme', mode);
 
@@ -185,7 +183,6 @@ export function ThemeProvider({
   }, [mode, theme, mounted]);
 
   const setMode = (newMode: ThemeMode) => {
-    console.log('[ThemeLoader] Setting mode:', newMode);
     setModeState(newMode);
     localStorage.setItem('theme-mode', newMode);
   };
