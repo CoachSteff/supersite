@@ -34,11 +34,13 @@ interface SettingsModalProps {
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [user, setUser] = useState<any>(null);
+  const [siteName, setSiteName] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
       checkAuth();
+      fetchSiteName();
     }
   }, [isOpen]);
 
@@ -54,6 +56,16 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       console.error('[SettingsModal] Auth check failed:', error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchSiteName() {
+    try {
+      const response = await fetch('/api/config');
+      const data = await response.json();
+      setSiteName(data.site?.name || '');
+    } catch (error) {
+      console.error('[SettingsModal] Config fetch failed:', error);
     }
   }
 
@@ -128,7 +140,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <NotificationSettings user={user} onUpdate={handleUserUpdate} />
             )}
             {activeTab === 'cookies' && (
-              <CookieSettings user={user} />
+              <CookieSettings user={user} siteName={siteName} />
             )}
             {activeTab === 'activity' && (
               <ActivitySettings user={user} />

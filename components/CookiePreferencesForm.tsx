@@ -13,9 +13,10 @@ interface CookiePreferences {
 interface CookiePreferencesFormProps {
   onSave?: () => void;
   compact?: boolean;
+  siteName?: string;
 }
 
-export default function CookiePreferencesForm({ onSave, compact = false }: CookiePreferencesFormProps) {
+export default function CookiePreferencesForm({ onSave, compact = false, siteName = 'This site' }: CookiePreferencesFormProps) {
   const [preferences, setPreferences] = useState<CookiePreferences>({
     necessary: true,
     analytics: false,
@@ -104,7 +105,7 @@ export default function CookiePreferencesForm({ onSave, compact = false }: Cooki
       )}
 
       <p className={styles.formDescription}>
-        SuperSite only uses essential session cookies for authentication. 
+        {siteName} only uses essential session cookies for authentication.
         Optional analytics and marketing cookies are not currently implemented.
       </p>
 

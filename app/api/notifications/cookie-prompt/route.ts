@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createNotification } from '@/lib/notifications';
 import { hasSetCookiePreferences } from '@/lib/cookie-preferences';
+import { getSiteConfig } from '@/lib/config';
 
 const ANONYMOUS_USER_ID = 'anonymous';
 
@@ -17,10 +18,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ created: false, message: 'Preferences already set' });
     }
 
+    const config = getSiteConfig();
     const notification = createNotification(userId, {
       type: 'system',
       title: 'Cookie Preferences',
-      message: 'SuperSite uses only essential session cookies. Click to review your cookie preferences.',
+      message: `${config.site.name} uses only essential session cookies. Click to review your cookie preferences.`,
       metadata: {
         context: {
           type: 'cookie-preferences',

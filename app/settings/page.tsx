@@ -30,10 +30,12 @@ export default function SettingsPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [user, setUser] = useState<any>(null);
+  const [siteName, setSiteName] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkAuth();
+    fetchSiteName();
   }, []);
 
   async function checkAuth() {
@@ -52,6 +54,16 @@ export default function SettingsPage() {
       router.push('/');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchSiteName() {
+    try {
+      const response = await fetch('/api/config');
+      const data = await response.json();
+      setSiteName(data.site?.name || '');
+    } catch (error) {
+      console.error('[Settings] Config fetch failed:', error);
     }
   }
 
@@ -106,7 +118,7 @@ export default function SettingsPage() {
             <NotificationSettings user={user} onUpdate={handleUserUpdate} />
           )}
           {activeTab === 'cookies' && (
-            <CookieSettings user={user} />
+            <CookieSettings user={user} siteName={siteName} />
           )}
           {activeTab === 'activity' && (
             <ActivitySettings user={user} />

@@ -5,7 +5,11 @@ import { Cookie, X } from 'lucide-react';
 import CookiePreferencesForm from './CookiePreferencesForm';
 import styles from '@/styles/AnonymousCookieNotice.module.css';
 
-export default function AnonymousCookieNotice() {
+interface AnonymousCookieNoticeProps {
+  siteName?: string;
+}
+
+export default function AnonymousCookieNotice({ siteName = 'This site' }: AnonymousCookieNoticeProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -67,7 +71,7 @@ export default function AnonymousCookieNotice() {
               <div className={styles.content}>
                 <h4 className={styles.title}>Cookie Notice</h4>
                 <p className={styles.description}>
-                  SuperSite uses only essential session cookies. Click to review preferences.
+                  {siteName} uses only essential session cookies. Click to review preferences.
                 </p>
               </div>
               <button
@@ -106,7 +110,7 @@ export default function AnonymousCookieNotice() {
                 <X size={18} />
               </button>
             </div>
-            <CookiePreferencesForm onSave={handleFormSaved} compact={true} />
+            <CookiePreferencesForm onSave={handleFormSaved} compact={true} siteName={siteName} />
           </div>
         )}
       </div>

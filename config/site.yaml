@@ -7,6 +7,9 @@ site:
 branding:
   theme: base
   primaryUser: accounts
+  logoText: SuperSite
+  logoAccent: ""
+  copyrightName: SuperSite
 admin:
   toolbar: true
 auth:

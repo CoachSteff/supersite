@@ -53,6 +53,9 @@ const SiteConfigSchema = z.object({
   branding: z.object({
     theme: z.string().default('default'),
     primaryUser: z.string().optional(),
+    logoText: z.string().optional(),
+    logoAccent: z.string().optional(),
+    copyrightName: z.string().optional(),
     overrides: ThemeOverridesSchema,
     // Legacy support (deprecated but functional)
     primaryColor: z.string().optional(),
@@ -256,6 +259,9 @@ export function getClientSafeConfig() {
     site: config.site,
     branding: {
       theme: config.branding.theme,
+      logoText: config.branding.logoText || config.site.name,
+      logoAccent: config.branding.logoAccent || '',
+      copyrightName: config.branding.copyrightName || config.site.name,
       // Expose theme colors for client-side use
       colors: theme.colors,
     },

@@ -13,6 +13,8 @@ interface HeaderProps {
   style?: 'full' | 'minimal' | 'centered' | 'none';
   sticky?: boolean;
   showLogo?: boolean;
+  logoText?: string;
+  logoAccent?: string;
   showSearch?: boolean;
   showAuth?: boolean;
 }
@@ -21,6 +23,8 @@ export default function Header({
   style = 'full',
   sticky = true,
   showLogo = true,
+  logoText = 'SuperSite',
+  logoAccent,
   showSearch = true,
   showAuth = false,
 }: HeaderProps) {
@@ -50,7 +54,7 @@ export default function Header({
       <div className={styles.container}>
         {showLogo && (
           <div className={styles.logo}>
-            <Link href="/">SuperSite</Link>
+            <Link href="/">{logoText}{logoAccent && <span className={styles.logoAccent}>{logoAccent}</span>}</Link>
           </div>
         )}
         
@@ -68,6 +72,7 @@ export default function Header({
             </button>
           )}
           
+          <ThemeToggle />
           {showAuth && <AuthButton />}
         </div>
       </div>

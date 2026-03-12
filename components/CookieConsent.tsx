@@ -13,7 +13,11 @@ interface CookiePreferences {
 const COOKIE_CONSENT_KEY = 'supersite_cookie_consent';
 const COOKIE_PREFERENCES_KEY = 'supersite_cookie_preferences';
 
-export default function CookieConsent() {
+interface CookieConsentProps {
+  siteName?: string;
+}
+
+export default function CookieConsent({ siteName = 'This site' }: CookieConsentProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
@@ -99,7 +103,7 @@ export default function CookieConsent() {
           <>
             <p className={styles.description}>
               We use cookies to enhance your browsing experience and analyze site traffic. 
-              SuperSite only uses essential session cookies to maintain your login state. 
+              {siteName} only uses essential session cookies to maintain your login state.
               No tracking or marketing cookies are used.
             </p>
 

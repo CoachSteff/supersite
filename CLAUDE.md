@@ -88,18 +88,17 @@ Everything specific to CoachSteff.live:
 4. **Framework improvements** (bug fixes, new features) → edit framework files, commit to Git
 5. **NEVER put site-specific branding in framework files** — this breaks the separation
 
-### Known site-specific modifications in framework files
+### Configurable branding (resolved)
 
-The following framework files contain CoachSteff-specific customizations that should NOT be pushed to the SuperSite GitHub repo:
+All component branding is now config-driven. Header logo (`branding.logoText`, `branding.logoAccent`), Footer copyright (`branding.copyrightName`), cookie notices, and social links all read from `config/site.yaml` (framework defaults) and `config/site.local.yaml` (site overrides). No CoachSteff-specific strings remain in framework components.
 
-- `components/Header.tsx` — Logo says "Steff." with accent dot (framework default: configurable)
-- `components/Footer.tsx` — CoachSteff copyright and links
-- `components/CookieConsent.tsx`, `AnonymousCookieNotice.tsx`, `CookiePreferencesForm.tsx`, `components/settings/CookieSettings.tsx` — Brand name "CoachSteff.live"
+### Remaining site-specific modifications in framework files
+
 - `styles/*.module.css` — Various styling tweaks for CoachSteff brand
 - `app/globals.css` — Parchment Sky color fallbacks (should be generic)
 - `app/layout.tsx` — Hardcoded Google Fonts (Inter + Playfair Display)
 
-When committing to the SuperSite repo, these files must be reverted or excluded.
+When committing to the SuperSite repo, review these files.
 
 ## Configuration System
 
@@ -229,4 +228,3 @@ npm run test:e2e     # Playwright E2E tests
 - Hardcode theme colors in `globals.css` (ThemeLoader handles this at runtime)
 - Hardcode font families in `layout.tsx` (should come from theme config)
 - Commit `.env.local`, `data/`, or `contact-submissions.log`
-- Push site-specific component modifications (Header logo, Footer content) to the SuperSite repo

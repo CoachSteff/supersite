@@ -92,6 +92,9 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
         <link rel="icon" href={config.site.favicon} />
         <script
           dangerouslySetInnerHTML={{
@@ -131,10 +134,12 @@ export default async function RootLayout({
                 <>
                   <AdminToolbar enabled={config.admin?.toolbar ?? false} />
                   <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
-                  <Header 
+                  <Header
                     style={header.style}
                     sticky={header.sticky}
                     showLogo={header.logo}
+                    logoText={config.branding.logoText || config.site.name}
+                    logoAccent={config.branding.logoAccent}
                     showSearch={header.search && features.search}
                     showAuth={authEnabled}
                   />
@@ -162,10 +167,14 @@ export default async function RootLayout({
                   >
                     {children}
                   </LayoutComponent>
-                  <Footer style={footer.style} />
+                  <Footer
+                    style={footer.style}
+                    copyrightName={config.branding.copyrightName || config.site.name}
+                    socialLinks={config.social}
+                  />
                   {features.chat && <ChatButton />}
                   {features.chat && <ChatWindow />}
-                  <AnonymousCookieNotice />
+                  <AnonymousCookieNotice siteName={config.site.name} />
                 </>
               )}
             </ChatProvider>

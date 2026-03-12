@@ -6,9 +6,10 @@ import styles from '@/styles/SettingsForm.module.css';
 
 interface CookieSettingsProps {
   user: any;
+  siteName?: string;
 }
 
-export default function CookieSettings({ user }: CookieSettingsProps) {
+export default function CookieSettings({ user, siteName = 'This site' }: CookieSettingsProps) {
   const [message, setMessage] = useState('');
 
   function handleSaved() {
@@ -21,11 +22,11 @@ export default function CookieSettings({ user }: CookieSettingsProps) {
       <div className={styles.sectionHeader}>
         <h2>Cookie Preferences</h2>
         <p className={styles.sectionDescription}>
-          Manage how SuperSite uses cookies to enhance your experience.
+          Manage how {siteName} uses cookies to enhance your experience.
         </p>
       </div>
 
-      <CookiePreferencesForm onSave={handleSaved} />
+      <CookiePreferencesForm onSave={handleSaved} siteName={siteName} />
 
       {message && (
         <div className={styles.successMessage}>
