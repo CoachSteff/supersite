@@ -67,4 +67,10 @@ next-env.d.ts
 
 # user data (authentication system)
 /data/
+contact-submissions.log
+
+# editor metadata
+_notes/
+dwsync.xml
+
 supersite-dev-backup-2026-02-10.tar.gz
