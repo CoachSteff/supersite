@@ -3,7 +3,7 @@ import { getPageBySlug, getAllPages } from '@/lib/markdown';
 import { translatePageContent } from '@/lib/translation-service';
 import { getSiteConfig } from '@/lib/config';
 import MarkdownContent from '@/components/MarkdownContent';
-import PageActions from '@/components/PageActions';
+
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -71,20 +71,12 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
   }
 
   return (
-    <>
-      <MarkdownContent 
-        title={translatedPage.title} 
-        content={translatedPage.content}
-        markdown={translatedPage.markdown}
-        path={translatedPage.path}
-        siteUrl={config.site.url}
-      />
-      <PageActions 
-        title={translatedPage.title}
-        markdown={translatedPage.markdown || ''}
-        path={translatedPage.path}
-        url={`/${params.slug.join('/')}`}
-      />
-    </>
+    <MarkdownContent
+      title={translatedPage.title}
+      content={translatedPage.content}
+      markdown={translatedPage.markdown}
+      path={translatedPage.path}
+      siteUrl={config.site.url}
+    />
   );
 }

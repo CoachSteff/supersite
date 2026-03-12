@@ -3,7 +3,7 @@ import { getBlogPostBySlug, getAllBlogPosts } from '@/lib/markdown';
 import { translateBlogPost } from '@/lib/translation-service';
 import { getSiteConfig } from '@/lib/config';
 import MarkdownContent from '@/components/MarkdownContent';
-import PageActions from '@/components/PageActions';
+
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import styles from '@/styles/Blog.module.css';
@@ -83,18 +83,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </div>
         )}
       </header>
-      <MarkdownContent 
+      <MarkdownContent
         title={translatedPost.title}
         content={translatedPost.content}
         markdown={translatedPost.markdown}
         path={translatedPost.path}
         siteUrl={config.site.url}
-      />
-      <PageActions 
-        title={translatedPost.title}
-        markdown={translatedPost.markdown || ''}
-        path={translatedPost.path}
-        url={`/blog/${params.slug}`}
       />
     </article>
   );
