@@ -1,13 +1,16 @@
 .header {
-  background-color: var(--background);
+  background-color: var(--header-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
+  transition: box-shadow 0.3s ease;
 }
 
 .sticky {
   position: sticky;
   top: 0;
-  z-index: 200; /* Ensure Header stays above content but below AdminToolbar (9999) */
+  z-index: 200;
 }
 
 /* Header styles */
@@ -35,16 +38,20 @@
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
+  height: 72px;
 }
 
 .logo {
-  font-size: var(--font-size-large);
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
 }
 
 .logo a {
@@ -53,8 +60,12 @@
 }
 
 .logo a:hover {
-  color: var(--primary-color);
+  color: var(--text-color);
   text-decoration: none;
+}
+
+.logoAccent {
+  color: var(--primary-color);
 }
 
 .nav {
@@ -64,7 +75,7 @@
 .navList {
   display: flex;
   list-style: none;
-  gap: var(--spacing-lg);
+  gap: 32px;
   padding: 0;
   margin: 0;
 }
@@ -74,15 +85,18 @@
 }
 
 .navItem a {
-  color: var(--text-color);
+  color: var(--text-light);
   text-decoration: none;
   padding: var(--spacing-sm) 0;
   display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .navItem a:hover,
 .navItem a.active {
-  color: var(--primary-color);
+  color: var(--text-color);
   text-decoration: none;
 }
 
@@ -97,7 +111,7 @@
   padding: var(--spacing-sm);
   min-width: 200px;
   list-style: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .navItem:hover .subNav {
@@ -123,16 +137,19 @@
   border: 1px solid var(--border-color);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 999px;
-  color: var(--text-color);
-  transition: background-color 0.2s;
+  color: var(--text-light);
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
   cursor: pointer;
+  font-size: 0.9rem;
 }
 
 .searchButton:hover {
-  background-color: var(--border-color);
+  background-color: var(--accent-light, var(--background-secondary));
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .authButton {
@@ -167,14 +184,16 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-md);
+    height: auto;
+    padding: var(--spacing-md);
   }
-  
+
   .navList {
     flex-direction: column;
     gap: var(--spacing-sm);
     width: 100%;
   }
-  
+
   .subNav {
     position: static;
     display: none;
@@ -182,7 +201,7 @@
     border: none;
     padding-left: var(--spacing-md);
   }
-  
+
   .navItem:hover .subNav {
     display: block;
   }

@@ -1,5 +1,5 @@
 .content {
-  max-width: 800px;
+  max-width: 900px;
 }
 
 .content h1,
@@ -8,10 +8,12 @@
 .content h4,
 .content h5,
 .content h6 {
-  margin-top: var(--spacing-xl);
+  margin-top: var(--spacing-xxl);
   margin-bottom: var(--spacing-md);
+  font-family: var(--font-heading);
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .content h1:first-child,
@@ -21,40 +23,49 @@
 }
 
 .content h1 {
-  font-size: var(--font-size-xlarge);
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: var(--spacing-sm);
+  font-size: 1.8rem;
 }
 
 @media (min-width: 768px) {
   .content h1 {
-    font-size: var(--font-size-xxlarge);
+    font-size: 2.4rem;
   }
 }
 
 .content h2 {
-  font-size: var(--font-size-large);
+  font-size: 1.4rem;
 }
 
 @media (min-width: 768px) {
   .content h2 {
-    font-size: var(--font-size-xlarge);
+    font-size: 1.8rem;
   }
 }
 
 .content h3 {
-  font-size: var(--font-size-base);
+  font-size: 1.1rem;
 }
 
 @media (min-width: 768px) {
   .content h3 {
-    font-size: var(--font-size-large);
+    font-size: 1.3rem;
   }
 }
 
 .content p {
   margin-bottom: var(--spacing-md);
-  line-height: 1.7;
+  line-height: 1.8;
+  color: var(--text-light);
+}
+
+.content > p:first-of-type {
+  font-size: 1.1rem;
+  color: var(--text-color);
+}
+
+.content strong {
+  color: var(--text-color);
+  font-weight: 600;
 }
 
 .content ul,
@@ -65,11 +76,15 @@
 
 .content li {
   margin-bottom: var(--spacing-sm);
+  line-height: 1.7;
+  color: var(--text-light);
 }
 
 .content a {
   color: var(--primary-color);
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .content a:hover {
@@ -79,7 +94,7 @@
 .content code {
   background-color: var(--background-secondary);
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: 4px;
   font-family: var(--font-family-mono);
   font-size: 0.9em;
   color: var(--text-color);
@@ -88,7 +103,7 @@
 .content pre {
   background-color: var(--background-secondary);
   padding: var(--spacing-md);
-  border-radius: var(--border-radius);
+  border-radius: 8px;
   overflow-x: auto;
   margin-bottom: var(--spacing-md);
   border: 1px solid var(--border-color);
@@ -102,11 +117,22 @@
 
 .content blockquote {
   border-left: 4px solid var(--primary-color);
-  padding-left: var(--spacing-md);
-  margin-left: 0;
-  margin-bottom: var(--spacing-md);
-  color: var(--text-light);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+  background: var(--background-secondary);
+  border-radius: 0 8px 8px 0;
+}
+
+.content blockquote p {
+  color: var(--text-color);
   font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.content blockquote p:last-child {
+  margin-bottom: 0;
 }
 
 .content img {
@@ -145,7 +171,7 @@
 .content hr {
   border: none;
   border-top: 1px solid var(--border-color);
-  margin: var(--spacing-xl) 0;
+  margin: var(--spacing-xxl) 0;
 }
 
 /* Task list checkboxes */
