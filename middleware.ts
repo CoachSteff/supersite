@@ -32,17 +32,17 @@ export function middleware(request: NextRequest) {
       const newPath = pathSegments.length > 1 ? '/' + pathSegments.slice(1).join('/') : '/';
       const url = request.nextUrl.clone();
       url.pathname = newPath;
-      
-      // Pass language via header
-      const response = NextResponse.rewrite(url);
-      response.headers.set('x-supersite-lang', detectedLang);
-      return response;
+
+      // Pass language via request header (readable by Server Components)
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set('x-supersite-lang', detectedLang);
+      return NextResponse.rewrite(url, { request: { headers: requestHeaders } });
     }
-    
+
     // Default language - no rewrite needed, but set header
-    const response = NextResponse.next();
-    response.headers.set('x-supersite-lang', DEFAULT_LANGUAGE);
-    return response;
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-supersite-lang', DEFAULT_LANGUAGE);
+    return NextResponse.next({ request: { headers: requestHeaders } });
   } catch (error) {
     console.error('Middleware error:', error);
     return NextResponse.next();
