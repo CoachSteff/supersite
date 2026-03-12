@@ -141,15 +141,16 @@ ${content}`;
       'You are a professional translator specializing in markdown content. Translate accurately while preserving all formatting.',
       ''
     );
-    
+
     if (response.error) {
-      throw new Error(`Translation failed: ${response.error}`);
+      console.error(`Translation failed: ${response.error}`);
+      return content;
     }
-    
+
     return response.content.trim();
   } catch (error) {
     console.error('Translation error:', error);
-    throw error;
+    return content;
   }
 }
 
@@ -172,67 +173,77 @@ export async function translatePageContent(
   targetLang: string
 ): Promise<PageData> {
   const config = getSiteConfig();
-  
+
   // Check if translation is enabled
   if (!config.multilingual?.enabled) {
     return page;
   }
-  
+
   // Check if target language is supported
   const supportedLanguages = config.multilingual.supportedLanguages || ['en'];
   if (!supportedLanguages.includes(targetLang)) {
     console.warn(`Language ${targetLang} not supported, returning original content`);
     return page;
   }
-  
+
   // If already in target language, return as-is
   if (targetLang === 'en') {
     return page;
   }
-  
-  const contentHash = generateContentHash(page.markdown);
-  const cached = getCachedTranslation(contentHash, targetLang);
-  
-  if (cached) {
-    // Reconstruct PageData from cache
-    const translatedContent = await markdownToHtml(cached.markdown);
-    
-    return {
+
+  try {
+    const contentHash = generateContentHash(page.markdown);
+    const cached = getCachedTranslation(contentHash, targetLang);
+
+    if (cached) {
+      // Reconstruct PageData from cache
+      const translatedContent = await markdownToHtml(cached.markdown);
+
+      return {
+        ...page,
+        title: cached.title,
+        description: cached.description,
+        content: translatedContent,
+        markdown: cached.markdown,
+      };
+    }
+
+    // Translate markdown content
+    const translatedMarkdown = await translateContent(page.markdown, 'en', targetLang);
+
+    // If translateContent returned the original (error fallback), skip caching
+    if (translatedMarkdown === page.markdown) {
+      return page;
+    }
+
+    // Re-parse translated markdown to HTML
+    const translatedContent = await markdownToHtml(translatedMarkdown);
+
+    // Extract translated metadata from frontmatter
+    const { data } = matter(translatedMarkdown);
+    const translatedTitle = (data.title as string) || page.title;
+    const translatedDescription = (data.description as string) || page.description;
+
+    const result = {
       ...page,
-      title: cached.title,
-      description: cached.description,
+      title: translatedTitle,
+      description: translatedDescription,
       content: translatedContent,
-      markdown: cached.markdown,
+      markdown: translatedMarkdown,
     };
+
+    // Cache for future use
+    setCachedTranslation(contentHash, targetLang, {
+      markdown: translatedMarkdown,
+      title: translatedTitle,
+      description: translatedDescription,
+    });
+
+    return result;
+  } catch (error) {
+    console.error('translatePageContent error:', error);
+    return page;
   }
-  
-  // Translate markdown content
-  const translatedMarkdown = await translateContent(page.markdown, 'en', targetLang);
-  
-  // Re-parse translated markdown to HTML
-  const translatedContent = await markdownToHtml(translatedMarkdown);
-  
-  // Extract translated metadata from frontmatter
-  const { data } = matter(translatedMarkdown);
-  const translatedTitle = (data.title as string) || page.title;
-  const translatedDescription = (data.description as string) || page.description;
-  
-  const result = {
-    ...page,
-    title: translatedTitle,
-    description: translatedDescription,
-    content: translatedContent,
-    markdown: translatedMarkdown,
-  };
-  
-  // Cache for future use
-  setCachedTranslation(contentHash, targetLang, {
-    markdown: translatedMarkdown,
-    title: translatedTitle,
-    description: translatedDescription,
-  });
-  
-  return result;
 }
 
 /**
@@ -243,67 +254,77 @@ export async function translateBlogPost(
   targetLang: string
 ): Promise<BlogPost> {
   const config = getSiteConfig();
-  
+
   // Check if translation is enabled
   if (!config.multilingual?.enabled) {
     return post;
   }
-  
+
   // Check if target language is supported
   const supportedLanguages = config.multilingual.supportedLanguages || ['en'];
   if (!supportedLanguages.includes(targetLang)) {
     console.warn(`Language ${targetLang} not supported, returning original content`);
     return post;
   }
-  
+
   // If already in target language, return as-is
   if (targetLang === 'en') {
     return post;
   }
-  
-  const contentHash = generateContentHash(post.markdown);
-  const cached = getCachedTranslation(contentHash, targetLang);
-  
-  if (cached) {
-    // Reconstruct BlogPost from cache
-    const translatedContent = await markdownToHtml(cached.markdown);
-    
-    return {
+
+  try {
+    const contentHash = generateContentHash(post.markdown);
+    const cached = getCachedTranslation(contentHash, targetLang);
+
+    if (cached) {
+      // Reconstruct BlogPost from cache
+      const translatedContent = await markdownToHtml(cached.markdown);
+
+      return {
+        ...post,
+        title: cached.title,
+        description: cached.description,
+        content: translatedContent,
+        markdown: cached.markdown,
+      };
+    }
+
+    // Translate markdown content
+    const translatedMarkdown = await translateContent(post.markdown, 'en', targetLang);
+
+    // If translateContent returned the original (error fallback), skip caching
+    if (translatedMarkdown === post.markdown) {
+      return post;
+    }
+
+    // Re-parse translated markdown to HTML
+    const translatedContent = await markdownToHtml(translatedMarkdown);
+
+    // Extract translated metadata from frontmatter
+    const { data } = matter(translatedMarkdown);
+    const translatedTitle = (data.title as string) || post.title;
+    const translatedDescription = (data.description as string) || post.description;
+
+    const result = {
       ...post,
-      title: cached.title,
-      description: cached.description,
+      title: translatedTitle,
+      description: translatedDescription,
       content: translatedContent,
-      markdown: cached.markdown,
+      markdown: translatedMarkdown,
     };
+
+    // Cache for future use
+    setCachedTranslation(contentHash, targetLang, {
+      markdown: translatedMarkdown,
+      title: translatedTitle,
+      description: translatedDescription,
+    });
+
+    return result;
+  } catch (error) {
+    console.error('translateBlogPost error:', error);
+    return post;
   }
-  
-  // Translate markdown content
-  const translatedMarkdown = await translateContent(post.markdown, 'en', targetLang);
-  
-  // Re-parse translated markdown to HTML
-  const translatedContent = await markdownToHtml(translatedMarkdown);
-  
-  // Extract translated metadata from frontmatter
-  const { data } = matter(translatedMarkdown);
-  const translatedTitle = (data.title as string) || post.title;
-  const translatedDescription = (data.description as string) || post.description;
-  
-  const result = {
-    ...post,
-    title: translatedTitle,
-    description: translatedDescription,
-    content: translatedContent,
-    markdown: translatedMarkdown,
-  };
-  
-  // Cache for future use
-  setCachedTranslation(contentHash, targetLang, {
-    markdown: translatedMarkdown,
-    title: translatedTitle,
-    description: translatedDescription,
-  });
-  
-  return result;
 }
 
 /**
