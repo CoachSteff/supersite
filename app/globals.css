@@ -1,11 +1,10 @@
 @import 'highlight.js/styles/github.css' (prefers-color-scheme: light);
 @import 'highlight.js/styles/github-dark.css' (prefers-color-scheme: dark);
 
-/* 
+/*
  * Theme CSS Variables
  * These are fallback defaults only. Actual theme colors are applied dynamically
- * by ThemeLoader component based on the active theme (themes/chatbot/colors.yaml)
- * and user's light/dark mode preference.
+ * by ThemeLoader component based on the active theme configuration.
  */
 :root {
   --primary-color: #2563eb;
@@ -17,31 +16,45 @@
   --border-color: #e5e7eb;
   --success-color: #10b981;
   --error-color: #ef4444;
-  
+  --accent-light: #eff6ff;
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --input-bg: #ffffff;
+
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --font-heading: inherit;
   --font-family-mono: 'Courier New', Courier, monospace;
-  
+
   --font-size-base: 16px;
   --font-size-small: 14px;
   --font-size-large: 18px;
   --font-size-xlarge: 24px;
   --font-size-xxlarge: 32px;
-  
+
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-xxl: 3rem;
-  
+
   --border-radius: 4px;
   --max-width: 1200px;
+}
+
+[data-theme="dark"] {
+  --accent-light: #1e293b;
+  --header-bg: rgba(17, 24, 39, 0.95);
+  --input-bg: #1f2937;
 }
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -55,18 +68,27 @@ body {
   background: var(--background);
   font-family: var(--font-family);
   font-size: var(--font-size-base);
-  line-height: 1.6;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  color: inherit;
+  color: var(--primary-color);
   text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--secondary-color);
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-color);
+  font-family: var(--font-heading);
   font-weight: 600;
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 p {
@@ -89,7 +111,7 @@ code {
 pre {
   background-color: var(--background-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 1rem;
   overflow-x: auto;
   margin-bottom: 1rem;
@@ -103,7 +125,7 @@ pre code {
 blockquote {
   border-left: 4px solid var(--primary-color);
   padding-left: 1rem;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   color: var(--text-light);
   font-style: italic;
 }
