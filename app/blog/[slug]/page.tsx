@@ -3,6 +3,7 @@ import { getBlogPostBySlug, getAllBlogPosts } from '@/lib/markdown';
 import { translateBlogPost } from '@/lib/translation-service';
 import { getSiteConfig } from '@/lib/config';
 import MarkdownContent from '@/components/MarkdownContent';
+import JsonLd, { buildArticleSchema, buildBreadcrumbSchema } from '@/components/JsonLd';
 
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -67,8 +68,17 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     }
   }
 
+  const siteUrl = config.site.url;
+  const breadcrumbs = [
+    { name: 'Home', url: siteUrl },
+    { name: 'Blog', url: `${siteUrl}/blog` },
+    { name: translatedPost.title, url: `${siteUrl}${translatedPost.path}` },
+  ];
+
   return (
     <article className={styles.blogPost}>
+      <JsonLd data={buildArticleSchema(translatedPost, config)} />
+      <JsonLd data={buildBreadcrumbSchema(breadcrumbs)} />
       <header className={styles.postHeader}>
         <h1>{translatedPost.title}</h1>
         <div className={styles.postMeta}>

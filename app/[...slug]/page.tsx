@@ -3,6 +3,7 @@ import { getPageBySlug, getAllPages } from '@/lib/markdown';
 import { translatePageContent } from '@/lib/translation-service';
 import { getSiteConfig } from '@/lib/config';
 import MarkdownContent from '@/components/MarkdownContent';
+import JsonLd, { buildBreadcrumbSchema } from '@/components/JsonLd';
 
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -70,13 +71,22 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
     }
   }
 
+  const siteUrl = config.site.url;
+  const breadcrumbs = [
+    { name: 'Home', url: siteUrl },
+    { name: translatedPage.title, url: `${siteUrl}${translatedPage.path}` },
+  ];
+
   return (
-    <MarkdownContent
-      title={translatedPage.title}
-      content={translatedPage.content}
-      markdown={translatedPage.markdown}
-      path={translatedPage.path}
-      siteUrl={config.site.url}
-    />
+    <>
+      <JsonLd data={buildBreadcrumbSchema(breadcrumbs)} />
+      <MarkdownContent
+        title={translatedPage.title}
+        content={translatedPage.content}
+        markdown={translatedPage.markdown}
+        path={translatedPage.path}
+        siteUrl={config.site.url}
+      />
+    </>
   );
 }

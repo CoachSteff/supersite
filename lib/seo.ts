@@ -26,8 +26,21 @@ export function generateMetadata(props: SEOProps): Metadata {
   const ogImage = `${config.site.url}${config.seo.ogImage}`;
 
   const metadata: Metadata = {
+    metadataBase: new URL(config.site.url),
     title: fullTitle,
     description,
+    robots: props.seo?.noindex
+      ? { index: false, follow: false }
+      : {
+          index: true,
+          follow: true,
+          'max-snippet': -1,
+          'max-image-preview': 'large' as const,
+          'max-video-preview': -1,
+        },
+    alternates: {
+      canonical: url,
+    },
     openGraph: {
       title: fullTitle,
       description,
@@ -50,13 +63,6 @@ export function generateMetadata(props: SEOProps): Metadata {
 
   if (props.seo?.keywords && props.seo.keywords.length > 0) {
     metadata.keywords = props.seo.keywords;
-  }
-
-  if (props.seo?.noindex) {
-    metadata.robots = {
-      index: false,
-      follow: false,
-    };
   }
 
   return metadata;

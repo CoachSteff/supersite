@@ -13,16 +13,28 @@ import Hero from '@/components/Hero';
 import AnonymousCookieNotice from '@/components/AnonymousCookieNotice';
 import { ThemeProvider } from '@/components/ThemeLoader';
 import { ThemeContextProvider } from '@/components/ThemeContext';
+import JsonLd, { buildWebSiteSchema, buildOrganizationSchema } from '@/components/JsonLd';
 import { getSiteConfig, getActiveTheme, getPrimaryUser } from '@/lib/config';
 import { getLayoutComponent, shouldShowSidebar } from '@/lib/layout-renderer';
 import { getAllCategories, getAllTags, getRecentBlogPosts } from '@/lib/markdown';
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = getSiteConfig();
-  
+
   return {
-    title: config.seo.defaultTitle,
+    metadataBase: new URL(config.site.url),
+    title: {
+      default: config.seo.defaultTitle,
+      template: config.seo.titleTemplate,
+    },
     description: config.seo.defaultDescription,
+    robots: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large' as const,
+      'max-video-preview': -1,
+    },
     openGraph: {
       title: config.seo.defaultTitle,
       description: config.seo.defaultDescription,
@@ -96,6 +108,8 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
         <link rel="icon" href={config.site.favicon} />
+        <JsonLd data={buildWebSiteSchema(config)} />
+        <JsonLd data={buildOrganizationSchema(config)} />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -142,6 +156,8 @@ export default async function RootLayout({
                     logoAccent={config.branding.logoAccent}
                     showSearch={header.search && features.search}
                     showAuth={authEnabled}
+                    scrollBehavior={header.scrollBehavior}
+                    scrollBackground={header.scrollBackground}
                   />
                   {hero.enabled && (
                     <Hero 
