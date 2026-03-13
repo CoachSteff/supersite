@@ -125,6 +125,95 @@ git pull                                # Get template updates
 npm run dev                             # Your site works with new features
 ```
 
+## Markdown Directives
+
+SuperSite extends standard markdown with custom directives for rich content layouts. Directives come in three types based on their syntax.
+
+### Container Directives (`:::name`)
+
+Wrap content blocks. Close with `:::`.
+
+**Collapsible section:**
+```markdown
+:::details{summary="Click to expand"}
+Hidden content with full **markdown** support.
+:::
+```
+
+**Tabbed content** (note: outer fence needs MORE colons than inner):
+```markdown
+::::tabs
+:::tab{label="Overview"}
+First tab content.
+:::
+:::tab{label="Details"}
+Second tab content.
+:::
+::::
+```
+
+**Content card** (first image becomes header, first heading becomes title):
+```markdown
+:::card
+![Photo](/images/photo.jpg)
+### Card Title
+Card body text.
+:::
+```
+
+**Numbered steps** (splits on `###` headings):
+```markdown
+:::steps
+### Step One
+Do this first.
+
+### Step Two
+Then do this.
+:::
+```
+
+**Other containers:** `:::image-grid{columns=3}`, `:::carousel`, `:::columns{count=2}`, `:::callout{type=tip}`, `:::figure`
+
+### Leaf Directives (`::name`)
+
+Single-line, no content body.
+
+```markdown
+::youtube{id=dQw4w9WgXcQ}
+::button{href=/contact label="Get in touch" variant=primary}
+::spacer{size=lg}
+::divider{style=dots}
+```
+
+- **youtube** — Responsive 16:9 embed. Only needs `id`.
+- **button** — Styled CTA. Variants: `primary`, `secondary`, `outline`.
+- **spacer** — Vertical whitespace. Sizes: `sm`, `md`, `lg`, `xl`.
+- **divider** — Decorative break. Styles: `dots`, `wave`, `gradient`, `fade`.
+
+### Text/Inline Directives (`:name[content]{attrs}`)
+
+Inline within paragraphs.
+
+```markdown
+This has :highlight[important text]{color=yellow} and a :badge[New]{color=green} badge.
+
+Press :kbd[Ctrl+S] to save.
+
+The :abbr[CAF]{title="Cognitive Agility Framework"} defines five capabilities.
+```
+
+- **highlight** — Colored background. Colors: `yellow`, `green`, `blue`, `pink`, `orange`.
+- **badge** — Status pill. Colors: `primary`, `green`, `red`, `yellow`, `purple`.
+- **kbd** — Keyboard key styling. Compound shortcuts like `Ctrl+S` auto-split.
+- **abbr** — Click to show popup with definition. Uses `title` attribute.
+
+### Directive Tips
+
+- Nested containers require the outer fence to have more colons than inner ones (e.g., `::::tabs` wrapping `:::tab`)
+- All directives work in both light and dark mode via theme CSS variables
+- See `/test-directives` for live examples of every directive
+- Directives can be combined: cards inside columns, highlights inside callouts, etc.
+
 ## Blog Post Naming
 
 Blog posts use date-based naming:

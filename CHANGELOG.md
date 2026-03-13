@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Markdown directives system** — 12 new directives across all three remark-directive types
+  - **Container directives** (`:::name`):
+    - `details` — Collapsible sections using native `<details>/<summary>`, supports `{summary="..."}` and `{open}` attributes
+    - `tabs` — Tabbed content panels with `:::tab{label="..."}` children, interactive tab switching
+    - `card` — Styled content cards with automatic image header extraction, heading as title, remaining content as body
+    - `steps` — Numbered step-by-step instructions with timeline connector, auto-splits on `<h3>` elements
+  - **Leaf directives** (`::name`):
+    - `youtube` — Responsive 16:9 YouTube embed via `youtube-nocookie.com`, lazy loading, `{id=...}` attribute
+    - `button` — Styled CTA link with `{href=... label="..."}` and `{variant=primary|secondary|outline}`
+    - `spacer` — Vertical whitespace mapped to theme spacing variables (`sm`, `md`, `lg`, `xl`)
+    - `divider` — Decorative section breaks with `{style=dots|wave|gradient|fade}` variants
+  - **Text/inline directives** (`:name[content]{attrs}`):
+    - `highlight` — Colored `<mark>` element with `{color=yellow|green|blue|pink|orange}` variants
+    - `badge` — Inline status pill with `{color=primary|green|red|yellow|purple}` variants
+    - `kbd` — Keyboard key styling, auto-splits compound shortcuts on `+` into separate keys
+    - `abbr` — Click-to-popup abbreviation with accessible keyboard support and click-outside dismiss
+- `span` component override in MarkdownContent.tsx for routing text directives
+- SEO/GEO infrastructure: auto-generated sitemap, robots.txt with AI crawler allowlisting, llms.txt for AI discoverability, JSON-LD schemas (WebSite, Organization, Person, Article, Breadcrumb, FAQ)
+- Progressive visual effects: CSS-only scroll animations, depth cards with `color-mix()`, fluid typography with `clamp()`
+- Theme system extensions: `EffectsSchema` and `AnimationsSchema` in theme schemas, hero text gradient support
 - Markdown showcase page with GitHub-flavored markdown checkbox support
 - Code block toolbar with copy button
 - Modal-based UI system with theme component customization
@@ -15,13 +35,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `prefers-reduced-motion` support and improved CSS architecture
 - Relevance-based AI context selection and search index TTL cache
 
+### Added Files
+- `components/directives/Details.tsx` — Collapsible section component
+- `components/directives/Tabs.tsx` — Tabbed panel component (client component)
+- `components/directives/Card.tsx` — Content card with image/title extraction
+- `components/directives/Steps.tsx` — Numbered steps with timeline
+- `components/directives/YouTube.tsx` — Responsive YouTube embed
+- `components/directives/Button.tsx` — CTA button with variant styles
+- `components/directives/Spacer.tsx` — Vertical spacing component
+- `components/directives/Divider.tsx` — Decorative divider with style variants
+- `components/directives/Highlight.tsx` — Inline text highlight
+- `components/directives/Badge.tsx` — Inline status badge
+- `components/directives/Kbd.tsx` — Keyboard shortcut display
+- `components/directives/Abbr.tsx` — Click-to-popup abbreviation (client component)
+- `lib/remarkDirectives.ts` — Remark plugin for directive AST transformation
+- `styles/Directives.module.css` — Styles for all 17 directives (5 existing + 12 new)
+- `app/sitemap.ts` — Auto-generated sitemap from content pages and blog posts
+- `app/robots.ts` — Robots.txt with AI crawler allowlisting
+- `app/llms.txt/route.ts` — Structured markdown for AI discoverability
+- `components/JsonLd.tsx` — JSON-LD structured data (6 schema types)
+- `lib/seo.ts` — Enhanced metadata with canonical URLs and robots directives
+
 ### Fixed
+- Tabs nested rendering: outer `::::tabs` (4 colons) required for remark-directive nesting with inner `:::tab` (3 colons)
+- Card images inheriting unwanted `border-radius` from `.content img` — reset in `.cardImage img`
+- Button primary label invisible due to CSS specificity: `.content a` (0,1,1) overriding `.buttonPrimary` (0,1,0) — resolved with inline styles per variant
 - React hydration errors in code blocks (plain text extraction, paragraph nesting, client-only toolbar)
 - Security hardening across auth, headers, and input sanitization
 - JWT_SECRET deferred to runtime for Next.js build compatibility
 - Navigation duplicate entries
 
 ### Changed
+- MarkdownContent.tsx extended with 8 new `div` switch cases and new `span` override for 4 text directives
+- `components/directives/index.ts` barrel export expanded with 12 new component exports
+- `package.json` updated with `remark-directive` dependency
 - Removed development test files and artifacts from repository
 
 ## [0.2.0] - 2026-02-10

@@ -87,8 +87,8 @@ SuperSite`,
   } catch (error) {
     console.error('[Email] Failed to send OTP:', error);
     
-    // In development, still log the code even if email fails
-    if (process.env.NODE_ENV === 'development') {
+    // In development without SMTP, still log the code even if email fails
+    if (process.env.NODE_ENV === 'development' && !process.env.SMTP_HOST) {
       console.log('[Email] OTP Code for', email, ':', code);
       return true;
     }
