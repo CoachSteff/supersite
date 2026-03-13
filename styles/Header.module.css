@@ -4,13 +4,27 @@
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
 }
 
 .sticky {
   position: sticky;
   top: 0;
   z-index: 200;
+}
+
+/* Scroll-aware background: solid bg + shadow when page has scrolled */
+.scrolled {
+  background-color: color-mix(in srgb, var(--primary-color) 4%, var(--background));
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  border-bottom-color: transparent;
+}
+
+/* Auto-hide: slide up when scrolling down */
+.hidden {
+  transform: translateY(-100%);
 }
 
 /* Header styles */

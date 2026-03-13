@@ -55,9 +55,9 @@ function TextHero({ config, style }: { config: SiteConfig; style: React.CSSPrope
   return (
     <div className={styles.textHero} style={style}>
       <div className={styles.heroContent}>
-        <h1 className={styles.heroHeading}>{heading}</h1>
-        <p className={styles.heroSubheading}>{subheading}</p>
-        <div className={styles.heroActions}>
+        <h1 className={`${styles.heroHeading} ${styles.heroHeadingGradient}`} data-animate="fade-up">{heading}</h1>
+        <p className={styles.heroSubheading} data-animate="fade-up" data-animate-delay="1">{subheading}</p>
+        <div className={styles.heroActions} data-animate="fade-up" data-animate-delay="2">
           <Link href={ctaLink} className={styles.ctaButton}>
             {ctaText}
           </Link>

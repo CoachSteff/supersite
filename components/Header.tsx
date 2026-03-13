@@ -17,6 +17,8 @@ interface HeaderProps {
   logoAccent?: string;
   showSearch?: boolean;
   showAuth?: boolean;
+  scrollBehavior?: 'sticky' | 'auto-hide' | 'static';
+  scrollBackground?: boolean;
 }
 
 export default function Header({
@@ -27,8 +29,12 @@ export default function Header({
   logoAccent,
   showSearch = true,
   showAuth = false,
+  scrollBehavior = 'sticky',
+  scrollBackground = false,
 }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     const handleSearchEvent = () => {
@@ -39,6 +45,35 @@ export default function Header({
     return () => window.removeEventListener('supersite:search', handleSearchEvent);
   }, []);
 
+  // Scroll-aware header behavior
+  useEffect(() => {
+    if (!scrollBackground && scrollBehavior === 'sticky') return;
+
+    let lastScrollY = 0;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Scroll background: add solid bg + shadow after scrolling past threshold
+      if (scrollBackground) {
+        setScrolled(currentScrollY > 20);
+      }
+
+      // Auto-hide: hide on scroll down, show on scroll up
+      if (scrollBehavior === 'auto-hide') {
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          setHidden(true);
+        } else {
+          setHidden(false);
+        }
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [scrollBehavior, scrollBackground]);
+
   if (style === 'none') {
     return null;
   }
@@ -46,7 +81,9 @@ export default function Header({
   const headerClasses = [
     styles.header,
     styles[`header-${style}`],
-    sticky ? styles.sticky : '',
+    sticky || scrollBehavior !== 'static' ? styles.sticky : '',
+    scrolled ? styles.scrolled : '',
+    hidden ? styles.hidden : '',
   ].filter(Boolean).join(' ');
 
   return (
