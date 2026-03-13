@@ -53,6 +53,8 @@ export const HeroTypeSchema = z.enum(['none', 'text', 'image', 'featured-post', 
 export const FooterStyleSchema = z.enum(['full', 'minimal', 'centered', 'none']);
 export const ChatLayoutSchema = z.enum(['popup', 'center', 'sidebar']);
 
+export const ScrollBehaviorSchema = z.enum(['sticky', 'auto-hide', 'static']).default('sticky');
+
 export const HeaderSchema = z.object({
   enabled: z.boolean().default(true),
   style: HeaderStyleSchema.default('full'),
@@ -61,6 +63,8 @@ export const HeaderSchema = z.object({
   search: z.boolean().default(true),
   themeToggle: z.boolean().default(true),
   auth: z.boolean().default(false),
+  scrollBehavior: ScrollBehaviorSchema,
+  scrollBackground: z.boolean().default(false),
 }).default({
   enabled: true,
   style: 'full',
@@ -69,6 +73,8 @@ export const HeaderSchema = z.object({
   search: true,
   themeToggle: true,
   auth: false,
+  scrollBehavior: 'sticky',
+  scrollBackground: false,
 });
 
 export const NavigationSchema = z.object({
@@ -231,6 +237,32 @@ export const SpacingSchema = z.object({
   xxl: '3rem',
 });
 
+export const EffectsSchema = z.object({
+  cardSurfaceTint: z.number().default(0),
+  cardBorderTint: z.number().default(0),
+  cardShadow: z.enum(['none', 'subtle', 'layered', 'elevated']).default('none'),
+  hoverLift: z.boolean().default(false),
+  textGradient: z.boolean().default(false),
+}).default({
+  cardSurfaceTint: 0,
+  cardBorderTint: 0,
+  cardShadow: 'none',
+  hoverLift: false,
+  textGradient: false,
+});
+
+export const AnimationsSchema = z.object({
+  scrollReveal: z.boolean().default(false),
+  microInteractions: z.boolean().default(false),
+  pageTransitions: z.boolean().default(false),
+  reducedMotionRespect: z.boolean().default(true),
+}).default({
+  scrollReveal: false,
+  microInteractions: false,
+  pageTransitions: false,
+  reducedMotionRespect: true,
+});
+
 export const ColorsSchema = z.object({
   name: z.string().optional(),
   colors: z.object({
@@ -240,12 +272,16 @@ export const ColorsSchema = z.object({
   typography: TypographySchema,
   spacing: SpacingSchema,
   borderRadius: z.string().default('4px'),
+  effects: EffectsSchema,
+  animations: AnimationsSchema,
 });
 
 export type Colors = z.infer<typeof ColorsSchema>;
 export type ColorPalette = z.infer<typeof ColorPaletteSchema>;
 export type Typography = z.infer<typeof TypographySchema>;
 export type Spacing = z.infer<typeof SpacingSchema>;
+export type Effects = z.infer<typeof EffectsSchema>;
+export type Animations = z.infer<typeof AnimationsSchema>;
 
 // ============================================
 // COMBINED THEME

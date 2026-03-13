@@ -117,24 +117,36 @@ function applyTheme(theme: FullTheme, mode: 'light' | 'dark') {
     fontFamilyMono: '--font-family-mono',
     baseFontSize: '--font-size-base',
   };
-  
-  if (themeData.typography) {
-    Object.entries(themeData.typography).forEach(([key, value]) => {
+
+  const typography = themeData.colors?.typography;
+  if (typography) {
+    Object.entries(typography).forEach(([key, value]) => {
       const cssVar = typographyMapping[key] || `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
       root.style.setProperty(cssVar, String(value));
     });
   }
 
   // Apply spacing if available
-  if (themeData.spacing) {
-    Object.entries(themeData.spacing).forEach(([key, value]) => {
+  const spacing = themeData.colors?.spacing;
+  if (spacing) {
+    Object.entries(spacing).forEach(([key, value]) => {
       root.style.setProperty(`--spacing-${key}`, String(value));
     });
   }
 
   // Apply layout if available
-  if (themeData.borderRadius) {
-    root.style.setProperty('--border-radius', String(themeData.borderRadius));
+  if (themeData.colors?.borderRadius) {
+    root.style.setProperty('--border-radius', String(themeData.colors.borderRadius));
+  }
+
+  // Apply effects system (from colors.yaml effects section)
+  const effects = themeData.colors?.effects;
+  if (effects) {
+    root.style.setProperty('--card-surface-tint', `${effects.cardSurfaceTint || 0}%`);
+    root.style.setProperty('--card-border-tint', `${effects.cardBorderTint || 0}%`);
+    root.style.setProperty('--card-shadow', effects.cardShadow || 'none');
+    root.style.setProperty('--hover-lift', effects.hoverLift ? '1' : '0');
+    root.style.setProperty('--text-gradient', effects.textGradient ? '1' : '0');
   }
 }
 

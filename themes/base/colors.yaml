@@ -36,3 +36,16 @@ spacing:
   xxl: "3rem"
 
 borderRadius: "4px"
+
+effects:
+  cardSurfaceTint: 0
+  cardBorderTint: 0
+  cardShadow: "none"
+  hoverLift: false
+  textGradient: false
+
+animations:
+  scrollReveal: false
+  microInteractions: false
+  pageTransitions: false
+  reducedMotionRespect: true
