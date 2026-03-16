@@ -5,6 +5,7 @@ import { remark } from 'remark';
 import html from 'remark-html';
 import remarkGfm from 'remark-gfm';
 import { getSiteConfig } from './config';
+import { extractHashtags, normalizeTag } from './remark-hashtags';
 
 // Get content directory with configuration support
 function getContentDirectory(): string {
@@ -52,6 +53,7 @@ export interface PageData {
   slug: string;
   title: string;
   description?: string;
+  tags?: string[];
   content: string;
   markdown: string;
   path: string;
@@ -146,10 +148,16 @@ export async function getPageBySlug(slug: string[]): Promise<PageData | null> {
 
   const { data, content, htmlContent } = await parseMarkdown(filePath);
 
+  // Merge frontmatter tags with inline hashtags
+  const frontmatterTags = ((data.tags as string[]) || []).map(normalizeTag);
+  const inlineTags = extractHashtags(content);
+  const tags = [...new Set([...frontmatterTags, ...inlineTags])];
+
   return {
     slug: slugPath,
     title: (data.title as string) || 'Untitled',
     description: data.description as string | undefined,
+    tags: tags.length > 0 ? tags : undefined,
     content: htmlContent,
     markdown: content,
     path: '/' + slugPath,
@@ -182,10 +190,16 @@ export async function getAllPages(): Promise<PageData[]> {
 
     const { data, content, htmlContent } = await parseMarkdown(file);
 
+    // Merge frontmatter tags with inline hashtags
+    const frontmatterTags = ((data.tags as string[]) || []).map(normalizeTag);
+    const inlineTags = extractHashtags(content);
+    const tags = [...new Set([...frontmatterTags, ...inlineTags])];
+
     pages.push({
       slug,
       title: (data.title as string) || 'Untitled',
       description: data.description as string | undefined,
+      tags: tags.length > 0 ? tags : undefined,
       content: htmlContent,
       markdown: content,
       path: slug === 'home' ? '/' : '/' + slug,
@@ -215,13 +229,18 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     const fileName = path.basename(file, '.md');
     const { data, content, htmlContent } = await parseMarkdown(file);
 
+    // Merge frontmatter tags with inline hashtags
+    const frontmatterTags = ((data.tags as string[]) || []).map(normalizeTag);
+    const inlineTags = extractHashtags(content);
+    const mergedTags = [...new Set([...frontmatterTags, ...inlineTags])];
+
     posts.push({
       slug: fileName,
       title: (data.title as string) || 'Untitled',
       date: (data.date as string) || '',
       author: data.author as string | undefined,
       description: data.description as string | undefined,
-      tags: (data.tags as string[]) || [],
+      tags: mergedTags,
       content: htmlContent,
       markdown: content,
       path: `/blog/${fileName}`,
@@ -251,13 +270,18 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 
   const { data, content, htmlContent } = await parseMarkdown(filePath);
 
+  // Merge frontmatter tags with inline hashtags
+  const frontmatterTags = ((data.tags as string[]) || []).map(normalizeTag);
+  const inlineTags = extractHashtags(content);
+  const mergedTags = [...new Set([...frontmatterTags, ...inlineTags])];
+
   return {
     slug,
     title: (data.title as string) || 'Untitled',
     date: (data.date as string) || '',
     author: data.author as string | undefined,
     description: data.description as string | undefined,
-    tags: (data.tags as string[]) || [],
+    tags: mergedTags,
     content: htmlContent,
     markdown: content,
     path: `/blog/${slug}`,
@@ -315,20 +339,33 @@ export function getFolderStructure(): NavItem[] {
 }
 
 export async function getAllTags(): Promise<{ tag: string; count: number }[]> {
-  const posts = await getAllBlogPosts();
+  const [posts, pages] = await Promise.all([getAllBlogPosts(), getAllPages()]);
   const tagMap = new Map<string, number>();
-  
-  posts.forEach(post => {
-    if (post.tags && Array.isArray(post.tags)) {
-      post.tags.forEach(tag => {
+
+  const countTags = (tags?: string[]) => {
+    if (tags && Array.isArray(tags)) {
+      tags.forEach(tag => {
         tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
       });
     }
-  });
-  
+  };
+
+  posts.forEach(post => countTags(post.tags));
+  pages.forEach(page => countTags(page.tags));
+
   return Array.from(tagMap.entries())
     .map(([tag, count]) => ({ tag, count }))
     .sort((a, b) => b.count - a.count);
+}
+
+export async function getContentByTag(tag: string): Promise<{ posts: BlogPost[]; pages: PageData[] }> {
+  const [allPosts, allPages] = await Promise.all([getAllBlogPosts(), getAllPages()]);
+
+  const normalizedTag = normalizeTag(tag);
+  const posts = allPosts.filter(p => p.tags?.includes(normalizedTag));
+  const pages = allPages.filter(p => p.tags?.includes(normalizedTag));
+
+  return { posts, pages };
 }
 
 export async function getAllCategories(): Promise<{ category: string; count: number }[]> {

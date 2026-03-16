@@ -1,0 +1,121 @@
+.tagsPage {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.tagsPage h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.tagsPage h2 {
+  margin-bottom: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+}
+
+.intro {
+  color: var(--text-light);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Tag cloud */
+.tagCloud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.tagLink {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3em;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background: var(--background-secondary);
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  line-height: 1.4;
+}
+
+.tagLink:hover {
+  background: var(--primary-color);
+  color: var(--background);
+}
+
+.tagCount {
+  font-size: 0.65em;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+.tagLink:hover .tagCount {
+  color: var(--background);
+  opacity: 0.8;
+}
+
+/* Tag detail page */
+.tagHeader {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.backLink {
+  display: inline-block;
+  color: var(--text-light);
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing-sm);
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: var(--primary-color);
+}
+
+/* Content list on tag detail page */
+.contentList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.pageItem {
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pageItem:last-child {
+  border-bottom: none;
+}
+
+.pageItem h3 a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.pageItem h3 a:hover {
+  color: var(--primary-color);
+}
+
+.pageItem p {
+  color: var(--text-light);
+  margin-top: var(--spacing-xs);
+}
+
+.pageTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.pageTag {
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.pageTag:hover {
+  text-decoration: underline;
+}
