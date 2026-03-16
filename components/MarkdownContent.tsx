@@ -5,6 +5,7 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import remarkDirective from 'remark-directive';
 import remarkDirectives from '@/lib/remarkDirectives';
+import remarkHashtags from '@/lib/remark-hashtags';
 import PageActions from './PageActions';
 import CodeBlock from './CodeBlock';
 import {
@@ -12,6 +13,8 @@ import {
   Details, Tabs, Card, Steps,
   YouTube, Button, Spacer, Divider,
   Highlight, Badge, Kbd, Abbr,
+  Formula, FormulaCard, InfoCard, Connector,
+  Flow, FlowStep, Stat, Section,
 } from './directives';
 import styles from '@/styles/Content.module.css';
 import 'highlight.js/styles/github-dark.css';
@@ -30,7 +33,7 @@ export default function MarkdownContent({ title, content, markdown, path, siteUr
   return (
     <div className={styles.content}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkDirective, remarkDirectives]}
+        remarkPlugins={[remarkGfm, remarkDirective, remarkDirectives, remarkHashtags]}
         rehypePlugins={[rehypeHighlight]}
         components={{
           div: ({ node, children, ...props }: any) => {
@@ -50,6 +53,14 @@ export default function MarkdownContent({ title, content, markdown, path, siteUr
                 case 'button': return <Button {...props} />;
                 case 'spacer': return <Spacer {...props} />;
                 case 'divider': return <Divider {...props} />;
+                case 'formula': return <Formula {...props}>{children}</Formula>;
+                case 'formula-card': return <FormulaCard {...props}>{children}</FormulaCard>;
+                case 'info-card': return <InfoCard {...props}>{children}</InfoCard>;
+                case 'connector': return <Connector {...props}>{children}</Connector>;
+                case 'flow': return <Flow {...props}>{children}</Flow>;
+                case 'flow-step': return <FlowStep {...props}>{children}</FlowStep>;
+                case 'stat': return <Stat {...props}>{children}</Stat>;
+                case 'section': return <Section {...props}>{children}</Section>;
               }
             }
             return <div {...props}>{children}</div>;
