@@ -77,9 +77,19 @@
 }
 
 html {
+  font-size: 100%;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+}
+
+/* WebKit (Safari) renders tighter font metrics than Blink (Chrome).
+   Bump text-size-adjust to compensate for Safari's conservative vw
+   resolution and Core Text glyph sizing on wide displays. */
+@supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+  html {
+    -webkit-text-size-adjust: 110%;
+  }
 }
 
 html,
@@ -95,6 +105,7 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
 }
 
