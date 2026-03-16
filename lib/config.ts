@@ -153,6 +153,7 @@ const SiteConfigSchema = z.object({
     heading: z.string().optional(),
     subheading: z.string().optional(),
     image: z.string().optional(),
+    images: z.array(z.string()).optional(),
     ctaText: z.string().optional(),
     ctaLink: z.string().optional(),
   }).optional(),

@@ -11,6 +11,7 @@ import { getRecentBlogPosts, type BlogPost } from '@/lib/markdown';
 import { detectPlatform, sortLinks } from '@/lib/link-utils';
 import type { Link as LinkType } from '@/lib/users';
 import Avatar from '@/components/Avatar';
+import RandomHeroImage from '@/components/RandomHeroImage';
 import styles from '@/styles/Hero.module.css';
 
 interface HeroProps {
@@ -71,19 +72,24 @@ function ImageHero({ config, style }: { config: SiteConfig; style: React.CSSProp
   const hero = config.hero || {};
   const heading = hero.heading || 'Welcome';
   const image = hero.image || '/images/hero-bg.jpg';
+  const images = hero.images;
   const ctaText = hero.ctaText;
   const ctaLink = hero.ctaLink;
 
   return (
     <div className={styles.imageHero} style={style}>
       <div className={styles.heroImage}>
-        <Image 
-          src={image} 
-          alt="Hero" 
-          fill 
-          style={{ objectFit: 'cover' }} 
-          priority
-        />
+        {images && images.length > 0 ? (
+          <RandomHeroImage images={images} fallback={image} />
+        ) : (
+          <Image
+            src={image}
+            alt="Hero"
+            fill
+            style={{ objectFit: 'cover' }}
+            priority
+          />
+        )}
       </div>
       <div className={styles.heroOverlay}>
         <div className={styles.heroContent}>
