@@ -6,7 +6,7 @@
   height: 18px;
   border-radius: 9px;
   background-color: var(--error-color);
-  color: white;
+  color: var(--on-primary, #ffffff);
   font-size: 10px;
   font-weight: 700;
   display: flex;

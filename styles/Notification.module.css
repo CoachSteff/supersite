@@ -41,20 +41,20 @@
 }
 
 .icon {
-  color: white;
+  color: var(--on-primary, #ffffff);
   flex-shrink: 0;
 }
 
 .message {
   flex: 1;
-  color: white;
+  color: var(--on-primary, #ffffff);
   font-weight: 500;
 }
 
 .closeButton {
   background: none;
   border: none;
-  color: white;
+  color: var(--on-primary, #ffffff);
   opacity: 0.8;
   cursor: pointer;
   padding: var(--spacing-xs);

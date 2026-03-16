@@ -48,7 +48,7 @@
   border: none;
   border-radius: var(--border-radius);
   background: none;
-  color: var(--primary-color, #3b82f6);
+  color: var(--primary-color, #2563eb);
   font-size: var(--font-size-small);
   font-weight: 500;
   cursor: pointer;
@@ -87,7 +87,7 @@
 
 .item.unread {
   background-color: var(--background-secondary, rgba(0, 0, 0, 0.02));
-  border-left-color: var(--primary-color, #3b82f6);
+  border-left-color: var(--primary-color, #2563eb);
 }
 
 .item.expanded {

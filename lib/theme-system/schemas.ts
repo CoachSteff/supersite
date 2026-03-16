@@ -209,6 +209,11 @@ export const ColorPaletteSchema = z.object({
   border: z.string(),
   success: z.string(),
   error: z.string(),
+  buttonText: z.string().optional(),
+  buttonHoverText: z.string().optional(),
+  onPrimary: z.string().optional(),
+  warning: z.string().optional(),
+  info: z.string().optional(),
 });
 
 export const TypographySchema = z.object({

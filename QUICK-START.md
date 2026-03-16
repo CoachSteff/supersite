@@ -90,5 +90,4 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3001
 
 ## See Also
 - Full documentation: `docs/DEV-SERVER-PORT.md`
-- Authentication setup: `docs/AUTH-UI-COMPLETE.md`
 - Production checklist: `docs/PRODUCTION-CHECKLIST.md`

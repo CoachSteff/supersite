@@ -8,23 +8,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Markdown directives system** — 12 new directives across all three remark-directive types
+- **Stat directive icon support** — `:::stat{icon="clock"}` renders Lucide outline icons above stat values, dynamically resolved from the full Lucide icon set via kebab-case name lookup
+- **Homepage infographic layout** — Redesigned index page using directive-based infographic sections (stats, info-cards, formula, flow, connectors, sections)
+
+### Improved
+- **Stat typography** — Replaced monospace (`Courier New`) font with heading font (`Playfair Display`) for stat values; reduced font size from `clamp(2rem, 5vw, 3rem)` to `clamp(1.5rem, 3.5vw, 2.2rem)` with tighter letter-spacing
+- **Button content/presentation separation** — Removed all inline color styles from `Button.tsx`; button variants now styled entirely via CSS module classes, respecting the `.content a:not([role="button"])` exclusion pattern
+- **CTA section cleanup** — Replaced connector boxes with clean prose; replaced oversized stat card ("Trusted across Belgium & Europe") with semantic `<h3>` heading
+
+### Changed
+- **Markdown directives system** — 23 directives across all three remark-directive types
   - **Container directives** (`:::name`):
     - `details` — Collapsible sections using native `<details>/<summary>`, supports `{summary="..."}` and `{open}` attributes
     - `tabs` — Tabbed content panels with `:::tab{label="..."}` children, interactive tab switching
     - `card` — Styled content cards with automatic image header extraction, heading as title, remaining content as body
     - `steps` — Numbered step-by-step instructions with timeline connector, auto-splits on `<h3>` elements
+    - `formula` — Equation-style layout with `:::formula-card` children and operator symbols (`+`, `=`, `->`)
+    - `flow` — Process flow diagram with `:::flow-step` children, directional arrows, and optional `{loop=true}`
+    - `section` — Full-bleed background section with `{variant=dark|light|muted|gradient}` for page structure
   - **Leaf directives** (`::name`):
     - `youtube` — Responsive 16:9 YouTube embed via `youtube-nocookie.com`, lazy loading, `{id=...}` attribute
     - `button` — Styled CTA link with `{href=... label="..."}` and `{variant=primary|secondary|outline}`
     - `spacer` — Vertical whitespace mapped to theme spacing variables (`sm`, `md`, `lg`, `xl`)
     - `divider` — Decorative section breaks with `{style=dots|wave|gradient|fade}` variants
+    - `stat` — Large statistics callout with `{value="..." label="..." color=cyan}` attributes
+    - `connector` — Mapping row connecting two concepts with arrow and colored dots
   - **Text/inline directives** (`:name[content]{attrs}`):
     - `highlight` — Colored `<mark>` element with `{color=yellow|green|blue|pink|orange}` variants
     - `badge` — Inline status pill with `{color=primary|green|red|yellow|purple}` variants
     - `kbd` — Keyboard key styling, auto-splits compound shortcuts on `+` into separate keys
     - `abbr` — Click-to-popup abbreviation with accessible keyboard support and click-outside dismiss
+  - **Infographic directives** (container/leaf):
+    - `formula-card` — Card within `:::formula` layout, supports `{accent=cyan}`, badge, subtitle, and hashtag pills
+    - `flow-step` — Step within `:::flow` layout, numbered with description
+    - `info-card` — Numbered capability card with accent color, badge, subtitle, and inline hashtag pills
+  - Named accent colors across infographic directives: cyan, teal, green, orange, yellow, purple, red, blue, pink
 - `span` component override in MarkdownContent.tsx for routing text directives
+- **Hashtag and tagging system** — inline `#TagName` syntax in markdown body text
+  - `lib/remark-hashtags.ts` — Remark plugin transforms `#tag` into `<a href="/tags/tag" class="hashtag">`
+  - Dual sources: frontmatter `tags: [...]` and inline `#hashtags` merged and deduplicated
+  - Tag normalization: all tags lowercased and kebab-cased via `normalizeTag()`
+  - Skipped contexts: headings, code blocks, inline code, existing links, HTML blocks
+  - Key functions: `extractHashtags()`, `normalizeTag()`, `getAllTags()`, `getContentByTag()`
+- **Tag pages** — `/tags` tag cloud and `/tags/{tag}` tag detail pages
+  - `app/tags/page.tsx` — Tag cloud with post counts
+  - `app/tags/[tag]/page.tsx` — Tag detail page with filtered content
+  - `styles/Tags.module.css` — Tag page styling
 - SEO/GEO infrastructure: auto-generated sitemap, robots.txt with AI crawler allowlisting, llms.txt for AI discoverability, JSON-LD schemas (WebSite, Organization, Person, Article, Breadcrumb, FAQ)
 - Progressive visual effects: CSS-only scroll animations, depth cards with `color-mix()`, fluid typography with `clamp()`
 - Theme system extensions: `EffectsSchema` and `AnimationsSchema` in theme schemas, hero text gradient support
@@ -48,8 +77,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `components/directives/Badge.tsx` — Inline status badge
 - `components/directives/Kbd.tsx` — Keyboard shortcut display
 - `components/directives/Abbr.tsx` — Click-to-popup abbreviation (client component)
+- `components/directives/Formula.tsx` — Formula equation layout
+- `components/directives/FormulaCard.tsx` — Card within formula layout
+- `components/directives/Flow.tsx` — Process flow diagram
+- `components/directives/FlowStep.tsx` — Step within flow diagram
+- `components/directives/InfoCard.tsx` — Numbered capability card
+- `components/directives/Connector.tsx` — Concept mapping row
+- `components/directives/Stat.tsx` — Statistics callout
+- `components/directives/Section.tsx` — Full-bleed background section
 - `lib/remarkDirectives.ts` — Remark plugin for directive AST transformation
-- `styles/Directives.module.css` — Styles for all 17 directives (5 existing + 12 new)
+- `lib/remark-hashtags.ts` — Remark plugin for inline hashtag transformation
+- `styles/Directives.module.css` — Styles for all 23 directives (5 existing + 18 new)
+- `styles/Tags.module.css` — Tag page and hashtag pill styling
+- `app/tags/page.tsx` — Tag cloud page
+- `app/tags/[tag]/page.tsx` — Tag detail page
 - `app/sitemap.ts` — Auto-generated sitemap from content pages and blog posts
 - `app/robots.ts` — Robots.txt with AI crawler allowlisting
 - `app/llms.txt/route.ts` — Structured markdown for AI discoverability
@@ -66,8 +107,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Navigation duplicate entries
 
 ### Changed
-- MarkdownContent.tsx extended with 8 new `div` switch cases and new `span` override for 4 text directives
-- `components/directives/index.ts` barrel export expanded with 12 new component exports
+- MarkdownContent.tsx extended with `div` switch cases for all container directives and new `span` override for text directives
+- `components/directives/index.ts` barrel export expanded with 20 component exports (12 original + 8 infographic)
+- `lib/markdown.ts` expanded with tag extraction, hashtag merging, and `getContentByTag()` function
+- `BlogCard.tsx` updated with clickable tag links
 - `package.json` updated with `remark-directive` dependency
 - Removed development test files and artifacts from repository
 

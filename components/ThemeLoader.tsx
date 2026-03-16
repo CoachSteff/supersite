@@ -95,6 +95,8 @@ function applyTheme(theme: FullTheme, mode: 'light' | 'dark') {
     border: '--border-color',
     success: '--success-color',
     error: '--error-color',
+    warning: '--warning-color',
+    info: '--info-color',
   };
 
   // Apply colors if available

@@ -207,12 +207,132 @@ The :abbr[CAF]{title="Cognitive Agility Framework"} defines five capabilities.
 - **kbd** — Keyboard key styling. Compound shortcuts like `Ctrl+S` auto-split.
 - **abbr** — Click to show popup with definition. Uses `title` attribute.
 
+### Infographic Directives
+
+For data visualization and presentation layouts.
+
+**Formula layout** (equation-style with operator symbols):
+```markdown
+:::formula
+:::formula-card{accent=cyan badge="Input"}
+### Data
+Raw information
+:::
+:::formula-card{accent=teal badge="Process"}
+### Analysis
+Pattern recognition
+:::
+:::formula-card{accent=green badge="Output"}
+### Insight
+Actionable knowledge
+:::
+:::
+```
+
+**Flow diagram** (process steps with directional arrows):
+```markdown
+:::flow
+:::flow-step
+### Collect
+Gather requirements
+:::
+:::flow-step
+### Build
+Develop solution
+:::
+:::flow-step
+### Ship
+Deploy to production
+:::
+:::
+```
+
+**Info card** (numbered capability card with accent and hashtag pills):
+```markdown
+:::info-card{number=1 accent=cyan badge="Core" subtitle="Foundation skill"}
+### Flexible Thinking
+The ability to shift perspectives and adapt approaches. #cognition #adaptability
+:::
+```
+
+**Statistics callout:**
+```markdown
+:::stat{value="23" color="cyan" icon="hash"}
+Markdown directives available out of the box.
+:::
+
+:::stat{value="99%" color="green" icon="gauge"}
+Lighthouse performance score.
+:::
+```
+The `icon` attribute accepts any [Lucide icon](https://lucide.dev/icons/) name in kebab-case (e.g., `clock`, `users`, `trending-up`, `linkedin`). Icons render as 28px outline strokes above the value.
+
+**Concept connector** (maps two ideas with an arrow):
+```markdown
+::connector{from="Old Approach" to="New Approach" color=teal}
+```
+
+**Full-bleed section** (background variant for page structure):
+```markdown
+:::section{variant=dark}
+Content with dark background spanning full width.
+:::
+```
+
+Available accent colors: `cyan`, `teal`, `green`, `orange`, `yellow`, `purple`, `red`, `blue`, `pink`.
+
 ### Directive Tips
 
 - Nested containers require the outer fence to have more colons than inner ones (e.g., `::::tabs` wrapping `:::tab`)
 - All directives work in both light and dark mode via theme CSS variables
 - See `/test-directives` for live examples of every directive
 - Directives can be combined: cards inside columns, highlights inside callouts, etc.
+
+## Hashtags and Tags
+
+SuperSite supports inline hashtags that automatically become linked tags.
+
+### Using Hashtags
+
+Write `#TagName` anywhere in your markdown body text:
+
+```markdown
+This post covers #AI and #MachineLearning techniques for #ProductivityBoost.
+```
+
+Each hashtag is transformed into a clickable link to the corresponding tag page (`/tags/ai`, `/tags/machine-learning`, etc.).
+
+### How Tags Work
+
+Tags come from two sources that are automatically merged:
+
+1. **Frontmatter tags** — explicit tag list in YAML header:
+   ```yaml
+   ---
+   tags: ["AI", "Machine Learning"]
+   ---
+   ```
+
+2. **Inline hashtags** — `#TagName` in body text
+
+Both sources are normalized (lowercased, kebab-cased) and deduplicated. For example, a frontmatter tag `"Machine Learning"` and an inline `#MachineLearning` resolve to the same tag: `machine-learning`.
+
+### Where Hashtags Are Skipped
+
+The hashtag plugin will not transform `#` in these contexts:
+- Headings (`# Heading` is not a tag)
+- Code blocks and inline code
+- Inside existing links
+- HTML blocks
+
+### Tag Pages
+
+- `/tags` — Tag cloud showing all tags with post counts
+- `/tags/{tag}` — Lists all content tagged with that tag
+
+### Inside Info Cards
+
+Hashtags inside `:::info-card` directives are contextually restyled as compact pills rather than standard inline links.
 
 ## Blog Post Naming
 

@@ -55,6 +55,10 @@ config/site.local.yaml
 
 # user content (custom site content, not template)
 content-custom/
+content-2026/
+
+# site-specific images (not framework assets)
+public/images/being-replaced-*.png
 
 # user custom themes
 themes-custom/

@@ -58,7 +58,7 @@ function TextHero({ config, style }: { config: SiteConfig; style: React.CSSPrope
         <h1 className={`${styles.heroHeading} ${styles.heroHeadingGradient}`} data-animate="fade-up">{heading}</h1>
         <p className={styles.heroSubheading} data-animate="fade-up" data-animate-delay="1">{subheading}</p>
         <div className={styles.heroActions} data-animate="fade-up" data-animate-delay="2">
-          <Link href={ctaLink} className={styles.ctaButton}>
+          <Link href={ctaLink} className={styles.ctaButton} role="button">
             {ctaText}
           </Link>
         </div>
@@ -90,7 +90,7 @@ function ImageHero({ config, style }: { config: SiteConfig; style: React.CSSProp
           <h1 className={styles.heroHeading}>{heading}</h1>
           {ctaText && ctaLink && (
             <div className={styles.heroActions}>
-              <Link href={ctaLink} className={styles.ctaButton}>
+              <Link href={ctaLink} className={styles.ctaButton} role="button">
                 {ctaText}
               </Link>
             </div>
@@ -143,7 +143,7 @@ async function FeaturedPostHero({ style }: { style: React.CSSProperties }) {
           )}
         </div>
         <div className={styles.heroActions}>
-          <Link href={`/blog/${post.slug}`} className={styles.ctaButton}>
+          <Link href={`/blog/${post.slug}`} className={styles.ctaButton} role="button">
             Read More
           </Link>
         </div>

@@ -22,11 +22,10 @@ Thank you for your interest in contributing to Supersite! This document provides
 ## Development Workflow
 
 1. **Make your changes** following our coding standards
-2. **Test your changes**:
+2. **Verify your changes**:
    ```bash
-   npm run test:ci        # Run unit tests
-   npm run test:e2e       # Run E2E tests
    npm run build          # Ensure build succeeds
+   npm run lint           # Check for lint errors
    ```
 3. **Update documentation** if needed
 4. **Update CHANGELOG.md** in the `[Unreleased]` section
@@ -36,69 +35,71 @@ Thank you for your interest in contributing to Supersite! This document provides
 
 - **TypeScript**: Use strict type checking, avoid `any`
 - **Components**: Prefer server components unless client-side features needed
-- **Testing**: Write tests for new features and bug fixes
 - **Documentation**: Update docs for user-facing changes
 - **CHANGELOG**: Document all changes in CHANGELOG.md
 
-## Testing Requirements
+## Framework vs. Site-Specific Boundary
 
-All contributions must:
-- ✅ Pass all existing tests (`npm run test:ci`)
-- ✅ Pass E2E tests (`npm run test:e2e`)
-- ✅ Include tests for new features
-- ✅ Include regression tests for bug fixes
-- ✅ Build successfully (`npm run build`)
+SuperSite separates framework code (git-tracked) from site-specific content (git-ignored). When contributing, only modify framework code:
+
+**Framework (tracked, contributions welcome):**
+- `app/`, `components/`, `lib/`, `styles/` — Application code
+- `themes/` — Built-in theme templates
+- `content/` — Template/demo content
+- `config/site.yaml` — Template configuration
+- `docs/` — Documentation
+
+**Site-specific (git-ignored, never committed):**
+- `themes-custom/` — User custom themes
+- `content-custom/` — User content
+- `config/site.local.yaml` — User configuration overrides
+- `.env.local` — API keys and secrets
 
 ## Pull Request Process
 
 1. **Update CHANGELOG.md** with your changes
-2. **Ensure all tests pass**
+2. **Ensure the build passes**: `npm run build`
 3. **Push to your fork**:
    ```bash
    git push origin feature/your-feature-name
    ```
 4. **Create a Pull Request** on GitHub
 5. **Describe your changes** clearly in the PR description
-6. **Wait for review** - maintainers will review your PR
+6. **Wait for review** — maintainers will review your PR
 
 ## Code Review
 
 All submissions require review. We use GitHub pull requests for this purpose. Reviewers will check:
 
 - Code quality and standards
-- Test coverage
+- Build success
 - Documentation updates
 - CHANGELOG.md updates
 
 ## Project Structure
 
-- `app/` - Next.js App Router pages and API routes
-- `components/` - React components
-- `lib/` - Utility functions and helpers
-- `config/` - Configuration files (site.yaml)
-- `content/` - Markdown content (pages, blog)
-- `docs/` - Documentation
-- `__tests__/` - Jest unit tests
-- `e2e/` - Playwright E2E tests
+- `app/` — Next.js App Router pages and API routes
+- `components/` — React components
+- `components/directives/` — Markdown directive components (23 directives)
+- `lib/` — Utility functions, config, markdown processing
+- `lib/theme-system/` — Folder-based theme loader and Zod schemas
+- `config/` — YAML configuration files
+- `content/` — Template markdown content (pages, blog)
+- `themes/` — Built-in theme templates (6 themes)
+- `themes-custom/` — User custom themes (git-ignored)
+- `content-custom/` — User content (git-ignored)
+- `styles/` — CSS modules
+- `docs/` — Documentation
 
-## Running Tests Locally
+## Adding a New Directive
 
-```bash
-# Unit tests (watch mode)
-npm run test
-
-# Unit tests (CI mode with coverage)
-npm run test:ci
-
-# E2E tests
-npm run test:e2e
-
-# E2E tests with UI
-npm run test:e2e:ui
-
-# Run all tests
-npm run test:all
-```
+1. Create the component in `components/directives/YourDirective.tsx`
+2. Export it from `components/directives/index.ts`
+3. Add the AST transformation case in `lib/remarkDirectives.ts`
+4. Add the render case in `components/MarkdownContent.tsx`
+5. Add styles in `styles/Directives.module.css`
+6. Document the directive in `docs/CONTENT-MANAGEMENT.md`
+7. Add an example to the test-directives page
 
 ## Questions?
 

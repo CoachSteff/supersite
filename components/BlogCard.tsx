@@ -27,10 +27,10 @@ export default function BlogCard({ post }: BlogCardProps) {
       {post.tags && post.tags.length > 0 && (
         <div className={styles.tags}>
           {post.tags.map((tag) => (
-            <span key={tag} className={styles.tag}>
+            <Link key={tag} href={`/tags/${tag}`} className={styles.tag}>
               <Tag size={12} />
               {tag}
-            </span>
+            </Link>
           ))}
         </div>
       )}

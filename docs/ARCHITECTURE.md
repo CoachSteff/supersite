@@ -1,6 +1,6 @@
 # SuperSite Architecture
 
-> Last updated: 2026-02-09 | Version: 0.2.0
+> Last updated: 2026-03-15 | Version: 0.3.0
 
 ## Overview
 
@@ -125,7 +125,52 @@ themes/base/
 - `getRecentBlogPosts(limit)` - Returns recent posts
 - `getFolderStructure()` - Builds navigation tree
 
-### 4. AI Chat System
+### 4. Markdown Directives System
+
+**Location**: `lib/remarkDirectives.ts`, `components/directives/`
+
+**Pipeline**: Content markdown is processed through `remark-directive` which parses directive syntax into AST nodes. `remarkDirectives.ts` transforms these AST nodes into HTML with data attributes. `MarkdownContent.tsx` then maps the rendered HTML elements to React components via `div` and `span` switch cases.
+
+**23 Directives** across 4 categories:
+- **Container** (7): `details`, `tabs`/`tab`, `card`, `steps`, `formula`, `flow`, `section`
+- **Leaf** (4): `youtube`, `button`, `spacer`, `divider`, `stat`, `connector`
+- **Text/Inline** (4): `highlight`, `badge`, `kbd`, `abbr`
+- **Infographic** (6): `formula-card`, `flow-step`, `info-card`, `connector`, `stat`, `section`
+
+**Styling**: All directive styles in `styles/Directives.module.css`. Infographic directives support named accent colors (cyan, teal, green, orange, yellow, purple, red, blue, pink).
+
+### 5. Hashtag and Tagging System
+
+**Location**: `lib/remark-hashtags.ts`, `lib/markdown.ts`
+
+**Pipeline**: The `remark-hashtags` plugin runs during markdown processing and transforms `#TagName` patterns into `<a href="/tags/tag-name" class="hashtag">` links. Tags are normalized to lowercase kebab-case.
+
+**Dual Sources**: Tags come from two places:
+1. Frontmatter `tags: [...]` array
+2. Inline `#hashtags` in body text
+
+Both sources are merged and deduplicated in `lib/markdown.ts` via `extractHashtags()` and `normalizeTag()`.
+
+**Skipped Contexts**: The plugin avoids transforming hashtags inside headings, code blocks, inline code, existing links, and HTML blocks.
+
+**Tag Pages**:
+- `/tags` — Tag cloud showing all tags with post counts (`app/tags/page.tsx`)
+- `/tags/{tag}` — Detail page listing content for a specific tag (`app/tags/[tag]/page.tsx`)
+
+**Key Functions**: `extractHashtags()`, `normalizeTag()`, `getAllTags()`, `getContentByTag()`
+
+### 6. SEO/GEO Infrastructure
+
+**Location**: Multiple files
+
+**Components**:
+- `app/sitemap.ts` — Auto-generated sitemap from all content pages and blog posts
+- `app/robots.ts` — Robots.txt with AI crawler allowlisting (GPTBot, ClaudeBot, PerplexityBot, Google-Extended)
+- `app/llms.txt/route.ts` — Structured markdown endpoint for AI discoverability
+- `components/JsonLd.tsx` — JSON-LD structured data with 6 schema types (WebSite, Organization, Person, Article, Breadcrumb, FAQ)
+- `lib/seo.ts` — Enhanced metadata generation with canonical URLs, robots directives, Open Graph, Twitter Cards
+
+### 7. AI Chat System
 
 **Location**: Multiple files
 - `lib/ai-providers.ts` - AI provider integrations
@@ -163,7 +208,7 @@ themes/base/
 [[notify:message]]      // Show notification
 ```
 
-### 5. Search System
+### 8. Search System
 
 **Location**: `lib/search.ts`
 
@@ -244,10 +289,16 @@ RootLayout (Server Component)
 1. Determine content directory (content-custom/ or content/)
 2. Read markdown file
 3. Parse frontmatter with gray-matter
-4. Convert markdown to HTML with remark
-5. Extract SEO metadata
-6. Build AI context (priority: high/medium/low)
-7. Render HTML content
+4. Process markdown through remark pipeline:
+   a. remark-gfm (GitHub-flavored markdown)
+   b. remark-directive (parse directive syntax into AST)
+   c. remarkDirectives (transform directive AST to HTML with data attrs)
+   d. remark-hashtags (transform #hashtags into linked anchors)
+   e. remark-html (convert to HTML)
+5. Extract and merge tags (frontmatter tags + inline hashtags)
+6. Extract SEO metadata
+7. Build AI context (priority: high/medium/low)
+8. Render HTML via MarkdownContent with directive component routing
 ```
 
 ### AI Chat Flow
@@ -294,46 +345,55 @@ supersite/
 │   ├── blog/                     # Blog pages
 │   │   ├── [slug]/page.tsx       # Individual post
 │   │   └── page.tsx              # Blog index
+│   ├── tags/                     # Tag system
+│   │   ├── page.tsx              # Tag cloud
+│   │   └── [tag]/page.tsx        # Tag detail page
 │   ├── contact/page.tsx          # Contact page
+│   ├── favourites/page.tsx       # Favourites page
 │   ├── [...slug]/page.tsx        # Dynamic content pages
+│   ├── sitemap.ts                # Auto-generated sitemap
+│   ├── robots.ts                 # Robots.txt with AI crawler config
+│   ├── llms.txt/route.ts         # AI discoverability endpoint
 │   ├── layout.tsx                # Root layout
 │   ├── page.tsx                  # Homepage
-│   └── globals.css               # Global styles + CSS variables
+│   └── globals.css               # Global styles, visual effects, dark mode
 │
 ├── components/                   # React components
-│   ├── ChatProvider.tsx          # Chat state management (v0.2.0)
-│   ├── ChatWindow.tsx            # Chat UI (v0.2.0)
+│   ├── directives/               # 23 markdown directive components
+│   │   ├── Details.tsx, Tabs.tsx, Card.tsx, Steps.tsx
+│   │   ├── Formula.tsx, FormulaCard.tsx, Flow.tsx, FlowStep.tsx
+│   │   ├── InfoCard.tsx, Connector.tsx, Stat.tsx, Section.tsx
+│   │   ├── YouTube.tsx, Button.tsx, Spacer.tsx, Divider.tsx
+│   │   ├── Highlight.tsx, Badge.tsx, Kbd.tsx, Abbr.tsx
+│   │   └── index.ts              # Barrel export
+│   ├── JsonLd.tsx                # JSON-LD structured data
+│   ├── ChatProvider.tsx          # Chat state management
+│   ├── ChatWindow.tsx            # Chat UI
 │   ├── ChatButton.tsx            # Floating chat button
-│   ├── ChatMessage.tsx           # Message renderer
-│   ├── VoiceInput.tsx            # Speech-to-text
-│   ├── ActionButton.tsx          # Action buttons
-│   ├── KeyboardShortcuts.tsx     # Global shortcuts
 │   ├── ThemeLoader.tsx           # Theme CSS injector
 │   ├── ThemeContext.tsx          # Theme metadata provider
-│   ├── ThemeToggle.tsx           # Theme switcher
 │   ├── Header.tsx                # Site header
 │   ├── Footer.tsx                # Site footer
-│   ├── Sidebar.tsx               # Dynamic sidebar (v0.2.0)
-│   ├── Navigation.tsx            # Auto-generated nav
-│   ├── Search.tsx                # Search modal
-│   ├── ContactForm.tsx           # Contact form
-│   ├── BlogCard.tsx              # Blog post card
-│   └── MarkdownContent.tsx       # Markdown renderer
+│   ├── Sidebar.tsx               # Dynamic sidebar
+│   ├── BlogCard.tsx              # Blog post card with tag links
+│   └── MarkdownContent.tsx       # Markdown renderer with directive routing
 │
 ├── lib/                          # Core utilities
 │   ├── config.ts                 # Config loader & validation
-│   ├── markdown.ts               # Content parser (v0.2.0)
+│   ├── markdown.ts               # Content parser, tag extraction, hashtag merging
+│   ├── remarkDirectives.ts       # Remark plugin for directive AST transformation
+│   ├── remark-hashtags.ts        # Remark plugin for inline hashtag processing
+│   ├── seo.ts                    # SEO metadata, canonical URLs, robots directives
 │   ├── ai-providers.ts           # AI integrations
 │   ├── ai-streaming.ts           # Streaming logic
 │   ├── ai-actions.ts             # Action system
 │   ├── context-builder.ts        # AI context builder
-│   ├── search.ts                 # Search functionality
-│   ├── seo.ts                    # SEO metadata generation
+│   ├── search.ts                 # FlexSearch integration
 │   ├── favorites.ts              # User favorites
-│   └── theme-system/             # NEW theme system
+│   └── theme-system/             # Folder-based theme system
 │       ├── index.ts              # Entry point
 │       ├── loader.ts             # Theme loader
-│       └── schemas.ts            # Zod schemas
+│       └── schemas.ts            # Zod schemas (incl. EffectsSchema, AnimationsSchema)
 │
 ├── themes/                       # Built-in themes
 │   ├── base/                     # Default theme
@@ -356,32 +416,25 @@ supersite/
 ├── content-custom/               # User content (git-ignored)
 │
 ├── styles/                       # CSS modules
+│   ├── Directives.module.css     # All 23 directive styles
+│   ├── Tags.module.css           # Tag page and hashtag styles
 │   ├── Chat.module.css
 │   ├── Header.module.css
 │   ├── Footer.module.css
 │   ├── Sidebar.module.css
 │   └── ...
 │
-├── __tests__/                    # Unit tests
-│   ├── api/                      # API route tests
-│   ├── components/               # Component tests
-│   └── lib/                      # Utility tests
-│
-├── e2e/                          # End-to-end tests
-│   ├── chat.spec.ts
-│   ├── features.spec.ts
-│   ├── homepage.spec.ts
-│   └── navigation.spec.ts
-│
 └── docs/                         # Documentation
     ├── ARCHITECTURE.md           # This file
-    ├── QUICKSTART.md             # Quick start guide
     ├── CONFIGURATION.md          # Configuration reference
-    ├── THEMES.md                 # Theme guide
-    ├── TESTING.md                # Testing guide
-    ├── ICONS.md                  # Icon reference
+    ├── CONTENT-MANAGEMENT.md     # Content authoring guide
     ├── THEME-SYSTEM.md           # Theme system details
-    └── AI-FIRST-UPGRADE.md       # AI features docs
+    ├── THEMES.md                 # Theme guide
+    ├── UPGRADING.md              # Upgrade guide
+    ├── QUICKSTART.md             # Quick start guide
+    ├── PRODUCTION-CHECKLIST.md   # Deployment checklist
+    ├── TESTING.md                # Testing guide
+    └── ICONS.md                  # Icon reference
 ```
 
 ## Design Decisions
@@ -437,54 +490,9 @@ supersite/
 
 ## Testing Strategy
 
-### Unit Tests
+Test suites (`__tests__/`, `e2e/`) were removed in v0.2.0 during architectural consolidation. Test scripts remain in `package.json` for future re-implementation.
 
-**Location**: `__tests__/`
-
-**Tools**: Jest + React Testing Library
-
-**Coverage**:
-- `lib/config.test.ts` - Configuration loading and validation
-- `lib/context-builder.test.ts` - AI context generation
-- `lib/favorites.test.ts` - User favorites management
-- `lib/search.test.ts` - Search functionality
-- `components/MarkdownContent.test.tsx` - Markdown rendering
-- `components/PageActions.test.tsx` - Page actions
-- `components/SharePopup.test.tsx` - Share popup
-- `api/config.test.ts` - Config API endpoint
-- `api/navigation.test.ts` - Navigation API endpoint
-
-**Total**: 51 unit tests
-
-### End-to-End Tests
-
-**Location**: `e2e/`
-
-**Tools**: Playwright
-
-**Coverage**:
-- `chat.spec.ts` - AI chat functionality
-- `features.spec.ts` - Feature toggles and behavior
-- `homepage.spec.ts` - Homepage rendering and navigation
-- `navigation.spec.ts` - Navigation and routing
-
-**Total**: 4 E2E test suites
-
-### Running Tests
-
-```bash
-# Unit tests
-npm test                    # Watch mode
-npm run test:ci             # CI mode with coverage
-npm run test:coverage       # Coverage report
-
-# E2E tests
-npm run test:e2e            # Headless
-npm run test:e2e:ui         # With UI
-
-# All tests
-npm run test:all            # Unit + E2E
-```
+**Verification**: Use `npm run build` to verify the project compiles without errors. The production build generates all static pages and catches type errors.
 
 ## Performance Considerations
 
@@ -570,19 +578,21 @@ npm run test:all            # Unit + E2E
 2. Types: `Theme` type removed. Use `FullTheme` from `lib/theme-system`.
 3. Components: No changes needed for chat components (aliases handled internally).
 
-## What's Active (v0.2.0)
+## What's Active (v0.3.0)
 
-✅ **Folder-based theme system** (`lib/theme-system/`)
-✅ **Chat system** with streaming, voice, actions (`ChatProvider`, `ChatWindow`)
-✅ **Dual config** and content directories
-✅ **Multi-AI provider** support (Anthropic, OpenAI, Gemini, Ollama)
-✅ **Complete sidebar** implementation with real data
-✅ **Social links** configuration and widgets
-✅ **Unified theme types** (`FullTheme` everywhere)
+- **Markdown directives** — 23 directives across container, leaf, text, and infographic types
+- **Hashtag and tagging system** — Inline `#hashtag` support with auto-generated tag pages
+- **SEO/GEO infrastructure** — Sitemap, robots.txt, llms.txt, JSON-LD schemas
+- **Progressive visual effects** — Scroll animations, depth cards, fluid typography
+- **Folder-based theme system** (`lib/theme-system/`)
+- **Chat system** with streaming, voice, actions (`ChatProvider`, `ChatWindow`)
+- **Dual config** and content directories
+- **Multi-AI provider** support (Anthropic, OpenAI, Gemini, Ollama)
+- **Complete sidebar** implementation with real data
+- **Social links** configuration and widgets
+- **Unified theme types** (`FullTheme` everywhere)
 
 ## Future Roadmap
-
-See [docs/AI-FIRST-UPGRADE.md](./AI-FIRST-UPGRADE.md) for planned features:
 
 ### Phase 3: Structure Rendering (Next Priority)
 - Layout types (full-width, sidebar-left/right, centered)
@@ -628,4 +638,4 @@ See [docs/AI-FIRST-UPGRADE.md](./AI-FIRST-UPGRADE.md) for planned features:
 - [Quick Start Guide](./QUICKSTART.md)
 - [Testing Guide](./TESTING.md)
 
-**Version**: 0.2.0 | **Last Updated**: 2026-02-09
+**Version**: 0.3.0 | **Last Updated**: 2026-03-15

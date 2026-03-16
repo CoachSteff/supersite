@@ -16,7 +16,7 @@
 .actionButton:hover:not(:disabled) {
   background: var(--primary-color);
   border-color: var(--primary-color);
-  color: white;
+  color: var(--on-primary, #ffffff);
   transform: translateY(-1px);
 }
 
@@ -32,7 +32,7 @@
 .actionButton.complete {
   background: var(--success-color);
   border-color: var(--success-color);
-  color: white;
+  color: var(--on-primary, #ffffff);
 }
 
 .icon {

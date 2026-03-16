@@ -85,16 +85,14 @@
 }
 
 /* Dark mode adjustments */
-@media (prefers-color-scheme: dark) {
-  .codeBlockToolbar {
-    background-color: rgba(31, 41, 55, 0.95);
-  }
-  
-  .copyButton {
-    background-color: rgba(17, 24, 39, 0.8);
-  }
-  
-  .copyButton:hover {
-    background-color: rgba(31, 41, 55, 0.9);
-  }
+[data-theme="dark"] .codeBlockToolbar {
+  background-color: var(--background-secondary);
+}
+
+[data-theme="dark"] .copyButton {
+  background-color: var(--background);
+}
+
+[data-theme="dark"] .copyButton:hover {
+  background-color: var(--background-secondary);
 }

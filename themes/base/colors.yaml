@@ -11,6 +11,9 @@ colors:
     border: "#e5e7eb"
     success: "#10b981"
     error: "#ef4444"
+    onPrimary: "#ffffff"
+    warning: "#f59e0b"
+    info: "#8b5cf6"
   dark:
     primary: "#60a5fa"
     secondary: "#93c5fd"
@@ -21,6 +24,9 @@ colors:
     border: "#374151"
     success: "#34d399"
     error: "#f87171"
+    onPrimary: "#ffffff"
+    warning: "#fbbf24"
+    info: "#a78bfa"
 
 typography:
   fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"

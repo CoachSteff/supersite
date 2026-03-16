@@ -29,6 +29,9 @@
   --border-color: #e5e7eb;
   --success-color: #10b981;
   --error-color: #ef4444;
+  --on-primary: #ffffff;
+  --warning-color: #f59e0b;
+  --info-color: #8b5cf6;
   --accent-light: #eff6ff;
   --header-bg: rgba(255, 255, 255, 0.95);
   --input-bg: #ffffff;
@@ -93,13 +96,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
+a:not([role="button"]) {
   color: var(--primary-color);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-a:hover {
+a:not([role="button"]):hover {
   color: var(--secondary-color);
 }
 
@@ -417,6 +420,29 @@ h3 { font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.75rem); }
     outline-offset: 2px;
     border-radius: 2px;
   }
+}
+
+/* ============================================
+ * Inline Hashtags
+ * Rendered by remark-hashtags plugin in markdown content.
+ * ============================================ */
+a.hashtag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1em 0.5em;
+  border-radius: 1em;
+  background: var(--background-secondary);
+  color: var(--primary-color);
+  font-size: 0.9em;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+a.hashtag:hover {
+  background: var(--primary-color);
+  color: var(--on-primary, #ffffff);
 }
 
 /* Text gradient utility — enabled via --text-gradient: 1 in theme */

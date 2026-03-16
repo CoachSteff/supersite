@@ -38,7 +38,7 @@
 
 .chatHeader {
   background-color: var(--primary-color);
-  color: white;
+  color: var(--on-primary, #ffffff);
   padding: var(--spacing-md);
   display: flex;
   justify-content: space-between;
@@ -59,7 +59,7 @@
 .controlButton {
   background: none;
   border: none;
-  color: white;
+  color: var(--on-primary, #ffffff);
   cursor: pointer;
   padding: var(--spacing-xs);
   display: flex;
@@ -70,7 +70,7 @@
 }
 
 .controlButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: color-mix(in srgb, var(--on-primary, #ffffff) 10%, transparent);
 }
 
 .chatMessages {
@@ -229,7 +229,7 @@
   height: 40px;
   border-radius: 50%;
   background-color: var(--primary-color);
-  color: white;
+  color: var(--on-primary, #ffffff);
   border: none;
   cursor: pointer;
   display: flex;
@@ -309,7 +309,7 @@
 .suggestionButton:hover {
   background: var(--primary-color);
   border-color: var(--primary-color);
-  color: white;
+  color: var(--on-primary, #ffffff);
   transform: translateY(-1px);
 }
 
@@ -681,7 +681,7 @@
 .centerChatSubmit {
   padding: 12px;
   background: var(--primary-color);
-  color: white;
+  color: var(--on-primary, #ffffff);
   border: none;
   border-radius: 16px;
   cursor: pointer;

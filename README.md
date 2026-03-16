@@ -5,61 +5,68 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black)](https://nextjs.org/)
 
-> 🎉 **Version 0.2.0** - Production-ready with AI-first features
+> **Version 0.3.0** — Markdown directives, hashtag tagging, SEO/GEO infrastructure, and visual effects
 
-A universal, AI-powered website template built with Next.js. Fully configuration-driven through YAML files and markdown content. Features an intelligent AI chat assistant that answers questions about your site content.
+A universal, AI-powered website framework built with Next.js. Fully configuration-driven through YAML files and markdown content. Features an intelligent AI chat assistant, 23 markdown directives for rich content layouts, a hashtag-based tagging system, and comprehensive SEO/GEO infrastructure.
 
 Part of the **Super** family: [superskills](https://github.com/coachsteff/superskills)
 
-📖 **[Read the Release Notes](./docs/dev/RELEASE_NOTES.md)** | 🚀 **[Quick Start Guide](./QUICK-START.md)** | 📚 **[Full Documentation](./docs/CONFIGURATION.md)**
+[Read the Release Notes](./docs/dev/RELEASE_NOTES.md) | [Quick Start Guide](./docs/QUICKSTART.md) | [Full Documentation](./docs/CONFIGURATION.md)
 
-## ✨ Key Features
+## Key Features
+
+### Content Authoring
+- **23 Markdown Directives** — Rich content layouts without code: tabs, cards, steps, formulas, flow diagrams, info cards, stats, and more
+- **Hashtag Tagging** — Write `#TagName` inline; tags are auto-extracted, merged with frontmatter tags, and linked to tag pages
+- **Tag Pages** — Auto-generated tag cloud (`/tags`) and per-tag detail pages (`/tags/{tag}`)
+- **Markdown-Based CMS** — All content in simple markdown files with YAML frontmatter
+- **Blog System** — Date-based posts with tags, categories, and metadata
 
 ### AI-Powered
-- **Intelligent Chat Assistant**: AI chatbot that understands your site content
-- **Multi-Provider Support**: Switch between Anthropic Claude, OpenAI GPT, Google Gemini, or local Ollama
-- **Multilingual Support**: Automatically detects and responds in user's language (17 languages supported)
-- **Context-Aware**: Automatically uses your markdown content to answer questions
-- **Configurable Behavior**: Customize AI personality and behavior via YAML
+- **Intelligent Chat Assistant** — AI chatbot that understands your site content
+- **Multi-Provider Support** — Anthropic Claude, OpenAI GPT, Google Gemini, or local Ollama
+- **Multilingual Support** — Automatic language detection and response in 17 languages
+- **Context-Aware** — Automatically uses your markdown content to answer questions
 
-### User Experience
-- **Favourites/Bookmarking**: Save and organize favourite pages and blog posts
-- **Multi-language Ready**: 17 languages with automatic detection and AI translation
-- **Language Switcher**: Easy language selection with flag icons
-- **Loading States**: Smooth transitions and progress indicators
-- **Translation Caching**: Fast performance with intelligent content caching
+### SEO/GEO Infrastructure
+- **Auto-Generated Sitemap** — Dynamic `sitemap.xml` from all content pages and blog posts
+- **AI Crawler Allowlisting** — `robots.txt` configured for GPTBot, ClaudeBot, PerplexityBot, Google-Extended
+- **AI Discoverability** — `llms.txt` structured markdown endpoint for AI systems
+- **JSON-LD Schemas** — 6 schema types: WebSite, Organization, Person, Article, Breadcrumb, FAQ
+- **Enhanced Metadata** — Canonical URLs, robots directives, Open Graph, Twitter Cards
+
+### Visual Effects
+- **CSS-Only Scroll Animations** — Progressive enhancement via `animation-timeline: view()`
+- **Depth Cards** — Tinted surfaces using `color-mix()` for layered visual depth
+- **Fluid Typography** — Responsive heading sizes with `clamp()`
+- **Hero Text Gradient** — Theme-controlled gradient headings
+- **Motion Safety** — All effects respect `prefers-reduced-motion`
+
+### Theme System
+- **Folder-Based YAML Themes** — Each theme is 4 YAML files: colors, structure, blocks, metadata
+- **Custom Theme Support** — Create themes in `themes-custom/` (git-ignored)
+- **6 Built-in Theme Templates** — base, blog, influencer, business, community, chatbot
+- **Automatic Dark Mode** — All themes include light and dark variants
+- **CSS Custom Properties** — Dynamic styling injected at runtime by ThemeLoader
 
 ### Configuration-Driven
-- **YAML Configuration**: All settings in one file (`config/site.yaml`)
-- **No Code Changes**: Customize branding, features, and AI without touching code
-- **Extended Frontmatter**: Rich metadata in markdown files
-- **Hot Reload**: Configuration changes take effect immediately
-
-### Content Management
-- **Markdown-Based**: All content in simple markdown files
-- **Auto-Generated Navigation**: Menu builds from folder structure
-- **Blog System**: Date-based posts with tags and metadata
-- **SEO-Optimized**: Automatic meta tags and structured data
+- **YAML Configuration** — All settings in `config/site.yaml` with local overrides in `config/site.local.yaml`
+- **No Code Changes** — Customize branding, features, and AI without touching code
+- **Dual-Config System** — Template config (tracked) + user overrides (git-ignored), deep-merged
+- **Dual-Content System** — Template content + user content, with priority resolution
 
 ### Modern Features
-- **Full-Text Search**: Fast client-side search with icons
-- **Dark/Light Mode**: Automatic theme adaptation
-- **Mobile-First**: Responsive design optimized for all devices
-- **Icon Library**: Lucide React for clean, minimal UI
-- **Contact Forms**: Built-in form with validation
+- **Full-Text Search** — Fast client-side search with FlexSearch
+- **Dark/Light Mode** — Automatic theme adaptation with system preference detection
+- **Favourites/Bookmarking** — Save and organize favourite pages and blog posts
+- **Contact Forms** — Built-in form with validation
+- **Mobile-First** — Responsive design optimized for all devices
 
-### Theming
-- **5 Built-in Themes**: Choose from professional, modern, minimal, dark, or vibrant themes
-- **Custom Themes**: Create your own themes with YAML configuration
-- **Theme Overrides**: Fine-tune specific values without creating a full theme
-- **Automatic Dark Mode**: All themes include light and dark variants
-- **CSS Custom Properties**: Dynamic styling via CSS variables
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Node.js 18+ installed
-- An API key for your chosen AI provider
+- Node.js 18+
+- An API key for your chosen AI provider (optional, for chat features)
 
 ### Installation
 
@@ -74,18 +81,17 @@ npm install
 ```bash
 npm run setup
 ```
-This creates your config (`config/site.local.yaml`) and content (`content-custom/`).
+This creates your config (`config/site.local.yaml`) and content directory (`content-custom/`).
 
 3. **Customize:**
-   - **Branding & features**: Edit `config/site.local.yaml`
-   - **Pages & content**: Edit files in `content-custom/`
+   - **Branding and features**: Edit `config/site.local.yaml`
+   - **Pages and content**: Edit files in `content-custom/`
    - See [Quick Start Guide](./docs/QUICKSTART.md) for details
 
-4. **Add your API key:**
-
-Create `.env.local`:
+4. **Add your API key** (optional, for AI chat):
 ```bash
-ANTHROPIC_API_KEY=your-key-here
+# Create .env.local
+echo 'ANTHROPIC_API_KEY=your-key-here' > .env.local
 ```
 
 5. **Start developing:**
@@ -93,72 +99,84 @@ ANTHROPIC_API_KEY=your-key-here
 npm run dev
 ```
 
-Visit http://localhost:3000
+Visit http://localhost:3001
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 supersite/
 ├── config/
-│   └── site.yaml             # Main configuration file
+│   ├── site.yaml                # Template configuration (git-tracked)
+│   └── site.local.yaml          # User overrides (git-ignored)
 ├── app/
-│   ├── api/
-│   │   ├── chat/             # AI chat endpoint
-│   │   ├── config/           # Configuration API
-│   │   ├── contact/          # Contact form
-│   │   ├── navigation/       # Navigation data
-│   │   └── search/           # Search endpoint
-│   ├── blog/                 # Blog pages
-│   ├── contact/              # Contact page
-│   ├── [...slug]/            # Dynamic routing
-│   ├── layout.tsx            # Root layout with chat
-│   ├── page.tsx              # Homepage
-│   └── globals.css           # Global styles + dark mode
+│   ├── api/                     # API routes (chat, config, contact, search)
+│   ├── blog/                    # Blog pages
+│   ├── tags/                    # Tag cloud and tag detail pages
+│   ├── contact/                 # Contact page
+│   ├── favourites/              # Favourites page
+│   ├── [...slug]/               # Dynamic content routing
+│   ├── sitemap.ts               # Auto-generated sitemap
+│   ├── robots.ts                # Robots.txt with AI crawler config
+│   ├── llms.txt/route.ts        # AI discoverability endpoint
+│   ├── layout.tsx               # Root layout
+│   ├── page.tsx                 # Homepage
+│   └── globals.css              # Global styles, dark mode, visual effects
 ├── components/
-│   ├── ChatProvider.tsx      # Chat state management
-│   ├── ChatButton.tsx        # Floating chat button
-│   ├── ChatWindow.tsx        # Chat interface
-│   ├── ChatMessage.tsx       # Message display
-│   ├── ThemeLoader.tsx       # Dynamic branding
-│   ├── Header.tsx            # Site header
-│   ├── Footer.tsx            # Site footer
-│   ├── Navigation.tsx        # Auto-generated nav
-│   ├── Search.tsx            # Search modal
-│   ├── ContactForm.tsx       # Contact form
-│   ├── BlogCard.tsx          # Blog post card
-│   └── MarkdownContent.tsx   # Markdown renderer
-├── content/
-│   ├── pages/                # Site pages (markdown)
-│   │   ├── index.md          # Homepage
-│   │   ├── about/index.md
-│   │   └── services/index.md
-│   └── blog/                 # Blog posts (markdown)
-│       └── YYYY-MM-DD-slug.md
+│   ├── directives/              # 23 markdown directive components
+│   │   ├── Details.tsx          # Collapsible sections
+│   │   ├── Tabs.tsx             # Tabbed panels
+│   │   ├── Card.tsx             # Content cards
+│   │   ├── Steps.tsx            # Numbered steps
+│   │   ├── Formula.tsx          # Equation layouts
+│   │   ├── Flow.tsx             # Process flow diagrams
+│   │   ├── InfoCard.tsx         # Capability cards
+│   │   ├── Stat.tsx             # Statistics callouts
+│   │   ├── Section.tsx          # Full-bleed sections
+│   │   └── ...                  # + Highlight, Badge, Kbd, Abbr, etc.
+│   ├── JsonLd.tsx               # JSON-LD structured data
+│   ├── ThemeLoader.tsx          # Theme CSS variable injection
+│   ├── Header.tsx               # Site header with navigation
+│   ├── Footer.tsx               # Site footer
+│   ├── MarkdownContent.tsx      # Markdown renderer with directive support
+│   ├── BlogCard.tsx             # Blog post card with tag links
+│   └── ...                      # Chat, Search, Navigation, etc.
 ├── lib/
-│   ├── config.ts             # YAML parser & validation
-│   ├── ai-providers.ts       # AI provider abstraction
-│   ├── context-builder.ts    # Build AI context
-│   ├── markdown.ts           # Markdown processing
-│   ├── search.ts             # Search functionality
-│   └── seo.ts                # SEO metadata generation
-└── styles/                   # CSS modules
-    ├── Chat.module.css       # Chat UI styles
-    ├── Header.module.css
-    ├── Footer.module.css
+│   ├── config.ts                # YAML config loader and validation
+│   ├── markdown.ts              # Content parser, tag extraction, hashtag merging
+│   ├── remarkDirectives.ts      # Remark plugin for directive AST transformation
+│   ├── remark-hashtags.ts       # Remark plugin for inline hashtag processing
+│   ├── seo.ts                   # SEO metadata and canonical URLs
+│   ├── ai-providers.ts          # AI provider integrations
+│   ├── search.ts                # FlexSearch integration
+│   └── theme-system/            # Folder-based theme loader and schemas
+├── themes/                      # Built-in theme templates (6 themes)
+├── themes-custom/               # User custom themes (git-ignored)
+├── content/                     # Template content (git-tracked)
+├── content-custom/              # User content (git-ignored)
+├── styles/                      # CSS modules
+│   ├── Directives.module.css    # All 23 directive styles
+│   ├── Tags.module.css          # Tag page styles
+│   └── ...
+└── docs/                        # Documentation
+    ├── ARCHITECTURE.md
+    ├── CONFIGURATION.md
+    ├── CONTENT-MANAGEMENT.md
+    ├── THEME-SYSTEM.md
+    ├── UPGRADING.md
     └── ...
 ```
 
-## 📝 Content Management
-```
+## Content Management
 
 ### Adding Pages
 
-Create markdown files in `content/pages/`. Folder structure = URL structure.
+Create markdown files in `content-custom/pages/`. Folder structure maps to URL structure.
 
 ```yaml
 ---
 title: "About Us"
 description: "Learn about our team"
+tags: ["about", "team"]
 seo:
   keywords: ["about", "team"]
 chat:
@@ -167,14 +185,30 @@ chat:
 ---
 
 # Your content here
+
+Use #hashtags inline and they will be auto-linked to tag pages.
 ```
 
-- `content/pages/about/index.md` → `/about`
-- `content/pages/services/consulting.md` → `/services/consulting`
+- `content-custom/pages/about/index.md` maps to `/about`
+- `content-custom/pages/services/consulting.md` maps to `/services/consulting`
+
+### Using Directives
+
+SuperSite supports 23 directives for rich content layouts. See [Content Management Guide](./docs/CONTENT-MANAGEMENT.md) for full reference.
+
+```markdown
+:::details{summary="Click to expand"}
+Hidden content with full **markdown** support.
+:::
+
+::stat{value="23" label="Directives" color=cyan}
+
+:highlight[Important]{color=yellow} and :badge[New]{color=green}
+```
 
 ### Adding Blog Posts
 
-Create files in `content/blog/` with format: `YYYY-MM-DD-slug.md`
+Create files in `content-custom/blog/` with format: `YYYY-MM-DD-slug.md`
 
 ```yaml
 ---
@@ -182,25 +216,22 @@ title: "Post Title"
 date: "2024-12-24"
 author: "Author Name"
 tags: ["AI", "Tech"]
-chat:
-  priority: medium
-  summary: "Brief description for AI"
 ---
 
-# Your content
+# Your content with #inline #hashtags
 ```
 
-## 🤖 AI Chat Configuration
+## AI Chat Configuration
 
 See [CONFIGURATION.md](./docs/CONFIGURATION.md) for complete details.
 
-### Quick Start
+### Quick Setup
 
-1. **Choose Provider** (edit `config/site.yaml`):
+1. **Choose Provider** (edit `config/site.local.yaml`):
 ```yaml
 chat:
   provider: "anthropic"  # anthropic | openai | gemini | ollama
-  model: "claude-3-5-sonnet-20241022"
+  model: "claude-sonnet-4-6"
 ```
 
 2. **Add API Key** (create `.env.local`):
@@ -214,80 +245,11 @@ chat:
   systemPrompt: "You are a helpful assistant for..."
   temperature: 0.7
   button:
-    position: "bottom-center"  # or bottom-left, bottom-right
+    position: "bottom-center"
   welcomeMessage: "Hi! How can I help?"
-  multilingual:
-    enabled: true          # Auto-detect and respond in user's language
-    fallbackLanguage: en   # Default when detection is uncertain
 ```
 
-### Multilingual Support
-
-The AI assistant automatically detects and responds in the user's language:
-- **Auto-detection**: Analyzes user input to identify language
-- **Browser fallback**: Uses browser language preference when needed
-- **15+ Languages**: English, Spanish, French, German, Portuguese, Italian, Dutch, Polish, Turkish, Russian, Japanese, Korean, Chinese, Arabic, Hebrew, Thai, Hindi
-- **No configuration needed**: Works out of the box
-- **Consistent tone**: Maintains friendly, helpful personality across all languages
-
-Example conversations:
-- User: "Hello, what can you do?" → AI responds in English
-- User: "Hola, ¿qué puedes hacer?" → AI responds in Spanish  
-- User: "こんにちは、何ができますか？" → AI responds in Japanese
-- User: "你好，你能做什么？" → AI responds in Chinese
-
-### Supported Providers
-
-- **Anthropic Claude** (recommended): Fast, accurate, great for Q&A
-- **OpenAI GPT**: Versatile, widely supported
-- **Google Gemini**: Good alternative, competitive pricing
-- **Ollama**: Free, runs locally, privacy-focused
-
-## 🎨 Customization
-
-### Branding (No Code Required!)
-
-Edit `config/site.yaml`:
-```yaml
-site:
-  name: "Your Company"
-  logo: "/logo.png"
-  
-branding:
-  primaryColor: "#FF6B35"
-  secondaryColor: "#004E89"
-  fontFamily: "Inter, sans-serif"
-```
-
-Colors and fonts update automatically!
-
-### SEO & Metadata
-
-Automatic SEO optimization with per-page overrides:
-
-```yaml
-seo:
-  title: "Custom SEO Title"
-  description: "Under 160 characters"
-  keywords: ["keyword1", "keyword2"]
-```
-
-Generates:
-- Meta tags
-- Open Graph tags
-- Twitter Card tags
-- Structured data
-
-## 📚 Documentation
-
-- **[TESTING.md](./docs/TESTING.md)**: Complete testing guide
-- **[CONFIGURATION.md](./docs/CONFIGURATION.md)**: Complete configuration guide
-- **[ICONS.md](./docs/ICONS.md)**: Icon usage reference
-- **[QUICKSTART.md](./docs/QUICKSTART.md)**: 5-minute setup guide
-- **[CHAT-POSITIONS.md](./docs/CHAT-POSITIONS.md)**: Chat positioning guide
-- **This README**: Quick start and overview
-
-## 🚢 Deployment
+## Deployment
 
 ### Build for Production
 
@@ -296,124 +258,61 @@ npm run build
 npm start
 ```
 
-### Deploy to Vercel (Recommended)
+### Deploy to Vercel
 
 1. Push to GitHub
 2. Import project in Vercel
 3. Add environment variables in Vercel dashboard
-4. Deploy!
+4. Deploy
+
+### Self-Hosted (Node.js + PM2 + Caddy)
+
+1. Clone repo to server
+2. Run `npm install && npm run build`
+3. Start with PM2: `pm2 start npm --name supersite -- start`
+4. Configure Caddy as reverse proxy to Node.js port
 
 ### Deploy to Other Platforms
 
 Works on Netlify, Railway, Render, or any Node.js host.
 
-**Static Export:**
-```js
-// next.config.js
-module.exports = {
-  output: 'export',  // For static hosting
-}
-```
+## Documentation
 
-## 🔧 Development
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** — System architecture and design decisions
+- **[CONFIGURATION.md](./docs/CONFIGURATION.md)** — Complete configuration reference
+- **[CONTENT-MANAGEMENT.md](./docs/CONTENT-MANAGEMENT.md)** — Content authoring, directives, hashtags
+- **[THEME-SYSTEM.md](./docs/THEME-SYSTEM.md)** — Theme system details
+- **[UPGRADING.md](./docs/UPGRADING.md)** — Upgrade guide between versions
+- **[QUICKSTART.md](./docs/QUICKSTART.md)** — 5-minute setup guide
+- **[TESTING.md](./docs/TESTING.md)** — Testing guide
+- **[ICONS.md](./docs/ICONS.md)** — Icon usage reference
+- **[PRODUCTION-CHECKLIST.md](./docs/PRODUCTION-CHECKLIST.md)** — Pre-deployment checklist
 
-### File Organization
+## Contributing
 
-- **`/config`**: YAML configuration
-- **`/app`**: Next.js pages and API routes
-- **`/components`**: React components
-- **`/lib`**: Utility functions and logic
-- **`/content`**: Markdown content files
-- **`/styles`**: CSS modules
+This is a template project. Feel free to fork and customize for your needs. See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
-### Testing
+## License
 
-Comprehensive test suite with Jest, React Testing Library, and Playwright.
+MIT License — feel free to use for personal or commercial projects.
 
-```bash
-# Run all tests
-npm test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run E2E tests
-npm run test:e2e
-
-# Run E2E tests with UI
-npm run test:e2e:ui
-```
-
-**Coverage:**
-- Unit tests for utilities and functions
-- Component tests for UI elements
-- API route tests
-- E2E tests for critical user flows
-
-See [TESTING.md](./docs/TESTING.md) for complete testing guide.
-
-### Extending Functionality
-
-**Add a new AI provider:**
-1. Create class in `lib/ai-providers.ts` implementing `AIProvider`
-2. Add to `getProvider()` switch statement
-3. Update config schema in `lib/config.ts`
-
-**Add custom page metadata:**
-1. Add fields to frontmatter schema in `lib/markdown.ts`
-2. Update parsing logic
-3. Use in components
-
-## 🌟 Use Cases
-
-Perfect for:
-- **Company Websites** with AI assistant
-- **Documentation Sites** with smart search
-- **Knowledge Bases** with conversational interface
-- **Blogs** with AI content helper
-- **Product Sites** with interactive Q&A
-- **Portfolios** with intelligent navigation
-
-## 📦 What Makes This Special
-
-✅ **True Configuration-Driven**: Change everything via YAML  
-✅ **AI-Native**: Built-in AI chat, not an afterthought  
-✅ **Multi-Provider**: Never locked into one AI service  
-✅ **Multi-language Ready**: 17 languages with AI translation  
-✅ **User Bookmarking**: Built-in favourites system  
-✅ **Content-First**: Markdown everywhere, no database needed  
-✅ **Production-Ready**: SEO, dark mode, responsive, fast  
-✅ **Developer-Friendly**: TypeScript, modular, well-documented  
-✅ **Universal Template**: Clone once, use for any site  
-
-## 🤝 Contributing
-
-This is a template project. Feel free to fork and customize for your needs!
-
-## 📄 License
-
-MIT License - feel free to use for personal or commercial projects.
-
-## 🆘 Troubleshooting
+## Troubleshooting
 
 **Chat doesn't work:**
 - Check API key in `.env.local`
 - Verify `chat.enabled: true` in config
 - Check browser console for errors
-- Ensure provider name matches exactly
 
 **Colors not updating:**
 - Restart dev server after config changes
-- Check color format is valid hex
 - Clear browser cache
 
 **Build fails:**
 - Run `npm install` again
-- Check all required dependencies installed
 - Verify Node.js version (18+)
 
 For more help, see [CONFIGURATION.md](./docs/CONFIGURATION.md)
 
 ---
 
-**Built with ❤️ using Next.js, TypeScript, and AI**
+**Built with Next.js, TypeScript, and AI**

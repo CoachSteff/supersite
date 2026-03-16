@@ -18,9 +18,9 @@
   width: 64px;
   height: 64px;
   margin: 8px;
-  border: 8px solid var(--color-primary, #3b82f6);
+  border: 8px solid var(--primary-color, #2563eb);
   border-radius: 50%;
-  border-color: var(--color-primary, #3b82f6) transparent transparent transparent;
+  border-color: var(--primary-color, #2563eb) transparent transparent transparent;
   animation: spinnerRotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
 
@@ -48,7 +48,7 @@
 .loadingText {
   margin-top: 1.5rem;
   font-size: 1rem;
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--text-light, #6b7280);
   font-weight: 500;
 }
 
@@ -59,12 +59,10 @@
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .spinnerRing {
-    border-color: var(--color-primary-dark, #60a5fa) transparent transparent transparent;
-  }
+[data-theme="dark"] .spinnerRing {
+  border-color: var(--primary-color, #60a5fa) transparent transparent transparent;
+}
 
-  .loadingText {
-    color: var(--color-text-secondary-dark, #9ca3af);
-  }
+[data-theme="dark"] .loadingText {
+  color: var(--text-light, #9ca3af);
 }

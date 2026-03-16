@@ -5,6 +5,7 @@ import { getSiteConfig } from '@/lib/config';
 import MarkdownContent from '@/components/MarkdownContent';
 import JsonLd, { buildArticleSchema, buildBreadcrumbSchema } from '@/components/JsonLd';
 
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import styles from '@/styles/Blog.module.css';
@@ -88,7 +89,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         {translatedPost.tags && translatedPost.tags.length > 0 && (
           <div className={styles.tags}>
             {translatedPost.tags.map((tag) => (
-              <span key={tag} className={styles.tag}>{tag}</span>
+              <Link key={tag} href={`/tags/${tag}`} className={styles.tag}>{tag}</Link>
             ))}
           </div>
         )}

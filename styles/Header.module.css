@@ -171,7 +171,7 @@
   border: none;
   padding: var(--spacing-sm);
   border-radius: var(--border-radius);
-  color: white;
+  color: var(--on-primary, #ffffff);
   transition: background-color 0.2s;
   display: flex;
   align-items: center;

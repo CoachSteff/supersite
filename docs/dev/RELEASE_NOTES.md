@@ -1,113 +1,91 @@
-# Supersite v0.1.0-alpha.1 Release Notes
+# SuperSite v0.3.0 Release Notes
 
-**Release Date:** December 27, 2024
+**Release Date:** March 15, 2026
 
-## 🎉 First Alpha Release!
+## What's New
 
-This is the first public alpha release of Supersite - an AI-powered, markdown-based website template built with Next.js. We're excited to share this with the community for testing and feedback!
+SuperSite 0.3.0 is a feature release focused on content authoring, discoverability, and visual polish. It introduces a comprehensive markdown directives system, a hashtag-based tagging system, SEO/GEO infrastructure for AI discoverability, and progressive visual effects.
 
-## ⚠️ Alpha Release Notice
+## Highlights
 
-This is an **alpha release**, which means:
-- APIs and configuration may change in future versions
-- Some features are still being refined
-- Use in production at your own discretion
-- We welcome feedback and bug reports via GitHub Issues
+### 23 Markdown Directives
 
-## ✨ What's Included
+A full directive system powered by `remark-directive` enables rich content layouts without writing code. Directives span four categories:
 
-### Core Features
-- ✅ **AI Chat Integration** - Multi-provider support (Anthropic, OpenAI, Gemini, Ollama)
-- ✅ **YAML Configuration** - Everything configurable via `config/site.yaml`
-- ✅ **Markdown Content** - Write content in simple markdown files
-- ✅ **Auto-Generated Navigation** - Menu builds from folder structure
-- ✅ **Full-Text Search** - Fast client-side search across all content
-- ✅ **Blog System** - Date-based posts with tags and metadata
-- ✅ **Dark/Light Mode** - Automatic theme adaptation
-- ✅ **Contact Form** - Built-in form with validation
-- ✅ **SEO Optimized** - Automatic meta tags and structured data
-- ✅ **Responsive Design** - Mobile-first, works on all devices
+- **Container directives** — `details`, `tabs`, `card`, `steps`, `formula`, `flow`, `section`
+- **Leaf directives** — `youtube`, `button`, `spacer`, `divider`, `stat`, `connector`
+- **Text/inline directives** — `highlight`, `badge`, `kbd`, `abbr`
+- **Infographic directives** — `formula-card`, `flow-step`, `info-card` with named accent colors
 
-### Documentation
-- 📖 Comprehensive README with examples
-- 📖 Detailed configuration guide (CONFIGURATION.md)
-- 📖 Quick start guide (QUICKSTART.md)
-- 📖 Testing guide (TESTING.md)
-- 📖 Icon reference (ICONS.md)
-- 📖 Chat positioning guide (CHAT-POSITIONS.md)
+All directives support light and dark mode and are styled via CSS modules.
 
-### Developer Experience
-- ✅ TypeScript throughout
-- ✅ Comprehensive test suite (Jest + Playwright)
-- ✅ 100% test pass rate
-- ✅ Clean, modular architecture
-- ✅ Well-documented codebase
+### Hashtag and Tagging System
 
-## 🚀 Quick Start
+Write `#TagName` inline in any markdown content. Hashtags are automatically transformed into linked tags and merged with frontmatter `tags: [...]`. Tag pages are auto-generated:
+
+- `/tags` — Tag cloud with post counts
+- `/tags/{tag}` — Filtered content for each tag
+
+### SEO/GEO Infrastructure
+
+- **sitemap.xml** — Auto-generated from all content pages and blog posts
+- **robots.txt** — AI crawler allowlisting for GPTBot, ClaudeBot, PerplexityBot, Google-Extended
+- **llms.txt** — Structured markdown endpoint for AI system discoverability
+- **JSON-LD** — 6 schema types: WebSite, Organization, Person, Article, Breadcrumb, FAQ
+- **Enhanced metadata** — Canonical URLs, robots directives, Open Graph, Twitter Cards
+
+### Progressive Visual Effects
+
+- CSS-only scroll animations via `animation-timeline: view()` (Chrome/Edge, progressive enhancement)
+- Depth cards using `color-mix()` for tinted surfaces
+- Fluid typography with `clamp()` on headings
+- Hero text gradient controlled by theme settings
+- All effects respect `prefers-reduced-motion`
+
+## Breaking Changes
+
+None. This is a backward-compatible feature release.
+
+## Upgrade from 0.2.0
+
+1. Pull latest changes
+2. Run `npm install` (new dependency: `remark-directive` was added in a prior commit, but verify it's installed)
+3. Run `npm run build` to verify
+
+No configuration changes required. All new features are opt-in through content authoring (directives, hashtags) or automatically active (SEO infrastructure, visual effects controlled by theme).
+
+## Requirements
+
+- Node.js 18+
+- npm 9+
+
+## Quick Start
 
 ```bash
-# Clone the repository
 git clone https://github.com/coachsteff/supersite.git
 cd supersite
-
-# Install dependencies
 npm install
-
-# Copy environment template
-cp .env.example .env.local
-
-# Add your API key to .env.local
-# Edit config/site.yaml for your site
-
-# Start development server
+npm run setup
 npm run dev
 ```
 
-Visit http://localhost:3000
+Visit http://localhost:3001
 
-## 📋 Requirements
+## Documentation
 
-- Node.js 18+ 
-- An API key from one of the supported AI providers (Anthropic, OpenAI, Gemini, or Ollama)
+- [CHANGELOG.md](../../CHANGELOG.md) — Detailed list of all changes
+- [CONTENT-MANAGEMENT.md](../CONTENT-MANAGEMENT.md) — Directives and hashtag usage guide
+- [ARCHITECTURE.md](../ARCHITECTURE.md) — Updated system architecture
+- [CONFIGURATION.md](../CONFIGURATION.md) — Configuration reference
 
-## 🐛 Known Issues
+## What's Next
 
-None reported yet! This is where we need your help. Please report any issues you find on GitHub.
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
-
-## 📦 What's Next?
-
-Planned for future releases:
-- Sitemap generation
-- Enhanced Schema.org structured data
-- More AI provider options
-- Additional page templates
-- Theme presets
-- Plugin system
-- Documentation improvements based on feedback
-
-## 💬 Feedback
-
-We'd love to hear your thoughts! 
-
-- **Bug Reports:** Open an issue on GitHub
-- **Feature Requests:** Open an issue or discussion
-- **Questions:** Start a discussion on GitHub
-- **Success Stories:** We'd love to hear how you're using Supersite!
-
-## 🙏 Thank You
-
-Thank you for trying Supersite! Your feedback will help make this project better for everyone.
-
-## 📄 License
-
-MIT License - See [LICENSE](./LICENSE) for details
+- Structure rendering (layout types, hero variants, footer styles)
+- Blocks system (sidebar widgets, section blocks)
+- Bundle size optimization and Lighthouse improvements
 
 ---
 
 **Part of the Super family:** [superskills](https://github.com/coachsteff/superskills)
 
-**Built with ❤️ using Next.js, TypeScript, and AI**
+**Built with Next.js, TypeScript, and AI**

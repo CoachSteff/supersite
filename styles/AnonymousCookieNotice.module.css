@@ -34,7 +34,7 @@
 }
 
 .icon {
-  color: var(--primary-color, #3b82f6);
+  color: var(--primary-color, #2563eb);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -95,8 +95,8 @@
 }
 
 .primary {
-  background-color: var(--primary-color, #3b82f6);
-  color: white;
+  background-color: var(--primary-color, #2563eb);
+  color: var(--on-primary, #ffffff);
 }
 
 .primary:hover {
