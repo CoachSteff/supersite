@@ -58,7 +58,10 @@ content-custom/
 content-2026/
 
 # site-specific images (not framework assets)
-public/images/being-replaced-*.png
+public/images/*.png
+public/images/*.webp
+public/images/*.jpg
+public/images/*.jpeg
 
 # user custom themes
 themes-custom/
