@@ -5,13 +5,13 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black)](https://nextjs.org/)
 
-> ⚠️ **Alpha Release** - This is v0.1.0-alpha.1. APIs and configuration may change. Use in production at your own discretion.
+> ⚠️ **Alpha Release** - This is v0.2.0-alpha. APIs and configuration may change. Use in production at your own discretion.
 
 A universal, AI-powered website template built with Next.js. Fully configuration-driven through YAML files and markdown content. Features an intelligent AI chat assistant that answers questions about your site content.
 
 Part of the **Super** family: [superskills](https://github.com/coachsteff/superskills)
 
-📖 **[Read the Release Notes](./RELEASE_NOTES.md)** | 🚀 **[Quick Start Guide](./QUICKSTART.md)** | 📚 **[Full Documentation](./CONFIGURATION.md)**
+📖 **[Read the Release Notes](./RELEASE_NOTES.md)** | 🚀 **[Quick Start Guide](./docs/QUICKSTART.md)** | 📚 **[Full Documentation](./docs/CONFIGURATION.md)**
 
 ## ✨ Key Features
 
