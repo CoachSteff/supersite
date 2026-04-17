@@ -78,8 +78,8 @@ export default function ThemeLoader({ theme }: ThemeLoaderProps) {
 
 function applyTheme(theme: FullTheme, mode: 'light' | 'dark') {
   const root = document.documentElement;
-  const themeData = theme as any;
-  const colors = mode === 'dark' ? themeData.colors?.colors?.dark : themeData.colors?.colors?.light;
+  const palette = theme.colors?.colors;
+  const colors = mode === 'dark' ? palette?.dark : palette?.light;
 
   // Set data attribute for CSS selectors
   root.setAttribute('data-theme', mode);
@@ -120,7 +120,7 @@ function applyTheme(theme: FullTheme, mode: 'light' | 'dark') {
     baseFontSize: '--font-size-base',
   };
 
-  const typography = themeData.colors?.typography;
+  const typography = theme.colors?.typography;
   if (typography) {
     Object.entries(typography).forEach(([key, value]) => {
       const cssVar = typographyMapping[key] || `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
@@ -129,7 +129,7 @@ function applyTheme(theme: FullTheme, mode: 'light' | 'dark') {
   }
 
   // Apply spacing if available
-  const spacing = themeData.colors?.spacing;
+  const spacing = theme.colors?.spacing;
   if (spacing) {
     Object.entries(spacing).forEach(([key, value]) => {
       root.style.setProperty(`--spacing-${key}`, String(value));
@@ -137,12 +137,12 @@ function applyTheme(theme: FullTheme, mode: 'light' | 'dark') {
   }
 
   // Apply layout if available
-  if (themeData.colors?.borderRadius) {
-    root.style.setProperty('--border-radius', String(themeData.colors.borderRadius));
+  if (theme.colors?.borderRadius) {
+    root.style.setProperty('--border-radius', String(theme.colors.borderRadius));
   }
 
   // Apply effects system (from colors.yaml effects section)
-  const effects = themeData.colors?.effects;
+  const effects = theme.colors?.effects;
   if (effects) {
     root.style.setProperty('--card-surface-tint', `${effects.cardSurfaceTint || 0}%`);
     root.style.setProperty('--card-border-tint', `${effects.cardBorderTint || 0}%`);

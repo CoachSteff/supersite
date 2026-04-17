@@ -22,9 +22,12 @@ export default function Navigation() {
       .catch(() => setNavItems([]));
   }, []);
 
+  const normalize = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);
+  const currentPath = normalize(pathname);
+
   const renderNavItems = (items: NavItem[]) => {
     return items.map((item) => {
-      const isActive = pathname === item.path;
+      const isActive = currentPath === normalize(item.path);
       
       return (
         <li key={item.path} className={styles.navItem}>

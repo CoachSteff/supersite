@@ -1,4 +1,92 @@
-# Upgrading to SuperSite 0.2.0
+# Upgrading SuperSite
+
+Per-release migration notes. Newest release first.
+
+- [0.4.0 — April 17, 2026](#upgrading-to-040)
+- [0.2.0 — February 10, 2026](#upgrading-to-020)
+
+---
+
+## Upgrading to 0.4.0
+
+0.4.0 is a security & correctness release. One breaking change: `JWT_SECRET` is now required in every environment. No other config or code change is forced; everything else is additive or internal.
+
+### Breaking: `JWT_SECRET` required everywhere
+
+Earlier releases silently fell back to the literal string `'dev-secret-change-in-production'` when `NODE_ENV=development` and `JWT_SECRET` was unset. That fallback has been removed. Missing or short secrets now throw at boot.
+
+**Action required:**
+
+```bash
+# 1. Generate a secret
+openssl rand -base64 48
+
+# 2. Add it to .env.local (development) and your production env store
+#    Must be at least 32 characters.
+JWT_SECRET=<paste>
+```
+
+**Rotation caveat:** changing `JWT_SECRET` invalidates every outstanding session. Users will be logged out.
+
+### New optional environment variables
+
+| Variable | Default | When to set |
+|---|---|---|
+| `TRUSTED_PROXY` | unset (false) | Set to `true` **only** when the app runs behind a reverse proxy you control (Caddy, Nginx, Cloudflare). When unset, `X-Forwarded-For` and `X-Real-IP` headers are ignored — client IP is taken from `request.ip`. |
+| `STRICT_CONTENT` | unset (false) | Set to `true` in CI to fail the build when any markdown file fails to parse. By default, unparseable files are logged and skipped. |
+
+### Security headers now shipped
+
+`next.config.js` now emits `Content-Security-Policy`, `Strict-Transport-Security` (production only), plus the previously-present `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, and `Permissions-Policy`.
+
+**If you customized `next.config.js` headers, re-apply your changes on top of the new baseline.** See [SECURITY.md](../SECURITY.md) for the full policy. If you embed third-party scripts, iframes, or fonts, extend `script-src`/`frame-src`/`font-src` accordingly.
+
+### CSRF middleware now runs on `/api/*`
+
+The `middleware.ts` matcher used to exclude `/api/*`. It no longer does, so the new `Origin`/`Referer` check can fire on state-changing API calls. The existing language-rewrite logic still short-circuits for API paths, so no behavior change there.
+
+**If you fetch your own API from a non-browser client** (curl, a mobile app, server-to-server), set an explicit `Origin` header matching the site host, or disable the CSRF block in `middleware.ts` for that specific route.
+
+### Minor API response changes
+
+- `/api/chat/stream` now returns `400` / `413` as regular HTTP responses for invalid or oversized bodies. Previously it returned `200` with an `error` event in the stream. Clients that only checked the stream for error events should also check `response.ok`.
+- `/api/notifications/create` now requires a valid JWT and can only create notifications for the caller's own `userId` (pending a proper role system). Calls that tried to create notifications for other users now return `403 Forbidden`.
+- `/api/contact` returns `400` with a specific field error for over-long fields (name ≤ 200, message ≤ 5000 chars).
+
+### Test-suite env update
+
+If you run Jest in a custom environment, set `JWT_SECRET` in your test setup. The shipped `jest.setup.ts` sets a 64-character test secret automatically.
+
+### Migration steps
+
+```bash
+# 1. Pull, install, build
+git pull origin main
+npm install
+
+# 2. Set JWT_SECRET in .env.local and in your production env
+openssl rand -base64 48   # generate
+# paste into .env.local as JWT_SECRET=...
+
+# 3. Re-check any custom next.config.js / middleware.ts overrides
+
+# 4. Test
+npm run test:ci
+npm run build
+```
+
+### Rollback
+
+```bash
+git checkout v0.3.0
+npm install
+```
+
+The old `dev-secret-change-in-production` fallback returns automatically on 0.3.x — but do not deploy 0.3.x with a missing production secret.
+
+---
+
+## Upgrading to 0.2.0
 
 This guide helps you upgrade from version 0.1.x to 0.2.0.
 

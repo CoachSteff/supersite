@@ -5,7 +5,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black)](https://nextjs.org/)
 
-> **Version 0.3.0** — Markdown directives, hashtag tagging, SEO/GEO infrastructure, and visual effects
+> **Version 0.4.0** — Security & correctness release. See [CHANGELOG.md](./CHANGELOG.md) and [UPGRADING.md](./docs/UPGRADING.md) — `JWT_SECRET` is now required.
 
 A universal, AI-powered website framework built with Next.js. Fully configuration-driven through YAML files and markdown content. Features an intelligent AI chat assistant, 23 markdown directives for rich content layouts, a hashtag-based tagging system, and comprehensive SEO/GEO infrastructure.
 
@@ -62,6 +62,15 @@ Part of the **Super** family: [superskills](https://github.com/coachsteff/supers
 - **Contact Forms** — Built-in form with validation
 - **Mobile-First** — Responsive design optimized for all devices
 
+### Security & Accessibility
+- **Strict Security Headers** — CSP, HSTS, `X-Frame-Options`, `Referrer-Policy`, and `Permissions-Policy` shipped by default
+- **CSRF Protection** — Middleware-level `Origin`/`Referer` check on all state-changing API routes
+- **Request Body Caps** — 1 MB global cap on API mutations, 256 KB on chat streaming
+- **Constant-Time OTP Compare** — Timing-oracle–free authentication
+- **URL Scheme Allowlist** — Profile links reject `javascript:`, `data:`, and other unsafe schemes
+- **WCAG 2.1 Skip-to-Content** — Keyboard users bypass the header with a focusable skip link
+- **Type-Safe Content Loading** — Markdown parse failures log a clear error and continue; `STRICT_CONTENT=true` in CI fails the build instead
+
 ## Quick Start
 
 ### Prerequisites
@@ -88,10 +97,23 @@ This creates your config (`config/site.local.yaml`) and content directory (`cont
    - **Pages and content**: Edit files in `content-custom/`
    - See [Quick Start Guide](./docs/QUICKSTART.md) for details
 
-4. **Add your API key** (optional, for AI chat):
+4. **Set environment variables** — create `.env.local` (not tracked in git):
+
 ```bash
-# Create .env.local
-echo 'ANTHROPIC_API_KEY=your-key-here' > .env.local
+cp .env.example .env.local
+```
+
+Then fill in:
+
+```dotenv
+# REQUIRED — sign JWTs. Generate with: openssl rand -base64 48
+JWT_SECRET=<at least 32 characters>
+
+# Optional — for AI chat
+ANTHROPIC_API_KEY=your-key-here
+
+# Optional — only when running behind a trusted reverse proxy (Caddy, Nginx, Cloudflare)
+# TRUSTED_PROXY=true
 ```
 
 5. **Start developing:**

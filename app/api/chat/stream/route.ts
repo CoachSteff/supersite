@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSiteConfig } from '@/lib/config';
 import { getStreamingProvider, StreamingMessage } from '@/lib/ai-streaming';
 import { buildContext, truncateContext } from '@/lib/context-builder';
@@ -9,9 +9,41 @@ import { getLanguageName } from '@/lib/translation-service';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const MAX_BODY_BYTES = 256 * 1024; // 256 KB
+
 export async function POST(request: NextRequest) {
+  // Reject oversized bodies early
+  const contentLength = request.headers.get('content-length');
+  if (contentLength && Number(contentLength) > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: 'Request body too large' }, { status: 413 });
+  }
+
+  // Validate request body *before* opening a stream, so failures return proper HTTP codes.
+  let messages: StreamingMessage[];
+  let currentLanguage: string | undefined;
+  try {
+    const body = await request.json();
+    messages = body?.messages;
+    currentLanguage = body?.currentLanguage;
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    return NextResponse.json({ error: 'Messages array is required' }, { status: 400 });
+  }
+
+  const lastMessage = messages[messages.length - 1];
+  if (!lastMessage || lastMessage.role !== 'user') {
+    return NextResponse.json({ error: 'Last message must be from user' }, { status: 400 });
+  }
+
+  const config = getSiteConfig();
+  if (!config.chat.enabled) {
+    return NextResponse.json({ error: 'Chat feature is disabled' }, { status: 503 });
+  }
+
   const encoder = new TextEncoder();
-  
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
 
@@ -21,30 +53,6 @@ export async function POST(request: NextRequest) {
 
   (async () => {
     try {
-      const body = await request.json();
-      const { messages, currentLanguage } = body;
-
-      if (!messages || !Array.isArray(messages)) {
-        await sendEvent('error', { error: 'Messages array is required' });
-        await writer.close();
-        return;
-      }
-
-      const config = getSiteConfig();
-
-      if (!config.chat.enabled) {
-        await sendEvent('error', { error: 'Chat feature is disabled' });
-        await writer.close();
-        return;
-      }
-
-      const lastMessage = messages[messages.length - 1];
-      if (!lastMessage || lastMessage.role !== 'user') {
-        await sendEvent('error', { error: 'Last message must be from user' });
-        await writer.close();
-        return;
-      }
-
       // Build context for AI
       const context = await buildContext(lastMessage.content);
       const truncatedContext = truncateContext(context);

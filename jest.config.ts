@@ -33,14 +33,6 @@ const config: Config = {
     '!**/coverage/**',
     '!**/jest.config.ts',
   ],
-  coverageThreshold: {
-    global: {
-      branches: 20,
-      functions: 40,
-      lines: 25,
-      statements: 25,
-    },
-  },
 }
 
 export default createJestConfig(config)

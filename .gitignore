@@ -53,18 +53,19 @@ test-*.md
 # user configuration (overrides template config)
 config/site.local.yaml
 
-# user content (custom site content, not template)
-content-custom/
+# user content (custom site content, not template) — match dirs AND symlinks
+/content-custom
 content-2026/
 
-# site-specific images (not framework assets)
+# site-specific public/ (images + symlinks during local dev)
+/public
 public/images/*.png
 public/images/*.webp
 public/images/*.jpg
 public/images/*.jpeg
 
-# user custom themes
-themes-custom/
+# user custom themes (dirs AND symlinks)
+/themes-custom
 
 # vercel
 .vercel
@@ -73,7 +74,8 @@ themes-custom/
 *.tsbuildinfo
 next-env.d.ts
 
-# user data (authentication system)
+# user data (authentication system — match dir AND symlink)
+/data
 /data/
 contact-submissions.log
 

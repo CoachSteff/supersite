@@ -381,7 +381,7 @@ export function getPublicProfile(username: string): Partial<UserProfile> | null 
       profile: {
         firstName: user.profile.firstName,
       },
-    } as any;
+    };
   }
 
   return {

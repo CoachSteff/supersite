@@ -94,7 +94,7 @@ export default async function RootLayout({
   }
   
   // Get layout component based on theme
-  const LayoutComponent = getLayoutComponent(layout.type as any);
+  const LayoutComponent = getLayoutComponent(layout.type);
   const { maxWidth, contentWidth, sidebarWidth } = layout;
   
   // Check if chat should be in center layout mode
@@ -131,6 +131,7 @@ export default async function RootLayout({
         />
       </head>
       <body style={{ paddingTop: config.admin?.toolbar ? '42px' : '0' }}>
+        <a href="#main-content" className="skip-link">Skip to content</a>
         <ThemeProvider theme={theme}>
           <ThemeContextProvider theme={theme}>
             <ChatProvider>
@@ -160,8 +161,8 @@ export default async function RootLayout({
                     scrollBackground={header.scrollBackground}
                   />
                   {hero.enabled && (
-                    <Hero 
-                      type={hero.type as any}
+                    <Hero
+                      type={hero.type}
                       height={hero.height}
                       config={config}
                       user={primaryUser}
