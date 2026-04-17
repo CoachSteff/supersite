@@ -20,7 +20,7 @@ export default function FullWidthLayout({
         '--content-max-width': contentWidth,
       } as React.CSSProperties}
     >
-      <main className={styles.content}>
+      <main id="main-content" className={styles.content}>
         {children}
       </main>
     </div>

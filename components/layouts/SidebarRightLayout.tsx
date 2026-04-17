@@ -25,7 +25,7 @@ export default function SidebarRightLayout({
         '--sidebar-width': sidebarWidth,
       } as React.CSSProperties}
     >
-      <main className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
         {children}
       </main>
       {sidebar && (

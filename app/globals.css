@@ -14,6 +14,26 @@
   }
 }
 
+/* Skip-to-content link — visually hidden until focused (WCAG 2.4.1) */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 9999;
+  padding: 0.75rem 1.25rem;
+  background: var(--primary-color, #2563eb);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+
 /*
  * Theme CSS Variables
  * These are fallback defaults only. Actual theme colors are applied dynamically

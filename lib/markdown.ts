@@ -183,33 +183,41 @@ export async function getAllPages(): Promise<PageData[]> {
   for (const file of files) {
     const relativePath = path.relative(pagesDir, file);
     let slug = relativePath.replace(/\.md$/, '').replace(/\/index$/, '').replace(/\\/g, '/');
-    
+
     if (!slug) {
       slug = 'home';
     }
 
-    const { data, content, htmlContent } = await parseMarkdown(file);
+    try {
+      const { data, content, htmlContent } = await parseMarkdown(file);
 
-    // Merge frontmatter tags with inline hashtags
-    const frontmatterTags = ((data.tags as string[]) || []).map(normalizeTag);
-    const inlineTags = extractHashtags(content);
-    const tags = [...new Set([...frontmatterTags, ...inlineTags])];
+      // Merge frontmatter tags with inline hashtags
+      const frontmatterTags = ((data.tags as string[]) || []).map(normalizeTag);
+      const inlineTags = extractHashtags(content);
+      const tags = [...new Set([...frontmatterTags, ...inlineTags])];
 
-    pages.push({
-      slug,
-      title: (data.title as string) || 'Untitled',
-      description: data.description as string | undefined,
-      tags: tags.length > 0 ? tags : undefined,
-      content: htmlContent,
-      markdown: content,
-      path: slug === 'home' ? '/' : '/' + slug,
-      author: data.author as string | undefined,
-      publishedDate: data.publishedDate as string | undefined,
-      lastModified: data.lastModified as string | undefined,
-      seo: data.seo as SEOMetadata | undefined,
-      chat: data.chat as ChatMetadata | undefined,
-      custom: data.custom as Record<string, unknown> | undefined,
-    });
+      pages.push({
+        slug,
+        title: (data.title as string) || 'Untitled',
+        description: data.description as string | undefined,
+        tags: tags.length > 0 ? tags : undefined,
+        content: htmlContent,
+        markdown: content,
+        path: slug === 'home' ? '/' : '/' + slug,
+        author: data.author as string | undefined,
+        publishedDate: data.publishedDate as string | undefined,
+        lastModified: data.lastModified as string | undefined,
+        seo: data.seo as SEOMetadata | undefined,
+        chat: data.chat as ChatMetadata | undefined,
+        custom: data.custom as Record<string, unknown> | undefined,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[markdown] Failed to parse page "${relativePath}": ${message}`);
+      if (process.env.STRICT_CONTENT === 'true') {
+        throw error;
+      }
+    }
   }
 
   return pages;
@@ -227,27 +235,35 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
 
   for (const file of files) {
     const fileName = path.basename(file, '.md');
-    const { data, content, htmlContent } = await parseMarkdown(file);
+    try {
+      const { data, content, htmlContent } = await parseMarkdown(file);
 
-    // Merge frontmatter tags with inline hashtags
-    const frontmatterTags = ((data.tags as string[]) || []).map(normalizeTag);
-    const inlineTags = extractHashtags(content);
-    const mergedTags = [...new Set([...frontmatterTags, ...inlineTags])];
+      // Merge frontmatter tags with inline hashtags
+      const frontmatterTags = ((data.tags as string[]) || []).map(normalizeTag);
+      const inlineTags = extractHashtags(content);
+      const mergedTags = [...new Set([...frontmatterTags, ...inlineTags])];
 
-    posts.push({
-      slug: fileName,
-      title: (data.title as string) || 'Untitled',
-      date: (data.date as string) || '',
-      author: data.author as string | undefined,
-      description: data.description as string | undefined,
-      tags: mergedTags,
-      content: htmlContent,
-      markdown: content,
-      path: `/blog/${fileName}`,
-      seo: data.seo as SEOMetadata | undefined,
-      chat: data.chat as ChatMetadata | undefined,
-      custom: data.custom as Record<string, unknown> | undefined,
-    });
+      posts.push({
+        slug: fileName,
+        title: (data.title as string) || 'Untitled',
+        date: (data.date as string) || '',
+        author: data.author as string | undefined,
+        description: data.description as string | undefined,
+        tags: mergedTags,
+        content: htmlContent,
+        markdown: content,
+        path: `/blog/${fileName}`,
+        seo: data.seo as SEOMetadata | undefined,
+        chat: data.chat as ChatMetadata | undefined,
+        custom: data.custom as Record<string, unknown> | undefined,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[markdown] Failed to parse blog post "${fileName}.md": ${message}`);
+      if (process.env.STRICT_CONTENT === 'true') {
+        throw error;
+      }
+    }
   }
 
   posts.sort((a, b) => {

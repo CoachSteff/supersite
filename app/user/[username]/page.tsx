@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import * as LucideIcons from 'lucide-react';
 import { MapPin, Mail, Globe } from 'lucide-react';
+import { getLucideIcon } from '@/lib/lucide-icon';
 import Avatar from '@/components/Avatar';
 import { getPublicProfile } from '@/lib/users';
 import { detectPlatform, sortLinks } from '@/lib/link-utils';
@@ -69,9 +69,7 @@ export default function UserProfilePage({ params }: PageProps) {
           <div className={styles.socialIcons}>
             {sortedLinks.map((link, index) => {
               const platformInfo = detectPlatform(link.url);
-              const IconComponent = platformInfo?.icon 
-                ? (LucideIcons as any)[platformInfo.icon] 
-                : Globe;
+              const IconComponent = getLucideIcon(platformInfo?.icon, Globe);
               const label = link.label || platformInfo?.label || 'Link';
 
               return (

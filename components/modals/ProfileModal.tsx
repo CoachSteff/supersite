@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import Modal from '../Modal';
 import Avatar from '../Avatar';
-import * as LucideIcons from 'lucide-react';
 import { MapPin, Mail, Globe } from 'lucide-react';
+import { getLucideIcon } from '@/lib/lucide-icon';
 import { detectPlatform, sortLinks } from '@/lib/link-utils';
 import type { Link } from '@/lib/users';
 import styles from '@/styles/UserProfile.module.css';
@@ -111,9 +111,7 @@ export default function ProfileModal({ isOpen, onClose, username }: ProfileModal
           <div className={styles.socialIcons}>
             {sortedLinks.map((link, index) => {
               const platformInfo = detectPlatform(link.url);
-              const IconComponent = platformInfo?.icon 
-                ? (LucideIcons as any)[platformInfo.icon] 
-                : Globe;
+              const IconComponent = getLucideIcon(platformInfo?.icon, Globe);
               const label = link.label || platformInfo?.label || 'Link';
 
               return (

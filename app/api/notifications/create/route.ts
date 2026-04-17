@@ -1,22 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { createNotification } from '@/lib/notifications';
 import { getUserById } from '@/lib/users';
+import { getUserFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('session');
+    const jwtPayload = getUserFromRequest(request);
 
-    if (!sessionCookie?.value) {
+    if (!jwtPayload) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const currentUser = getUserById(sessionCookie.value);
-    
+    const currentUser = getUserById(jwtPayload.userId);
+
     if (!currentUser) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -31,6 +30,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'userIds must be a non-empty array' },
         { status: 400 }
+      );
+    }
+
+    if (userIds.length !== 1 || userIds[0] !== jwtPayload.userId) {
+      return NextResponse.json(
+        { error: 'Forbidden: can only create notifications for yourself' },
+        { status: 403 }
       );
     }
 

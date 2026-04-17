@@ -91,7 +91,7 @@ function AboutWidget({ title, content, image }: { title?: string; content?: stri
   return (
     <div className={styles.widget}>
       {title && <h3 className={styles.widgetTitle}>{title}</h3>}
-      {image && <img src={image} alt="" className={styles.aboutImage} />}
+      {image && <img src={image} alt={title || ''} aria-hidden={!title} className={styles.aboutImage} />}
       {content && <p className={styles.aboutContent}>{content}</p>}
     </div>
   );

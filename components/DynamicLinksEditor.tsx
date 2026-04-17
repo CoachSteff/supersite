@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, X, GripVertical, ExternalLink, Globe } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
+import { getLucideIcon } from '@/lib/lucide-icon';
 import { detectPlatform, isValidUrl, getFaviconUrl, reorderLinks } from '@/lib/link-utils';
 import type { Link } from '@/lib/users';
 import styles from '@/styles/DynamicLinksEditor.module.css';
@@ -130,8 +130,8 @@ export default function DynamicLinksEditor({ links, onChange }: DynamicLinksEdit
 
     // Try to use Lucide icon
     if (link.icon) {
-      const IconComponent = (LucideIcons as any)[link.icon];
-      if (IconComponent) {
+      const IconComponent = getLucideIcon(link.icon, Globe);
+      if (IconComponent !== Globe) {
         return <IconComponent size={20} className={styles.icon} />;
       }
     }

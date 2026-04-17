@@ -3,13 +3,20 @@ import { z } from 'zod';
 import { getUserFromRequest, generateJWT, setAuthCookie } from '@/lib/auth';
 import { updateUser, getUserById, autoMigrateUser } from '@/lib/users';
 
+const safeUrl = z
+  .string()
+  .url()
+  .refine((u) => /^https?:\/\//i.test(u), 'Only http(s) URLs are allowed');
+
+const safeOptionalUrl = safeUrl.optional().or(z.literal(''));
+
 const customSocialLinkSchema = z.object({
   name: z.string().min(1).max(50),
-  url: z.string().url(),
+  url: safeUrl,
 });
 
 const linkSchema = z.object({
-  url: z.string().url(),
+  url: safeUrl,
   platform: z.string().optional(),
   label: z.string().optional(),
   icon: z.string().optional(),
@@ -30,16 +37,16 @@ const updateSchema = z.object({
   }).optional(),
   links: z.array(linkSchema).optional(),
   social: z.object({
-    x: z.string().url().optional().or(z.literal('')),
-    twitter: z.string().url().optional().or(z.literal('')),
-    linkedin: z.string().url().optional().or(z.literal('')),
-    github: z.string().url().optional().or(z.literal('')),
-    facebook: z.string().url().optional().or(z.literal('')),
-    instagram: z.string().url().optional().or(z.literal('')),
-    youtube: z.string().url().optional().or(z.literal('')),
-    spotify: z.string().url().optional().or(z.literal('')),
-    blog: z.string().url().optional().or(z.literal('')),
-    website: z.string().url().optional().or(z.literal('')),
+    x: safeOptionalUrl,
+    twitter: safeOptionalUrl,
+    linkedin: safeOptionalUrl,
+    github: safeOptionalUrl,
+    facebook: safeOptionalUrl,
+    instagram: safeOptionalUrl,
+    youtube: safeOptionalUrl,
+    spotify: safeOptionalUrl,
+    blog: safeOptionalUrl,
+    website: safeOptionalUrl,
     custom: z.array(customSocialLinkSchema).optional(),
   }).optional(),
 });

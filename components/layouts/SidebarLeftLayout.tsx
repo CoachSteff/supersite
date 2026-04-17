@@ -30,7 +30,7 @@ export default function SidebarLeftLayout({
           {sidebar}
         </aside>
       )}
-      <main className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
         {children}
       </main>
     </div>

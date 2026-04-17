@@ -5,9 +5,67 @@ import { NextRequest, NextResponse } from 'next/server';
 const SUPPORTED_LANGUAGES = ['en', 'nl', 'fr'];
 const DEFAULT_LANGUAGE = 'en';
 
+const UNSAFE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
+// Reject oversized bodies on API requests. Chat streaming has its own tighter limit,
+// but every other JSON endpoint on this site handles small payloads — 1 MB is generous.
+const MAX_API_BODY_BYTES = 1 * 1024 * 1024;
+
+/**
+ * Reject cross-origin state-changing API requests.
+ * Compares Origin (or Referer as fallback) against the request's own host.
+ * This is a defense-in-depth against CSRF on top of SameSite=Lax cookies.
+ */
+function isCsrfBlocked(request: NextRequest): boolean {
+  if (!UNSAFE_METHODS.has(request.method)) return false;
+
+  const expectedHost = request.headers.get('host');
+  if (!expectedHost) return false; // behind misconfigured proxy — fail open rather than lock users out
+
+  const origin = request.headers.get('origin');
+  if (origin) {
+    try {
+      return new URL(origin).host !== expectedHost;
+    } catch {
+      return true;
+    }
+  }
+
+  const referer = request.headers.get('referer');
+  if (referer) {
+    try {
+      return new URL(referer).host !== expectedHost;
+    } catch {
+      return true;
+    }
+  }
+
+  // No Origin and no Referer on an unsafe method is suspicious — block.
+  return true;
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
+  // CSRF check on state-changing API calls
+  if (pathname.startsWith('/api/') && isCsrfBlocked(request)) {
+    return NextResponse.json(
+      { error: 'Cross-origin request blocked' },
+      { status: 403 }
+    );
+  }
+
+  // Reject oversized API bodies early
+  if (pathname.startsWith('/api/') && UNSAFE_METHODS.has(request.method)) {
+    const len = request.headers.get('content-length');
+    if (len && Number(len) > MAX_API_BODY_BYTES) {
+      return NextResponse.json(
+        { error: 'Request body too large' },
+        { status: 413 }
+      );
+    }
+  }
+
   // Skip middleware for API routes, static files, and Next.js internals
   if (
     pathname.startsWith('/api/') ||
@@ -53,12 +111,13 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public files (images, etc.)
+     *
+     * API routes ARE matched so the CSRF Origin check above runs on them.
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
   ],
 };

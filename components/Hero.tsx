@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import * as LucideIcons from 'lucide-react';
-import { 
-  MapPin, 
-  Mail, 
+import {
+  MapPin,
+  Mail,
   Globe,
 } from 'lucide-react';
+import { getLucideIcon } from '@/lib/lucide-icon';
 import type { SiteConfig } from '@/lib/config';
 import { getRecentBlogPosts, type BlogPost } from '@/lib/markdown';
 import { detectPlatform, sortLinks } from '@/lib/link-utils';
@@ -75,16 +75,19 @@ function ImageHero({ config, style }: { config: SiteConfig; style: React.CSSProp
   const images = hero.images;
   const ctaText = hero.ctaText;
   const ctaLink = hero.ctaLink;
+  // Decorative background image — alt="" so screen readers skip it. Heading conveys meaning.
+  const heroAlt = '';
 
   return (
     <div className={styles.imageHero} style={style}>
       <div className={styles.heroImage}>
         {images && images.length > 0 ? (
-          <RandomHeroImage images={images} fallback={image} />
+          <RandomHeroImage images={images} fallback={image} alt={heroAlt} />
         ) : (
           <Image
             src={image}
-            alt="Hero"
+            alt={heroAlt}
+            role="presentation"
             fill
             style={{ objectFit: 'cover' }}
             priority
@@ -218,9 +221,7 @@ function ProfileHero({ config, style, user }: { config: SiteConfig; style: React
           <div className={styles.profileSocial}>
             {sortedLinks.map((link, index) => {
               const platformInfo = detectPlatform(link.url);
-              const IconComponent = platformInfo?.icon 
-                ? (LucideIcons as any)[platformInfo.icon] 
-                : Globe;
+              const IconComponent = getLucideIcon(platformInfo?.icon, Globe);
               const label = link.label || platformInfo?.label || 'Link';
 
               return (

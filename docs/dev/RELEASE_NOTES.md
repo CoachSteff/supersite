@@ -1,91 +1,123 @@
-# SuperSite v0.3.0 Release Notes
+# SuperSite v0.4.0 Release Notes
 
-**Release Date:** March 15, 2026
+**Release Date:** April 17, 2026
 
 ## What's New
 
-SuperSite 0.3.0 is a feature release focused on content authoring, discoverability, and visual polish. It introduces a comprehensive markdown directives system, a hashtag-based tagging system, SEO/GEO infrastructure for AI discoverability, and progressive visual effects.
+0.4.0 is a security and correctness release. Every finding from the April codebase audit has been addressed — across authentication, request handling, content safety, accessibility, and developer ergonomics. One breaking change: `JWT_SECRET` is now mandatory in every environment (minimum 32 characters).
+
+No new features, no new content directives, no theme churn. If you're on 0.3.0, the upgrade surface is small: set `JWT_SECRET`, re-check any custom `next.config.js`/`middleware.ts`, and redeploy.
 
 ## Highlights
 
-### 23 Markdown Directives
+### Strict security headers out of the box
 
-A full directive system powered by `remark-directive` enables rich content layouts without writing code. Directives span four categories:
+`next.config.js` now ships a real Content-Security-Policy plus HSTS (production only) on top of the previously-present `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, and `Permissions-Policy`. The default CSP blocks framing (`frame-ancestors 'none'`), inline `<object>`, and `script-src 'unsafe-eval'` in production.
 
-- **Container directives** — `details`, `tabs`, `card`, `steps`, `formula`, `flow`, `section`
-- **Leaf directives** — `youtube`, `button`, `spacer`, `divider`, `stat`, `connector`
-- **Text/inline directives** — `highlight`, `badge`, `kbd`, `abbr`
-- **Infographic directives** — `formula-card`, `flow-step`, `info-card` with named accent colors
+### CSRF protection in middleware
 
-All directives support light and dark mode and are styled via CSS modules.
+`POST`/`PUT`/`PATCH`/`DELETE` requests to `/api/*` are rejected with 403 when the `Origin`/`Referer` host doesn't match the request host. Combined with `SameSite=Lax` auth cookies, this defeats cross-site forgeries without a token.
 
-### Hashtag and Tagging System
+### Request body size caps
 
-Write `#TagName` inline in any markdown content. Hashtags are automatically transformed into linked tags and merged with frontmatter `tags: [...]`. Tag pages are auto-generated:
+1 MB cap on all API mutations, 256 KB on `/api/chat/stream`. Enforced via `Content-Length`; oversized requests get 413 before any parsing.
 
-- `/tags` — Tag cloud with post counts
-- `/tags/{tag}` — Filtered content for each tag
+### Authentication hardening
 
-### SEO/GEO Infrastructure
+- OTP comparison is now **constant-time** (`crypto.timingSafeEqual`).
+- `JWT_SECRET` is **required** in every environment — the old dev fallback is gone.
+- `clearAuthCookie` overwrites with matching attributes so browsers actually evict the cookie on logout.
+- Client IP comes from `request.ip` by default; `X-Forwarded-For` is only honored when `TRUSTED_PROXY=true`, eliminating a header-spoof evasion for IP-based rate limits.
 
-- **sitemap.xml** — Auto-generated from all content pages and blog posts
-- **robots.txt** — AI crawler allowlisting for GPTBot, ClaudeBot, PerplexityBot, Google-Extended
-- **llms.txt** — Structured markdown endpoint for AI system discoverability
-- **JSON-LD** — 6 schema types: WebSite, Organization, Person, Article, Breadcrumb, FAQ
-- **Enhanced metadata** — Canonical URLs, robots directives, Open Graph, Twitter Cards
+### URL scheme allowlist
 
-### Progressive Visual Effects
+Profile social/link fields now reject `javascript:`, `data:`, `vbscript:`, and all non-http(s) schemes. Closes a stored-XSS vector for rendered profile links.
 
-- CSS-only scroll animations via `animation-timeline: view()` (Chrome/Edge, progressive enhancement)
-- Depth cards using `color-mix()` for tinted surfaces
-- Fluid typography with `clamp()` on headings
-- Hero text gradient controlled by theme settings
-- All effects respect `prefers-reduced-motion`
+### Accessibility: skip-to-content link
+
+WCAG 2.1 §2.4.1. A focus-visible "Skip to content" link is injected at the top of `<body>` and targets `#main-content`, which is now present on all four layouts.
+
+### Developer ergonomics
+
+- **Type-safe Lucide icon lookup** — `lib/lucide-icon.ts` replaces five `(LucideIcons as any)[name]` call sites.
+- **Markdown content loader surfaces errors** — `getAllPages` / `getAllBlogPosts` log per-file parse failures and continue. Set `STRICT_CONTENT=true` in CI to fail the build.
+- **`ThemeLoader` typed** against `FullTheme` instead of `as any`.
+- **`ChatProvider` effect split** into mount-time fetch + config-driven history load, eliminating a stale-closure bug.
 
 ## Breaking Changes
 
-None. This is a backward-compatible feature release.
+### `JWT_SECRET` is now required in every environment
 
-## Upgrade from 0.2.0
+The development fallback (`'dev-secret-change-in-production'`) has been removed. Missing or shorter-than-32-character secrets throw at boot.
 
-1. Pull latest changes
-2. Run `npm install` (new dependency: `remark-directive` was added in a prior commit, but verify it's installed)
-3. Run `npm run build` to verify
-
-No configuration changes required. All new features are opt-in through content authoring (directives, hashtags) or automatically active (SEO infrastructure, visual effects controlled by theme).
-
-## Requirements
-
-- Node.js 18+
-- npm 9+
-
-## Quick Start
+**Action required:** generate a secret and add it to `.env.local` and your production env:
 
 ```bash
-git clone https://github.com/coachsteff/supersite.git
-cd supersite
-npm install
-npm run setup
-npm run dev
+openssl rand -base64 48
+# paste into JWT_SECRET=...
 ```
 
-Visit http://localhost:3001
+Rotation note: changing `JWT_SECRET` invalidates all outstanding sessions.
 
-## Documentation
+### Middleware matcher now covers `/api/*`
 
-- [CHANGELOG.md](../../CHANGELOG.md) — Detailed list of all changes
-- [CONTENT-MANAGEMENT.md](../CONTENT-MANAGEMENT.md) — Directives and hashtag usage guide
-- [ARCHITECTURE.md](../ARCHITECTURE.md) — Updated system architecture
-- [CONFIGURATION.md](../CONFIGURATION.md) — Configuration reference
+Previously excluded. The matcher was widened so the new CSRF and body-size checks actually fire on API routes. The language-rewrite logic still short-circuits for API paths internally, so no user-visible behavior change — but if you had custom middleware logic keyed on the old exclusion, revisit it.
 
-## What's Next
+### `/api/chat/stream` returns proper HTTP status codes
 
-- Structure rendering (layout types, hero variants, footer styles)
-- Blocks system (sidebar widgets, section blocks)
-- Bundle size optimization and Lighthouse improvements
+Invalid or oversized bodies now get `400` / `413` before any SSE stream opens. Previously they returned `200` with an `error` event embedded in the stream. Clients that only checked for error events should also check `response.ok`.
 
----
+## New Optional Environment Variables
 
-**Part of the Super family:** [superskills](https://github.com/coachsteff/superskills)
+| Variable | Default | Purpose |
+|---|---|---|
+| `TRUSTED_PROXY` | `false` | Set to `true` when behind a reverse proxy so `X-Forwarded-For` / `X-Real-IP` are honored for client-IP rate limiting. |
+| `STRICT_CONTENT` | `false` | Set to `true` in CI to fail the build when any markdown file fails to parse. |
 
-**Built with Next.js, TypeScript, and AI**
+## Upgrade from 0.3.0
+
+```bash
+# 1. Pull + install
+git pull origin main
+npm install
+
+# 2. Set JWT_SECRET in .env.local and your production env store
+openssl rand -base64 48
+
+# 3. Re-apply any custom next.config.js header overrides on the new baseline
+
+# 4. Verify
+npm run test:ci
+npm run build
+```
+
+See [UPGRADING.md](../UPGRADING.md) for the full migration checklist and rollback instructions.
+
+## Verification
+
+After upgrading, confirm from a fresh terminal:
+
+```bash
+# Security headers present
+curl -sI http://localhost:3001/ | grep -iE 'content-security-policy|x-frame-options'
+
+# Auth route locked down
+curl -s -o /dev/null -w '%{http_code}\n' -X POST http://localhost:3001/api/notifications/create
+# expect: 401
+
+# CSRF triggers
+curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Origin: http://evil.com' \
+  -H 'Content-Type: application/json' -d '{}' http://localhost:3001/api/contact
+# expect: 403
+```
+
+## Rollback
+
+```bash
+git checkout v0.3.0
+npm install
+```
+
+## Thanks
+
+0.4.0 was driven by an April codebase audit. No external contributors this release — but the audit itself is documented in the project's plan files if you want the full list of findings.

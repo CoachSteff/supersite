@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { parseActions, AIAction, actionExecutor } from '@/lib/ai-actions';
 
@@ -71,7 +71,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     return supportedLanguages.includes(firstSegment) ? firstSegment : 'en';
   }, [pathname]);
 
-  // Load config and messages from storage
+  // Fetch runtime config once on mount
   useEffect(() => {
     fetch('/api/config')
       .then(res => res.json())
@@ -83,20 +83,29 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         });
       })
       .catch(console.error);
+  }, []);
 
-    // Load persisted messages
-    if (typeof window !== 'undefined' && config.memory.enabled) {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          setMessages(parsed.slice(-config.memory.maxMessages));
-        } catch (e) {
-          console.error('Failed to parse stored messages:', e);
-        }
+  // Load persisted messages once we know memory settings (runs after config settles).
+  const hasLoadedHistory = useRef(false);
+  useEffect(() => {
+    if (hasLoadedHistory.current) return;
+    if (typeof window === 'undefined') return;
+    if (!config.memory.enabled) {
+      hasLoadedHistory.current = true;
+      return;
+    }
+
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setMessages(parsed.slice(-config.memory.maxMessages));
+      } catch (e) {
+        console.error('Failed to parse stored messages:', e);
       }
     }
-  }, []);
+    hasLoadedHistory.current = true;
+  }, [config.memory.enabled, config.memory.maxMessages]);
 
   // Persist messages to storage
   useEffect(() => {

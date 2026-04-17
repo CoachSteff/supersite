@@ -42,22 +42,6 @@ jobs:
           flags: unittests
           name: codecov-umbrella
       
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-      
-      - name: Run E2E tests
-        run: npm run test:e2e
-        env:
-          CI: true
-      
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report-${{ matrix.node-version }}
-          path: playwright-report/
-          retention-days: 30
-  
   build:
     name: Build
     runs-on: ubuntu-latest

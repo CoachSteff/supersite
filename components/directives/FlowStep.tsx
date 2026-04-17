@@ -1,14 +1,22 @@
 import React from 'react';
 import styles from '@/styles/Directives.module.css';
-import * as LucideIcons from 'lucide-react';
+import { getLucideIcon } from '@/lib/lucide-icon';
 
-export default function FlowStep({ children, icon, label }: any) {
+interface FlowStepProps {
+  children?: React.ReactNode;
+  icon?: React.ReactNode;
+  label?: string;
+}
+
+export default function FlowStep({ children, icon, label }: FlowStepProps) {
   let iconElement: React.ReactNode = icon;
 
-  // If icon matches a Lucide icon name, render the component
-  if (icon && typeof icon === 'string' && icon in LucideIcons) {
-    const IconComponent = (LucideIcons as any)[icon];
-    iconElement = <IconComponent size={24} strokeWidth={1.5} />;
+  // If icon is a string naming a Lucide icon, render the component
+  if (typeof icon === 'string') {
+    const IconComponent = getLucideIcon(icon, null);
+    if (IconComponent) {
+      iconElement = <IconComponent size={24} strokeWidth={1.5} />;
+    }
   }
 
   return (

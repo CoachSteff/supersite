@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 
 // Set test environment variables
-process.env.JWT_SECRET = 'test-secret-for-jest'
+process.env.JWT_SECRET = 'test-secret-for-jest-that-is-long-enough-to-pass-validation'
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),

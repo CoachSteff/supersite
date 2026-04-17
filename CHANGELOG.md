@@ -5,7 +5,85 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.0] - 2026-04-17
+
+A security and correctness release. Every issue surfaced by the April codebase audit has been addressed, covering authentication, request handling, content safety, accessibility, and developer ergonomics. One breaking change: `JWT_SECRET` is now required in all environments.
+
+### ⚠️ Breaking Changes
+
+- **`JWT_SECRET` environment variable is now required in all environments and must be at least 32 characters.** The development fallback (`dev-secret-change-in-production`) has been removed. See [UPGRADING.md](./docs/UPGRADING.md) for migration steps.
+
+### Security
+
+- **HSTS + Content-Security-Policy** headers shipped by default via `next.config.js`. CSP is restrictive (no `script-src *`, `frame-ancestors 'none'`, `object-src 'none'`); HSTS is gated to production with a 2-year max-age. `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, and `Permissions-Policy` were already present.
+- **CSRF protection via middleware** — `POST`/`PUT`/`PATCH`/`DELETE` requests to `/api/*` are rejected with 403 when the `Origin`/`Referer` host does not match the request host. Complements the existing `SameSite=Lax` auth cookie.
+- **Request body size cap** — `/api/*` unsafe methods are rejected with 413 when `Content-Length` exceeds 1 MB. `/api/chat/stream` enforces a stricter 256 KB cap.
+- **Constant-time OTP comparison** — `lib/auth.ts` now uses `crypto.timingSafeEqual` to validate OTP codes, eliminating a timing oracle over the 6-digit code space.
+- **`clearAuthCookie` attribute match** — logout now overwrites the cookie with the same `path`/`httpOnly`/`secure`/`sameSite` attributes it was set with, ensuring browsers actually evict it.
+- **Trusted-proxy gate for client IP** — `x-forwarded-for`/`x-real-ip` headers are only honored when `TRUSTED_PROXY=true`. Rate limiting now keys on `request.ip` by default, eliminating header-spoof evasion. OTP verification primary-keys on email, secondary-keys on IP.
+- **URL scheme allowlist on user profiles** — `app/api/user/profile/route.ts` rejects `javascript:`, `data:`, `vbscript:`, and other non-http(s) schemes in social/link fields via Zod refine. Closes a stored-XSS vector for rendered profile links.
+- **Removed JWT dev-secret fallback** — the hardcoded `'dev-secret-change-in-production'` default is gone. Missing `JWT_SECRET` throws at boot. Minimum 32-character length enforced.
+- **Contact-form log-injection fix** — `app/api/contact/route.ts` now writes structured JSON lines instead of free-form text, and validates inputs with Zod (name ≤ 200, email RFC-valid, message ≤ 5000). CRLF in user input can no longer forge fake log entries.
+- **Notifications API auth fix** — `app/api/notifications/create` no longer reads a nonexistent `session` cookie as a userId. Requires a valid JWT and restricts creation to the caller's own `userId` (no cross-user broadcast without an admin role, which does not yet exist).
+
+### Fixed
+
+- **Hydration mismatch on random hero image** — `RandomHeroImage` picked a different image on server vs client, producing a React hydration warning. Now initializes to the first image and swaps in a random pick post-mount.
+- **Chat streaming route returned 200 + error-event on invalid bodies** — body parse and validation now happen before the stream opens, so malformed payloads produce proper `400`/`413` HTTP status codes.
+- **Markdown content loader swallowed parse errors** — `getAllPages` and `getAllBlogPosts` now wrap each file in try/catch, log a clear `[markdown]` line with the path, and continue. Set `STRICT_CONTENT=true` in CI to fail the build when any file fails to parse.
+- **`ChatProvider` effect used stale `config` closure** — split into separate mount-time fetch and config-driven history load, guarded by a `hasLoadedHistory` ref so session storage is read once after config settles.
+- **`ThemeLoader` unsafely cast `theme as any`** — now typed against `FullTheme` with narrowed access to `theme.colors?.colors?.light/dark`.
+- **Navigation active-state mismatch on trailing slashes** — `components/Navigation.tsx` normalizes both sides of the comparison.
+
+### Added
+
+- **Type-safe Lucide icon lookup** — `lib/lucide-icon.ts` exports `getLucideIcon(name, fallback)`. Replaces five `(LucideIcons as any)[name]` call sites across `Hero`, `DynamicLinksEditor`, `ProfileModal`, `FlowStep`, and the user profile page.
+- **`TRUSTED_PROXY` environment variable** — opt-in flag for trusting `X-Forwarded-For`/`X-Real-IP` headers when behind a reverse proxy (Caddy, Nginx, Cloudflare).
+- **`STRICT_CONTENT` environment variable** — when `true`, markdown parse errors throw instead of being logged. Use in CI to catch broken frontmatter.
+- **Skip-to-content link** — WCAG 2.1 §2.4.1 compliance. `<a class="skip-link" href="#main-content">` inserted at the top of `<body>`, styled via `app/globals.css`, and targeting `id="main-content"` on the `<main>` element of all four layouts (`FullWidthLayout`, `CenteredLayout`, `SidebarLeftLayout`, `SidebarRightLayout`).
+- **Themeable infographic accents** — `InfoCard` directive's named accent palette (cyan, teal, green, orange, etc.) now reads `var(--accent-cyan, #…)` so themes can override individual accents via CSS custom properties.
+- **Alt-text prop on `Hero` and `RandomHeroImage`** — `Hero` marks the background image as decorative (`alt=""` + `role="presentation"`) since the `<h1>` already conveys meaning; `RandomHeroImage` accepts an explicit `alt` prop.
+
+### Changed
+
+- **Middleware matcher now covers `/api/*`** — previously excluded. The matcher was widened so the CSRF Origin check and body-size cap actually run on API routes. The existing language-rewrite logic still skips API paths internally.
+- **Rate limiter IP source** — default is `request.ip`. Forwarded headers are only read when `TRUSTED_PROXY=true`. Per-email rate limit is the primary defense on `/api/auth/verify-otp`; IP is the secondary.
+- **CSS variables for accents** — new optional `--accent-{cyan|teal|green|orange|yellow|purple|red|blue|pink}` variables available for theme overrides.
+
+### Documentation
+
+- **New: [UPGRADING to 0.4.0](./docs/UPGRADING.md)** — covers the `JWT_SECRET` breaking change and new optional env vars.
+- **Updated: [SECURITY.md](./SECURITY.md)** — documents the shipped security headers, OTP hardening, CSRF stance, and URL-scheme allowlist.
+- **Updated: [PRODUCTION-CHECKLIST.md](./docs/PRODUCTION-CHECKLIST.md)** — incorporates the new env-var requirements and trusted-proxy guidance.
+
+### Files Added
+- `lib/lucide-icon.ts` — Type-safe Lucide icon lookup helper
+
+### Files Modified (framework)
+- `next.config.js` — HSTS + CSP headers
+- `middleware.ts` — CSRF Origin check, body-size cap, matcher widened to `/api/*`
+- `lib/auth.ts` — JWT_SECRET required, constant-time OTP compare, clearAuthCookie attribute match
+- `lib/markdown.ts` — Per-file try/catch, `STRICT_CONTENT` support
+- `app/api/user/profile/route.ts` — URL scheme allowlist via Zod refine
+- `components/ThemeLoader.tsx` — Removed `as any`, typed narrowing
+- `components/ChatProvider.tsx` — Split effects, `hasLoadedHistory` ref
+- `components/RandomHeroImage.tsx` — Post-mount random pick
+- `components/Hero.tsx` — Decorative alt, `getLucideIcon` helper
+- `components/Navigation.tsx` — Trailing-slash normalization
+- `components/directives/InfoCard.tsx`, `FlowStep.tsx` — Theme-var accents, typed props
+- `components/layouts/*.tsx` — `#main-content` anchor for skip link
+- `components/modals/ProfileModal.tsx`, `DynamicLinksEditor.tsx` — Use `getLucideIcon`
+- `components/Sidebar.tsx` — Accessible alt text
+- `app/layout.tsx` — Skip link, removed stray `as any`
+- `app/globals.css` — `.skip-link` styles
+
+### Files Modified (site-specific, not upstream)
+- `app/api/notifications/create/route.ts` — JWT auth, self-notification only
+- `app/api/chat/stream/route.ts` — Body validation outside IIFE
+- `app/api/auth/verify-otp/route.ts` — Trusted-proxy IP, email-primary rate limit
+- `app/api/contact/route.ts` — Zod validation, JSON-line log format
+
+## [0.3.0] - 2026-03-15
 
 ### Added
 - **Stat directive icon support** — `:::stat{icon="clock"}` renders Lucide outline icons above stat values, dynamically resolved from the full Lucide icon set via kebab-case name lookup

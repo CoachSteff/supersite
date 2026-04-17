@@ -9,13 +9,25 @@ const requestSchema = z.object({
   code: z.string().length(6, 'Code must be 6 digits'),
 });
 
+// Only honor forwarded headers when explicitly behind a trusted reverse proxy.
+// Otherwise a client can spoof them to evade rate limiting.
+function getClientIp(request: NextRequest): string {
+  const trustProxy = process.env.TRUSTED_PROXY === 'true';
+  if (trustProxy) {
+    const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+    if (forwarded) return forwarded;
+    const real = request.headers.get('x-real-ip');
+    if (real) return real;
+  }
+  return request.ip || 'unknown';
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // IP-based rate limiting to prevent brute-force across multiple emails
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-      || request.headers.get('x-real-ip')
-      || 'unknown';
-    if (!checkRateLimit(`ip:${ip}`, 10, 15)) {
+    // First-line rate-limit: per-IP (cheap, prevents body-parse spam).
+    // When not behind a trusted proxy, this keys on a shared "unknown" bucket — that's intentional.
+    const ip = getClientIp(request);
+    if (!checkRateLimit(`ip:${ip}`, 30, 15)) {
       return NextResponse.json(
         { error: 'Too many attempts. Please try again later.' },
         { status: 429 }
@@ -24,6 +36,14 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { email, code } = requestSchema.parse(body);
+
+    // Stronger rate-limit keyed by email — can't be evaded by rotating IPs.
+    if (!checkRateLimit(`otp:${email.toLowerCase()}`, 10, 15)) {
+      return NextResponse.json(
+        { error: 'Too many attempts. Please try again later.' },
+        { status: 429 }
+      );
+    }
 
     // Validate OTP
     const validation = validateOTP(email, code);

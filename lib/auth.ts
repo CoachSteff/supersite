@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, unlinkSync, readdirSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import { createHash, randomInt } from 'crypto';
+import { createHash, randomInt, timingSafeEqual } from 'crypto';
 import jwt from 'jsonwebtoken';
 import yaml from 'js-yaml';
 import { NextRequest, NextResponse } from 'next/server';
@@ -20,10 +20,9 @@ const USERS_DIR = join(DATA_DIR, 'users');
 let _jwtSecret: string | null = null;
 function getJwtSecret(): string {
   if (!_jwtSecret) {
-    const secret = process.env.JWT_SECRET
-      || (process.env.NODE_ENV === 'development' ? 'dev-secret-change-in-production' : undefined);
-    if (!secret) {
-      throw new Error('JWT_SECRET environment variable is required in production');
+    const secret = process.env.JWT_SECRET;
+    if (!secret || secret.length < 32) {
+      throw new Error('JWT_SECRET environment variable is required and must be at least 32 characters');
     }
     _jwtSecret = secret;
   }
@@ -104,8 +103,13 @@ export function validateOTP(email: string, code: string): { valid: boolean; erro
       return { valid: false, error: 'Maximum attempts exceeded' };
     }
 
-    // Check if code matches
-    if (otpData.code !== code) {
+    // Check if code matches (constant-time to avoid timing attacks)
+    const expected = Buffer.from(otpData.code, 'utf8');
+    const provided = Buffer.from(code, 'utf8');
+    const codeMatches =
+      expected.length === provided.length && timingSafeEqual(expected, provided);
+
+    if (!codeMatches) {
       // Increment attempts
       otpData.attempts += 1;
       writeFileSync(otpPath, yaml.dump(otpData), 'utf-8');
@@ -190,9 +194,15 @@ export function setAuthCookie(response: NextResponse, token: string): NextRespon
   return response;
 }
 
-// Clear auth cookie
+// Clear auth cookie — attributes must match setAuthCookie or browsers won't remove it
 export function clearAuthCookie(response: NextResponse): NextResponse {
-  response.cookies.delete('auth-token');
+  response.cookies.set('auth-token', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 0,
+    path: '/',
+  });
   return response;
 }
 
