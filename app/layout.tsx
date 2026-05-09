@@ -7,9 +7,9 @@ import Sidebar from '@/components/Sidebar';
 import { ChatProvider } from '@/components/ChatProvider';
 import ChatButton from '@/components/ChatButton';
 import ChatWindow from '@/components/ChatWindow';
-import CenterChatLayout from '@/components/CenterChatLayout';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import Hero from '@/components/Hero';
+import RootShell from '@/components/RootShell';
 import AnonymousCookieNotice from '@/components/AnonymousCookieNotice';
 import { ThemeProvider } from '@/components/ThemeLoader';
 import { ThemeContextProvider } from '@/components/ThemeContext';
@@ -96,11 +96,7 @@ export default async function RootLayout({
   // Get layout component based on theme
   const LayoutComponent = getLayoutComponent(layout.type);
   const { maxWidth, contentWidth, sidebarWidth } = layout;
-  
-  // Check if chat should be in center layout mode
-  // Priority: site config overrides > theme default
-  const chatInCenter = (config.chat?.window?.layout ?? theme.structure.chatLayout) === 'center';
-  
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -135,20 +131,10 @@ export default async function RootLayout({
         <ThemeProvider theme={theme}>
           <ThemeContextProvider theme={theme}>
             <ChatProvider>
-              {chatInCenter ? (
-                // Center chat layout (ChatGPT-style)
-                <>
-                  <AdminToolbar enabled={config.admin?.toolbar ?? false} />
-                  <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
-                  <CenterChatLayout config={config} user={primaryUser} themeName={theme.themeFolder || 'base'}>
-                    {children}
-                  </CenterChatLayout>
-                </>
-              ) : (
-                // Standard layout with floating/popup chat
-                <>
-                  <AdminToolbar enabled={config.admin?.toolbar ?? false} />
-                  <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
+              <AdminToolbar enabled={config.admin?.toolbar ?? false} />
+              <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
+              <RootShell
+                header={
                   <Header
                     style={header.style}
                     sticky={header.sticky}
@@ -160,20 +146,24 @@ export default async function RootLayout({
                     scrollBehavior={header.scrollBehavior}
                     scrollBackground={header.scrollBackground}
                   />
-                  {hero.enabled && (
+                }
+                hero={
+                  hero.enabled ? (
                     <Hero
                       type={hero.type}
                       height={hero.height}
                       config={config}
                       user={primaryUser}
                     />
-                  )}
+                  ) : null
+                }
+                body={
                   <LayoutComponent
                     maxWidth={maxWidth}
                     contentWidth={contentWidth}
                     sidebarWidth={sidebarWidth}
                     sidebar={showSidebar && sidebarData ? (
-                      <Sidebar 
+                      <Sidebar
                         widgets={theme.blocks.sidebar}
                         categories={sidebarData.categories}
                         tags={sidebarData.tags}
@@ -184,16 +174,24 @@ export default async function RootLayout({
                   >
                     {children}
                   </LayoutComponent>
+                }
+                footer={
                   <Footer
                     style={footer.style}
                     copyrightName={config.branding.copyrightName || config.site.name}
                     socialLinks={config.social}
                   />
-                  {features.chat && <ChatButton />}
-                  {features.chat && <ChatWindow />}
-                  <AnonymousCookieNotice siteName={config.site.name} />
-                </>
-              )}
+                }
+                popupChat={
+                  features.chat ? (
+                    <>
+                      <ChatButton />
+                      <ChatWindow />
+                    </>
+                  ) : null
+                }
+              />
+              <AnonymousCookieNotice siteName={config.site.name} />
             </ChatProvider>
           </ThemeContextProvider>
         </ThemeProvider>

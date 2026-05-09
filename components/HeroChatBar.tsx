@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Send, Sparkles } from 'lucide-react';
 import { useChat } from './ChatProvider';
-import ChatMessage from './ChatMessage';
 import VoiceInput from './VoiceInput';
 import styles from '@/styles/HeroChatBar.module.css';
 
@@ -29,19 +29,13 @@ export default function HeroChatBar({
   subheading,
   sampleQuestions = [],
 }: HeroChatBarProps) {
-  const {
-    messages,
-    isLoading,
-    isStreaming,
-    error,
-    sendMessage,
-  } = useChat();
+  const router = useRouter();
+  const { isLoading, isStreaming, error, sendMessage } = useChat();
 
   const [input, setInput] = useState('');
   const [config, setConfig] = useState<ClientConfig | null>(null);
   const [isListening, setIsListening] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch('/api/config')
@@ -50,20 +44,18 @@ export default function HeroChatBar({
       .catch(console.error);
   }, []);
 
-  useEffect(() => {
-    if (messagesEndRef.current && messages.length > 0) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
-
   const submitMessage = useCallback(
     async (raw: string) => {
       const message = raw.trim();
       if (!message || isLoading || isStreaming) return;
       setInput('');
-      await sendMessage(message);
+      // Navigate to /chat first so the user lands on the dedicated surface
+      // before the streamed response arrives. ChatProvider state is shared
+      // across routes, so the message thread carries over.
+      router.push('/chat');
+      void sendMessage(message);
     },
-    [isLoading, isStreaming, sendMessage],
+    [isLoading, isStreaming, sendMessage, router],
   );
 
   const handleSubmit = useCallback(
@@ -99,7 +91,7 @@ export default function HeroChatBar({
     return null;
   }
 
-  const showHeader = (heading || subheading) && messages.length === 0;
+  const showHeader = !!(heading || subheading);
 
   return (
     <section className={styles.hero}>
@@ -111,22 +103,7 @@ export default function HeroChatBar({
           </header>
         )}
 
-        {messages.length > 0 && (
-          <div className={styles.messages} aria-live="polite">
-            {messages.map((message, index) => (
-              <ChatMessage key={`${message.timestamp}-${index}`} message={message} />
-            ))}
-            {(isLoading || isStreaming) && !messages.some((m) => m.isStreaming) && (
-              <div className={styles.thinking} aria-label="Thinking">
-                <span />
-                <span />
-                <span />
-              </div>
-            )}
-            {error && <div className={styles.error}>{error}</div>}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
+        {error && <div className={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           {config.chat.voice?.enabled && (
@@ -158,7 +135,7 @@ export default function HeroChatBar({
           </button>
         </form>
 
-        {messages.length === 0 && sampleQuestions.length > 0 && (
+        {sampleQuestions.length > 0 && (
           <div className={styles.chips} role="group" aria-label="Sample questions">
             {sampleQuestions.map((question) => (
               <button
