@@ -156,6 +156,11 @@ const SiteConfigSchema = z.object({
     images: z.array(z.string()).optional(),
     ctaText: z.string().optional(),
     ctaLink: z.string().optional(),
+    chat: z.object({
+      heading: z.string().optional(),
+      subheading: z.string().optional(),
+      sampleQuestions: z.array(z.string()).optional(),
+    }).optional(),
   }).optional(),
   admin: z.object({
     toolbar: z.boolean().optional().default(false),

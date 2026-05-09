@@ -89,6 +89,16 @@ hero:
   subheading: SuperSite is the fastest way to create intelligent, beautiful sites
   ctaText: Get Started
   ctaLink: /contact
+  # Used when the active theme's structure.yaml sets hero.type: chat — renders
+  # an inline ConversationBar that posts to the same backend as the floating
+  # chat. If unset, falls back to hero.heading / hero.subheading.
+  chat:
+    heading: How can we help?
+    subheading: Ask anything — the answer arrives in plain language.
+    sampleQuestions:
+      - What is SuperSite?
+      - Show me your services
+      - How do I get started?
 multilingual:
   enabled: true
   defaultLanguage: en
