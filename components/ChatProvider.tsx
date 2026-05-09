@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { parseActions, AIAction, actionExecutor } from '@/lib/ai-actions';
 
@@ -62,6 +62,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [config, setConfig] = useState<ChatConfig>(DEFAULT_CONFIG);
+
+  // Keep a ref to the latest messages so send callbacks can read them
+  // without taking `messages` as a useCallback dependency. Without this,
+  // every streamed token rebuilds sendMessage, the context value, and
+  // every consumer — which in turn re-runs effects in VoiceInput etc.
+  const messagesRef = useRef<ChatMessage[]>(messages);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   // Extract current language from pathname
   const getCurrentLanguage = useCallback(() => {
@@ -139,7 +148,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(({ role, content }) => ({ role, content })),
+          messages: [...messagesRef.current, userMessage].map(({ role, content }) => ({ role, content })),
           currentLanguage: getCurrentLanguage(),
         }),
       });
@@ -224,7 +233,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsStreaming(false);
     }
-  }, [messages, config.actions.enabled]);
+  }, [config.actions.enabled, getCurrentLanguage]);
 
   const sendMessageNonStreaming = useCallback(async (content: string) => {
     const userMessage: ChatMessage = {
@@ -242,7 +251,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(({ role, content }) => ({ role, content })),
+          messages: [...messagesRef.current, userMessage].map(({ role, content }) => ({ role, content })),
           currentLanguage: getCurrentLanguage(),
         }),
       });
@@ -276,7 +285,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, config.actions.enabled]);
+  }, [config.actions.enabled, getCurrentLanguage]);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return;
@@ -313,21 +322,21 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     await actionExecutor.execute(action);
   }, [config.actions.enabled]);
 
+  const contextValue = useMemo<ChatContextType>(() => ({
+    messages,
+    isOpen,
+    isLoading,
+    isStreaming,
+    error,
+    suggestions,
+    sendMessage,
+    toggleChat,
+    clearMessages,
+    executeAction,
+  }), [messages, isOpen, isLoading, isStreaming, error, suggestions, sendMessage, toggleChat, clearMessages, executeAction]);
+
   return (
-    <ChatContext.Provider
-      value={{
-        messages,
-        isOpen,
-        isLoading,
-        isStreaming,
-        error,
-        suggestions,
-        sendMessage,
-        toggleChat,
-        clearMessages,
-        executeAction,
-      }}
-    >
+    <ChatContext.Provider value={contextValue}>
       {children}
     </ChatContext.Provider>
   );

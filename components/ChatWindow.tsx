@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Send, Trash2, Sparkles, Mic, Plus } from 'lucide-react';
 import { useChat } from './ChatProvider';
 import ChatMessage from './ChatMessage';
@@ -78,26 +78,39 @@ export default function ChatWindow() {
     }
   }, [isOpen]);
 
+  const submitMessage = useCallback(async (raw: string) => {
+    const message = raw.trim();
+    if (!message || isLoading || isStreaming) return;
+    setInput('');
+    await sendMessage(message);
+  }, [isLoading, isStreaming, sendMessage]);
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    await submitMessage(input);
+  }, [input, submitMessage]);
+
+  const handleInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Defensive Enter handler. The form's onSubmit also catches Enter, but binding
+    // it explicitly here removes any ambiguity with IME composition or third-party
+    // listeners that may swallow the form-level submit on certain browsers.
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      void submitMessage(input);
+    }
+  }, [input, submitMessage]);
+
+  const handleVoiceTranscript = useCallback((transcript: string) => {
+    setInput(prev => prev + (prev ? ' ' : '') + transcript);
+  }, []);
+
+  const handleSuggestionClick = useCallback(async (suggestion: string) => {
+    await sendMessage(suggestion);
+  }, [sendMessage]);
+
   if (!isOpen || !config?.chat.enabled) {
     return null;
   }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading || isStreaming) return;
-
-    const message = input;
-    setInput('');
-    await sendMessage(message);
-  };
-
-  const handleVoiceTranscript = (transcript: string) => {
-    setInput(prev => prev + (prev ? ' ' : '') + transcript);
-  };
-
-  const handleSuggestionClick = async (suggestion: string) => {
-    await sendMessage(suggestion);
-  };
 
   const getPositionStyles = (): React.CSSProperties => {
     const { position, width, height } = config.chat.window;
@@ -284,6 +297,7 @@ export default function ChatWindow() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleInputKeyDown}
               placeholder={isListening ? 'Listening...' : config.chat.placeholder}
               className={styles.chatInput}
               disabled={isLoading || isStreaming}
