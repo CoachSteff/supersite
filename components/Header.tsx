@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
+import AdminOnly from './AdminOnly';
 import Navigation from './Navigation';
 import Search from './Search';
 import ThemeToggle from './ThemeToggle';
@@ -109,7 +110,9 @@ export default function Header({
             </button>
           )}
           
-          <ThemeToggle />
+          <AdminOnly>
+            <ThemeToggle />
+          </AdminOnly>
           {showAuth && <AuthButton />}
         </div>
       </div>
