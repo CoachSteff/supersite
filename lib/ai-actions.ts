@@ -93,16 +93,17 @@ export function parseActions(text: string): { cleanText: string; actions: AIActi
   }
   cleanText = cleanText.replace(highlightRegex, '');
 
-  // Parse link actions: [[link:url|label]]
+  // Convert legacy [[link:url|label]] markers into standard markdown links so
+  // they render inline as part of the prose. Earlier versions extracted these
+  // into a separate CTA list, which left orphaned punctuation in the sentence
+  // ("we recommend beginning with our .") — see issue #8.
   const linkRegex = /\[\[link:([^|\]]+)\|?([^\]]*)\]\]/g;
-  while ((match = linkRegex.exec(text)) !== null) {
-    actions.push({
-      type: 'openLink',
-      payload: { url: match[1].trim(), label: match[2]?.trim() || match[1].trim() },
-      label: match[2]?.trim() || 'Open link',
-    });
-  }
-  cleanText = cleanText.replace(linkRegex, '');
+  cleanText = cleanText.replace(linkRegex, (_full, url: string, label: string) => {
+    const trimmedUrl = url.trim();
+    const trimmedLabel = label?.trim();
+    const display = trimmedLabel || trimmedUrl;
+    return `[${display}](${trimmedUrl})`;
+  });
 
   // Parse copy actions: [[copy:text to copy]]
   const copyRegex = /\[\[copy:([^\]]+)\]\]/g;
@@ -143,21 +144,22 @@ export function parseActions(text: string): { cleanText: string; actions: AIActi
  * System prompt addition for AI actions
  */
 export const AI_ACTIONS_PROMPT = `
-You can perform actions on the page by including special markers in your response:
+For inline links, use standard markdown: [label text](/path-or-url). Inline links render in the flow of the sentence and keep your prose readable.
+
+You can also perform actions on the page by including special markers in your response:
 
 - [[navigate:/path]] - Navigate to a page (e.g., [[navigate:/about]])
 - [[search:query]] - Open search with a query
 - [[scroll:#section]] - Scroll to a section
-- [[link:url|label]] - Create a clickable link
 - [[copy:text]] - Add a "copy to clipboard" button
 - [[suggest:text]] - Suggest a follow-up question
 - [[notify:message]] - Show a notification
 
-Use these sparingly and only when they add value. For example:
+Use action markers sparingly and only when they add value. For example:
 - If someone asks about services, you might include [[navigate:/services]]
 - If you want to suggest follow-up questions, use [[suggest:...]]
 
-Always provide the information in your text response as well - actions are supplementary.
+Do NOT use action markers as a substitute for inline links inside a sentence — use markdown for that. Always provide the information in your text response as well; actions are supplementary.
 `;
 
 /**
