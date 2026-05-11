@@ -273,6 +273,9 @@ export function getClientSafeConfig() {
       logoText: config.branding.logoText || config.site.name,
       logoAccent: config.branding.logoAccent || '',
       copyrightName: config.branding.copyrightName || config.site.name,
+      // primaryUser is the username used for admin gating (AdminOnly wrapper).
+      // Until a real role system exists, the primary user is the de-facto admin.
+      primaryUser: config.branding.primaryUser || '',
       // Expose theme colors for client-side use
       colors: theme.colors,
     },
