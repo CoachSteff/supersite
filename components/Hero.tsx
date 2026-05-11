@@ -12,6 +12,7 @@ import { detectPlatform, sortLinks } from '@/lib/link-utils';
 import type { Link as LinkType } from '@/lib/users';
 import Avatar from '@/components/Avatar';
 import RandomHeroImage from '@/components/RandomHeroImage';
+import HeroChatBar from '@/components/HeroChatBar';
 import styles from '@/styles/Hero.module.css';
 
 interface HeroProps {
@@ -40,7 +41,7 @@ export default async function Hero({ type, height, config, user }: HeroProps) {
     case 'profile':
       return <ProfileHero config={config} style={heroStyle} user={user} />;
     case 'chat':
-      return <ChatHero style={heroStyle} />;
+      return <ChatHero style={heroStyle} config={config} />;
     default:
       return null;
   }
@@ -244,15 +245,15 @@ function ProfileHero({ config, style, user }: { config: SiteConfig; style: React
   );
 }
 
-function ChatHero({ style }: { style: React.CSSProperties }) {
+function ChatHero({ style, config }: { style: React.CSSProperties; config: SiteConfig }) {
+  const chatHero = config.hero?.chat;
   return (
     <div className={styles.chatHero} style={style}>
-      <div className={styles.heroContent}>
-        <h1 className={styles.heroHeading}>Chat with AI</h1>
-        <p className={styles.heroSubheading}>
-          Click the chat button in the bottom right to start a conversation
-        </p>
-      </div>
+      <HeroChatBar
+        heading={chatHero?.heading ?? config.hero?.heading}
+        subheading={chatHero?.subheading ?? config.hero?.subheading}
+        sampleQuestions={chatHero?.sampleQuestions ?? []}
+      />
     </div>
   );
 }
