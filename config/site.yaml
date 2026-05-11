@@ -70,6 +70,9 @@ chat:
     icon: sparkles
   welcomeMessage: Hi! I'm your AI assistant. Ask me anything about this site, or use voice input!
   placeholder: Ask me anything...
+  # Suffix appended to the site name in the chat header.
+  # Override with "" if your site name already ends in "AI".
+  titleSuffix: ' AI'
 features:
   search: true
   blog: true

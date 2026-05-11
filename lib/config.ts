@@ -126,6 +126,11 @@ const SiteConfigSchema = z.object({
     }),
     welcomeMessage: z.string(),
     placeholder: z.string(),
+    // Suffix appended after the site name in the chat header. Defaults to
+    // " AI" for backwards compatibility, but consumers whose site name
+    // already ends in "AI" should override this with "" to avoid duplicates
+    // (e.g. "The House of AI AI"). See issue #7.
+    titleSuffix: z.string().optional().default(' AI'),
   }),
   features: z.object({
     search: z.boolean(),
@@ -283,6 +288,7 @@ export function getClientSafeConfig() {
       window: config.chat.window,
       welcomeMessage: config.chat.welcomeMessage,
       placeholder: config.chat.placeholder,
+      titleSuffix: config.chat.titleSuffix,
     },
     features: config.features,
     admin: config.admin,

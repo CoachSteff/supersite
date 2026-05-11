@@ -21,6 +21,7 @@ interface ClientConfig {
     };
     welcomeMessage: string;
     placeholder: string;
+    titleSuffix?: string;
     voice?: {
       enabled: boolean;
       language: string;
@@ -198,7 +199,7 @@ export default function ChatWindow() {
       <div className={styles.chatHeader}>
         <div className={styles.headerLeft}>
           <Sparkles size={18} className={styles.headerIcon} />
-          <h3>{config.site.name} AI</h3>
+          <h3>{config.site.name}{config.chat.titleSuffix ?? ' AI'}</h3>
         </div>
         <div className={styles.chatControls}>
           {messages.length > 0 && (
