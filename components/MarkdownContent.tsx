@@ -8,6 +8,8 @@ import remarkDirectives from '@/lib/remarkDirectives';
 import remarkHashtags from '@/lib/remark-hashtags';
 import PageActions from './PageActions';
 import CodeBlock from './CodeBlock';
+import SchemaForm from './SchemaForm';
+import PartnershipLogos from './PartnershipLogos';
 import {
   ImageGrid, Carousel, Columns, Callout, Figure,
   Details, Tabs, Card, Steps,
@@ -101,6 +103,15 @@ export default function MarkdownContent({ title, content, markdown, path, siteUr
 
             if (isInline) {
               return <code className={className} {...props}>{children}</code>;
+            }
+
+            // Custom block handlers — match info-string via the language- prefix
+            // that react-markdown puts on the code element's className.
+            if (className?.includes('language-form')) {
+              return <SchemaForm source={code} />;
+            }
+            if (className?.includes('language-partnership-logos')) {
+              return <PartnershipLogos source={code} />;
             }
 
             return (
