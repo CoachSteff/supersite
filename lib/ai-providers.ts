@@ -15,7 +15,7 @@ export interface AIResponse {
 }
 
 export interface AIProvider {
-  chat(messages: AIMessage[], systemPrompt: string, context: string): Promise<AIResponse>;
+  chat(messages: AIMessage[], systemPrompt: string, context: string, maxTokensOverride?: number): Promise<AIResponse>;
 }
 
 export class AnthropicProvider implements AIProvider {
@@ -36,13 +36,13 @@ export class AnthropicProvider implements AIProvider {
     this.maxTokens = config.chat.maxTokens;
   }
 
-  async chat(messages: AIMessage[], systemPrompt: string, context: string): Promise<AIResponse> {
+  async chat(messages: AIMessage[], systemPrompt: string, context: string, maxTokensOverride?: number): Promise<AIResponse> {
     try {
       const fullSystemPrompt = `${systemPrompt}\n\n${context}`;
 
       const response = await this.client.messages.create({
         model: this.model,
-        max_tokens: this.maxTokens,
+        max_tokens: maxTokensOverride ?? this.maxTokens,
         temperature: this.temperature,
         system: fullSystemPrompt,
         messages: messages.map(msg => ({
@@ -85,14 +85,14 @@ export class OpenAIProvider implements AIProvider {
     this.maxTokens = config.chat.maxTokens;
   }
 
-  async chat(messages: AIMessage[], systemPrompt: string, context: string): Promise<AIResponse> {
+  async chat(messages: AIMessage[], systemPrompt: string, context: string, maxTokensOverride?: number): Promise<AIResponse> {
     try {
       const fullSystemPrompt = `${systemPrompt}\n\n${context}`;
 
       const response = await this.client.chat.completions.create({
         model: this.model,
         temperature: this.temperature,
-        max_tokens: this.maxTokens,
+        max_tokens: maxTokensOverride ?? this.maxTokens,
         messages: [
           { role: 'system', content: fullSystemPrompt },
           ...messages.map(msg => ({
@@ -133,17 +133,17 @@ export class GeminiProvider implements AIProvider {
     this.maxTokens = config.chat.maxTokens;
   }
 
-  async chat(messages: AIMessage[], systemPrompt: string, context: string): Promise<AIResponse> {
+  async chat(messages: AIMessage[], systemPrompt: string, context: string, maxTokensOverride?: number): Promise<AIResponse> {
     try {
       const model = this.client.getGenerativeModel({ model: this.model });
-      
+
       const fullPrompt = `${systemPrompt}\n\n${context}\n\nConversation:\n${messages.map(m => `${m.role}: ${m.content}`).join('\n')}`;
 
       const result = await model.generateContent({
         contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
         generationConfig: {
           temperature: this.temperature,
-          maxOutputTokens: this.maxTokens,
+          maxOutputTokens: maxTokensOverride ?? this.maxTokens,
         },
       });
 
@@ -174,7 +174,7 @@ export class OllamaProvider implements AIProvider {
     this.temperature = config.chat.temperature;
   }
 
-  async chat(messages: AIMessage[], systemPrompt: string, context: string): Promise<AIResponse> {
+  async chat(messages: AIMessage[], systemPrompt: string, context: string, maxTokensOverride?: number): Promise<AIResponse> {
     try {
       const fullSystemPrompt = `${systemPrompt}\n\n${context}`;
 
@@ -189,6 +189,7 @@ export class OllamaProvider implements AIProvider {
         ],
         options: {
           temperature: this.temperature,
+          ...(maxTokensOverride ? { num_predict: maxTokensOverride } : {}),
         },
       });
 

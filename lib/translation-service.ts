@@ -18,6 +18,15 @@ interface CachedTranslation {
 }
 
 /**
+ * Strip a leading/trailing code-fence wrapper if the LLM wrapped the whole
+ * response in ```...```. Only strips when the fence wraps the entire payload.
+ */
+function stripCodeFenceWrapper(text: string): string {
+  const match = text.match(/^```[a-zA-Z0-9_-]*\n([\s\S]*?)\n```\s*$/);
+  return match ? match[1] : text;
+}
+
+/**
  * Generate SHA-256 hash of content for cache key
  */
 export function generateContentHash(content: string): string {
@@ -130,6 +139,7 @@ Requirements:
 - Use natural, fluent ${targetLangName}
 - Preserve line breaks and paragraph structure
 - Do not add any comments or explanations, only return the translated content
+- Do NOT wrap the response in a code fence (no \`\`\`markdown ... \`\`\`). Return the raw markdown directly.
 
 Content to translate:
 ${content}`;
@@ -139,7 +149,8 @@ ${content}`;
     const response = await provider.chat(
       [{ role: 'user', content: translationPrompt }],
       'You are a professional translator specializing in markdown content. Translate accurately while preserving all formatting.',
-      ''
+      '',
+      8192
     );
 
     if (response.error) {
@@ -147,7 +158,7 @@ ${content}`;
       return content;
     }
 
-    return response.content.trim();
+    return stripCodeFenceWrapper(response.content.trim());
   } catch (error) {
     console.error('Translation error:', error);
     return content;
