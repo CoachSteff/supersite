@@ -2,6 +2,93 @@
 
 Complete reference for the SuperSite theme system. All visual styling is controlled from YAML configuration files, with CSS containing only structural rules and graceful fallbacks.
 
+> **Note:** v0.5 introduces dedicated optional files for typography, scalar tokens, gradients, logos, and page-type bindings. The pre-v0.5 single-file `colors.yaml` shape still works and emits a deprecation warning. See [§ v0.5 Migration](#v05-migration) below.
+
+## v0.5 Migration
+
+In v0.4, `colors.yaml` carried colours, typography, spacing, `borderRadius`, `effects`, and `animations`. In v0.5 each of those concerns gets its own optional file. The new shape is opt-in and additive — your existing themes keep working.
+
+### New optional files
+
+```
+themes/<name>/
+├── theme.yaml         # unchanged
+├── colors.yaml        # slimmed: palette only (light + dark)
+├── structure.yaml     # unchanged
+├── blocks.yaml        # unchanged
+├── typography.yaml    # NEW — font families, base size, type scale
+├── tokens.yaml        # NEW — spacing, radius, shadow, motion
+├── gradient.yaml      # NEW — named gradients with light/dark variants
+├── logo.yaml          # NEW — primary/primaryLight/mark asset paths
+├── page-types.yaml    # NEW — pageType → { hero, header, body, footer }
+└── heroes/            # NEW — theme-owned hero components (Spectrum, Mesh, …)
+```
+
+All five new files are independently optional. A minimal theme can still be just `theme.yaml` + `colors.yaml`.
+
+### Migrating an existing theme
+
+1. Open `themes/<name>/colors.yaml`.
+2. Move `typography`, `fontFamily`, `baseFontSize` → `typography.yaml`.
+3. Move `spacing`, `borderRadius`, `effects` → `tokens.yaml`.
+4. Delete the moved keys from `colors.yaml`. The file now holds only `name:` and the `colors:` block.
+
+`themes/base/` ships v0.5-native and works as a concrete reference.
+
+### Page-type registry
+
+A theme can declare per-page-type layout choices in `page-types.yaml`:
+
+```yaml
+default: default
+
+types:
+  default:
+    hero: none
+  home:
+    hero: spectrum
+  chat:
+    hero: none
+    body: chat-shell
+  product-detail:
+    hero: hero-md
+```
+
+A page binds to a registry entry via frontmatter:
+
+```yaml
+---
+title: Welcome
+pageType: home
+---
+```
+
+Inline overrides (`hero:`, `header:`, `body:`, `footer:` in frontmatter) win over the registry entry.
+
+### Heroes
+
+Heroes are React components owned by themes. The framework ships only the `none` hero — themes register additional ids (e.g. `spectrum`) by populating `theme.heroes`. The page-type resolver looks up the chosen id; unknown ids fall back to `none` with a console warning. See `lib/hero-registry.ts` for the contract.
+
+### Canonical CSS variables (v0.5+)
+
+| Concern    | Canonical name        | Legacy alias (deprecated)  |
+|------------|------------------------|-----------------------------|
+| Colours    | `--color-primary`     | `--primary-color`           |
+|            | `--color-text`        | `--text-color`              |
+|            | `--color-background`  | `--background`              |
+| Typography | `--font-display`      | (none)                      |
+|            | `--font-body`         | `--font-family`             |
+|            | `--font-mono`         | `--font-family-mono`        |
+| Spacing    | `--space-md`          | `--spacing-md`              |
+| Radius     | `--radius-lg`         | `--border-radius` (single)  |
+| Shadow     | `--shadow-sm` (mode)  | (none)                      |
+| Gradient   | `--gradient-brand`    | (none)                      |
+| Motion     | `--motion-duration`   | (none)                      |
+
+Legacy aliases are preserved for one minor version. They will be removed in v0.6.
+
+---
+
 ## Core Principle: Separation of Theming and Content
 
 The codebase contains **zero hardcoded theme colors**. Every color reference in CSS uses `var(--variable-name)` with a fallback matching the base theme. Actual theme colors are applied at runtime by `ThemeLoader.tsx` via inline styles on `<html>`, which override the `:root` fallback declarations in `globals.css`.

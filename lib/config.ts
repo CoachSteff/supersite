@@ -4,6 +4,7 @@ import yaml from 'js-yaml';
 import { z } from 'zod';
 import { unstable_noStore as noStore } from 'next/cache';
 import { loadTheme, applyThemeOverrides, type FullTheme } from './theme-system';
+import { getThemeHeroes } from './theme-heroes';
 
 const ChatButtonPositionSchema = z.enum(['bottom-left', 'bottom-center', 'bottom-right']);
 const ChatWindowPositionSchema = z.enum(['bottom-right', 'bottom-center', 'bottom-left', 'right-docked', 'bottom-docked', 'left-docked']);
@@ -339,6 +340,13 @@ export function getActiveTheme(): FullTheme {
   let finalTheme = { ...fullTheme, themeFolder };
   if (config.branding.overrides) {
     finalTheme = { ...applyThemeOverrides(fullTheme, config.branding.overrides), themeFolder };
+  }
+
+  // Attach theme-owned hero components (v0.5+).
+  // Themes register heroes by adding an entry to lib/theme-heroes.ts.
+  const heroes = getThemeHeroes(themeName);
+  if (heroes) {
+    finalTheme = { ...finalTheme, heroes };
   }
   
   // Legacy branding support (deprecated but still functional)

@@ -45,7 +45,7 @@ export type Features = z.infer<typeof FeaturesSchema>;
 // STRUCTURE.YAML - Layout & Structure
 // ============================================
 
-export const HeaderStyleSchema = z.enum(['full', 'minimal', 'centered', 'none']);
+export const HeaderStyleSchema = z.enum(['full', 'minimal', 'centered', 'none', 'embedded-in-hero']);
 export const LayoutTypeSchema = z.enum(['full-width', 'centered', 'sidebar-left', 'sidebar-right']);
 export const NavigationStyleSchema = z.enum(['horizontal', 'vertical', 'hamburger', 'none']);
 export const NavigationPositionSchema = z.enum(['header', 'sidebar', 'footer']);
@@ -289,10 +289,99 @@ export type Effects = z.infer<typeof EffectsSchema>;
 export type Animations = z.infer<typeof AnimationsSchema>;
 
 // ============================================
+// TYPOGRAPHY.YAML — optional dedicated typography file (v0.5+)
+// ============================================
+
+export const TypeScaleEntrySchema = z.object({
+  size: z.string(),
+  lineHeight: z.union([z.string(), z.number()]).optional(),
+  weight: z.union([z.string(), z.number()]).optional(),
+  tracking: z.string().optional(),
+  transform: z.string().optional(),
+});
+
+export const TypographyFileSchema = z.object({
+  fontFamilies: z.object({
+    display: z.string().optional(),
+    body: z.string().optional(),
+    mono: z.string().optional(),
+  }).optional(),
+  baseFontSize: z.string().optional(),
+  scale: z.record(z.string(), TypeScaleEntrySchema).optional(),
+});
+
+export type TypographyFile = z.infer<typeof TypographyFileSchema>;
+export type TypeScaleEntry = z.infer<typeof TypeScaleEntrySchema>;
+
+// ============================================
+// TOKENS.YAML — optional scalar tokens file (v0.5+)
+// ============================================
+
+export const TokensFileSchema = z.object({
+  spacing: z.record(z.string(), z.string()).optional(),
+  radius: z.record(z.string(), z.string()).optional(),
+  shadow: z.object({
+    light: z.record(z.string(), z.string()).optional(),
+    dark: z.record(z.string(), z.string()).optional(),
+  }).optional(),
+  motion: z.object({
+    duration: z.string().optional(),
+    easing: z.string().optional(),
+    hoverDuration: z.string().optional(),
+  }).optional(),
+});
+
+export type TokensFile = z.infer<typeof TokensFileSchema>;
+
+// ============================================
+// GRADIENT.YAML — optional gradient definitions (v0.5+)
+// ============================================
+
+export const GradientFileSchema = z.object({
+  light: z.record(z.string(), z.string()).optional(),
+  dark: z.record(z.string(), z.string()).optional(),
+});
+
+export type GradientFile = z.infer<typeof GradientFileSchema>;
+
+// ============================================
+// LOGO.YAML — optional logo asset registry (v0.5+)
+// ============================================
+
+export const LogoFileSchema = z.object({
+  primary: z.string().optional(),
+  primaryLight: z.string().optional(),
+  mark: z.string().optional(),
+  alt: z.string().optional(),
+});
+
+export type LogoFile = z.infer<typeof LogoFileSchema>;
+
+// ============================================
+// PAGE-TYPES.YAML — page-type → layout registry (v0.5+)
+// ============================================
+
+export const PageTypeEntrySchema = z.object({
+  hero: z.string().optional(),
+  header: z.string().optional(),
+  body: z.string().optional(),
+  footer: z.string().optional(),
+});
+
+export const PageTypesFileSchema = z.object({
+  default: z.string().default('default'),
+  types: z.record(z.string(), PageTypeEntrySchema).default({}),
+});
+
+export type PageTypesFile = z.infer<typeof PageTypesFileSchema>;
+export type PageTypeEntry = z.infer<typeof PageTypeEntrySchema>;
+
+// ============================================
 // COMBINED THEME
 // ============================================
 
 export type ComponentMap = Record<string, React.ComponentType<any>>;
+export type HeroRegistry = Record<string, React.ComponentType<any>>;
 
 export const FullThemeSchema = z.object({
   meta: ThemeMetaSchema,
@@ -303,5 +392,11 @@ export const FullThemeSchema = z.object({
 
 export type FullTheme = z.infer<typeof FullThemeSchema> & {
   components?: ComponentMap;
+  heroes?: HeroRegistry;
   themeFolder?: string;
+  typography?: TypographyFile;
+  tokens?: TokensFile;
+  gradient?: GradientFile;
+  logo?: LogoFile;
+  pageTypes?: PageTypesFile;
 };

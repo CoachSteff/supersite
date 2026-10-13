@@ -15,6 +15,7 @@ import { ThemeProvider } from '@/components/ThemeLoader';
 import { ThemeContextProvider } from '@/components/ThemeContext';
 import JsonLd, { buildWebSiteSchema, buildOrganizationSchema } from '@/components/JsonLd';
 import { getSiteConfig, getActiveTheme, getPrimaryUser } from '@/lib/config';
+import { toClientSafeTheme } from '@/lib/theme-system';
 import { getLayoutComponent, shouldShowSidebar } from '@/lib/layout-renderer';
 import { getAllCategories, getAllTags, getRecentBlogPosts } from '@/lib/markdown';
 
@@ -60,7 +61,10 @@ export default async function RootLayout({
 }) {
   const config = getSiteConfig();
   const theme = getActiveTheme();
-  
+  // Strip functions (heroes, components) before passing to client providers —
+  // they can't cross the RSC boundary.
+  const clientTheme = toClientSafeTheme(theme);
+
   // Get structure settings from the full theme
   const { header, footer, hero, layout } = theme.structure;
   const features = theme.meta.features;
@@ -128,12 +132,13 @@ export default async function RootLayout({
       </head>
       <body style={{ paddingTop: config.admin?.toolbar ? '42px' : '0' }}>
         <a href="#main-content" className="skip-link">Skip to content</a>
-        <ThemeProvider theme={theme}>
-          <ThemeContextProvider theme={theme}>
+        <ThemeProvider theme={clientTheme}>
+          <ThemeContextProvider theme={clientTheme}>
             <ChatProvider>
               <AdminToolbar enabled={config.admin?.toolbar ?? false} />
               <KeyboardShortcuts enabled={config.chat.shortcuts?.enabled ?? true} />
               <RootShell
+                suppressHeaderOnHome={header.style === 'embedded-in-hero'}
                 header={
                   <Header
                     style={header.style}

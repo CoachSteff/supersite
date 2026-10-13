@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - Unreleased
+
+A theming-system upgrade. The single overloaded `colors.yaml` is split into focused, independently-optional files (`typography.yaml`, `tokens.yaml`, `gradient.yaml`, `logo.yaml`, `page-types.yaml`), and pages can now bind to a layout/hero via a `pageType` frontmatter field that resolves through the theme's `page-types.yaml` registry. Heroes are pluggable: themes register their own hero components against an `id`, and the framework only ships the `none` hero. No existing themes break — the legacy `colors.yaml` shape continues to work but emits a one-time deprecation warning per theme. The legacy shape will be removed in v0.6.
+
+### Added
+
+- **New optional theme files** — each independently optional, loaded by `loadTheme()`:
+  - `typography.yaml` — font families, base size, and a full type scale (display-xl through mono-sm).
+  - `tokens.yaml` — spacing, radius, mode-aware shadows, and motion (duration/easing/hoverDuration).
+  - `gradient.yaml` — named gradients with `light:` and `dark:` variants.
+  - `logo.yaml` — `primary`, `primaryLight`, `mark`, `alt` asset paths.
+  - `page-types.yaml` — registry that maps `pageType` → `{ hero, header, body, footer }`.
+- **Hero registry** (`lib/hero-registry.ts`) — `resolveHero(id, theme)` returns the registered component or falls back to a built-in `NoneHero`. Themes register heroes by setting `theme.heroes = { spectrum: SpectrumHero, ... }`.
+- **Page-type resolver** (`lib/page-type-resolver.ts`) — resolves a page's frontmatter against the theme registry; inline overrides (`hero:` / `header:` / `body:` / `footer:` in frontmatter) win over the registry entry.
+- **`pageType` frontmatter** — pages can declare `pageType: home` (or any registered type). Falls back to the theme's `default` entry.
+- **`PageShell` component** (`components/PageShell.tsx`) — server component that wraps page content with the resolved hero. Wired into `app/page.tsx` and `app/[...slug]/page.tsx`.
+- **Canonical CSS variable surface** — `--color-*`, `--font-*`, `--space-*`, `--radius-*`, `--shadow-*`, `--gradient-*`, `--motion-*`. Legacy names (`--primary-color`, `--spacing-md`, `--font-family`, …) are aliased to the canonical ones for one minor version.
+
+### Changed
+
+- `ThemeLoader` rewritten to merge tokens from the new optional files and project them onto `document.documentElement` as canonical CSS custom properties. Mode-aware tokens (palette, gradient, shadow) honour the resolved light/dark mode.
+- `themes/base/colors.yaml` slimmed down to just the palette; typography moved to `themes/base/typography.yaml`, scalar tokens to `themes/base/tokens.yaml`, page-type defaults to `themes/base/page-types.yaml`. Other built-in themes are unchanged and continue to work via the compatibility bridge.
+
+### Deprecated
+
+- **Embedding `typography`, `spacing`, `effects`, `animations`, or `borderRadius` inside `colors.yaml`** — the v0.4 shape. Still loaded and applied, but emits a one-time `console.warn` per theme when no dedicated `typography.yaml` / `tokens.yaml` is present. Will be removed in v0.6. See [docs/THEMING.md](./docs/THEMING.md) for the migration guide.
+
 ## [0.4.0] - 2026-04-17
 
 A security and correctness release. Every issue surfaced by the April codebase audit has been addressed, covering authentication, request handling, content safety, accessibility, and developer ergonomics. One breaking change: `JWT_SECRET` is now required in all environments.

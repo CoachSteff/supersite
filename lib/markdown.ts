@@ -63,6 +63,15 @@ export interface PageData {
   seo?: SEOMetadata;
   chat?: ChatMetadata;
   custom?: Record<string, any>;
+  /**
+   * v0.5+ page-type binding. Read from frontmatter.
+   * Resolves through the theme's `page-types.yaml` registry to a layout.
+   */
+  pageType?: string;
+  hero?: string;
+  header?: string;
+  body?: string;
+  footer?: string;
 }
 
 export interface BlogPost {
@@ -167,6 +176,11 @@ export async function getPageBySlug(slug: string[]): Promise<PageData | null> {
     seo: data.seo as SEOMetadata | undefined,
     chat: data.chat as ChatMetadata | undefined,
     custom: data.custom as Record<string, unknown> | undefined,
+    pageType: data.pageType as string | undefined,
+    hero: data.hero as string | undefined,
+    header: data.header as string | undefined,
+    body: data.body as string | undefined,
+    footer: data.footer as string | undefined,
   };
 }
 
@@ -210,6 +224,11 @@ export async function getAllPages(): Promise<PageData[]> {
         seo: data.seo as SEOMetadata | undefined,
         chat: data.chat as ChatMetadata | undefined,
         custom: data.custom as Record<string, unknown> | undefined,
+        pageType: data.pageType as string | undefined,
+        hero: data.hero as string | undefined,
+        header: data.header as string | undefined,
+        body: data.body as string | undefined,
+        footer: data.footer as string | undefined,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

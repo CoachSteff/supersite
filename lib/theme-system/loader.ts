@@ -6,12 +6,22 @@ import {
   StructureSchema,
   BlocksSchema,
   ColorsSchema,
+  TypographyFileSchema,
+  TokensFileSchema,
+  GradientFileSchema,
+  LogoFileSchema,
+  PageTypesFileSchema,
   type FullTheme,
   type ThemeMeta,
   type Structure,
   type Blocks,
   type Colors,
   type ComponentMap,
+  type TypographyFile,
+  type TokensFile,
+  type GradientFile,
+  type LogoFile,
+  type PageTypesFile,
 } from './schemas';
 
 const THEME_FILES = {
@@ -19,7 +29,46 @@ const THEME_FILES = {
   structure: 'structure.yaml',
   blocks: 'blocks.yaml',
   colors: 'colors.yaml',
+  typography: 'typography.yaml',
+  tokens: 'tokens.yaml',
+  gradient: 'gradient.yaml',
+  logo: 'logo.yaml',
+  pageTypes: 'page-types.yaml',
 };
+
+// Tracks themes that have already emitted a deprecation warning this process
+const deprecationWarned = new Set<string>();
+
+/**
+ * Detect the legacy v0.4 colors.yaml shape — typography/spacing/effects/animations
+ * embedded in colors.yaml — and emit a one-time deprecation warning per theme.
+ * Returns true when the legacy shape is present.
+ */
+function detectLegacyColorsShape(themePath: string, themeName: string): boolean {
+  const colorsPath = path.join(themePath, THEME_FILES.colors);
+  if (!fs.existsSync(colorsPath)) return false;
+
+  try {
+    const raw = yaml.load(fs.readFileSync(colorsPath, 'utf8')) as Record<string, unknown> | null;
+    if (!raw || typeof raw !== 'object') return false;
+
+    const legacyKeys = ['typography', 'spacing', 'effects', 'animations', 'borderRadius'];
+    const present = legacyKeys.filter((k) => k in raw);
+    if (present.length === 0) return false;
+
+    if (!deprecationWarned.has(themeName)) {
+      deprecationWarned.add(themeName);
+      console.warn(
+        `[supersite] Theme "${themeName}" defines ${present.join(', ')} inside colors.yaml. ` +
+        `This shape is deprecated and will be removed in v0.6 — split into typography.yaml / tokens.yaml. ` +
+        `See docs/THEMING.md for the migration guide.`
+      );
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 interface ThemeLoadResult {
   theme: FullTheme;
@@ -80,16 +129,35 @@ export function loadTheme(themeName: string): ThemeLoadResult {
   const meta = loadThemeFile<ThemeMeta>(themePath, THEME_FILES.meta, ThemeMetaSchema, errors);
   const structure = loadThemeFile<Structure>(themePath, THEME_FILES.structure, StructureSchema, errors);
   const blocks = loadThemeFile<Blocks>(themePath, THEME_FILES.blocks, BlocksSchema, errors);
-  
+
   // Colors can be specified in meta.defaultColors
   const colorsFile = meta?.defaultColors || THEME_FILES.colors;
   const colors = loadThemeFile<Colors>(themePath, colorsFile, ColorsSchema, errors);
+
+  // v0.5+ optional files. Each is independently optional.
+  const typography = loadThemeFile<TypographyFile>(themePath, THEME_FILES.typography, TypographyFileSchema, errors);
+  const tokens = loadThemeFile<TokensFile>(themePath, THEME_FILES.tokens, TokensFileSchema, errors);
+  const gradient = loadThemeFile<GradientFile>(themePath, THEME_FILES.gradient, GradientFileSchema, errors);
+  const logo = loadThemeFile<LogoFile>(themePath, THEME_FILES.logo, LogoFileSchema, errors);
+  const pageTypes = loadThemeFile<PageTypesFile>(themePath, THEME_FILES.pageTypes, PageTypesFileSchema, errors);
+
+  // Detect legacy v0.4 colors.yaml shape (typography/spacing/effects inside colors.yaml).
+  // Suppress the deprecation warning when the theme has migrated to dedicated files.
+  const hasMigrated = !!(typography || tokens);
+  if (!hasMigrated) {
+    detectLegacyColorsShape(themePath, themeName);
+  }
 
   const theme: FullTheme = {
     meta: meta || ThemeMetaSchema.parse({ name: themeName }),
     structure: structure || StructureSchema.parse({}),
     blocks: blocks || BlocksSchema.parse({}),
     colors: colors || getDefaultColors(),
+    typography: typography || undefined,
+    tokens: tokens || undefined,
+    gradient: gradient || undefined,
+    logo: logo || undefined,
+    pageTypes: pageTypes || undefined,
     // Components will be loaded dynamically on the client side
     // to support 'use client' directives
   };
@@ -313,6 +381,20 @@ export function applyThemeOverrides(
       },
     },
   };
+}
+
+/**
+ * Strip server-only fields (functions like hero components) so the theme can
+ * cross a React Server Components → Client Components boundary without
+ * tripping the serializer.
+ *
+ * Use whenever passing the theme into a `'use client'` component. The data
+ * tokens (colors, typography, gradient, etc.) are preserved; only the
+ * non-serializable React-component registries are removed.
+ */
+export function toClientSafeTheme(theme: FullTheme): FullTheme {
+  const { heroes, components, ...rest } = theme;
+  return rest as FullTheme;
 }
 
 /**

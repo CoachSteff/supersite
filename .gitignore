@@ -67,6 +67,9 @@ public/images/*.jpeg
 # user custom themes (dirs AND symlinks)
 /themes-custom
 
+# local hero-registry overrides — site-specific theme registrations
+lib/*.local.ts
+
 # vercel
 .vercel
 
@@ -84,3 +87,5 @@ _notes/
 dwsync.xml
 
 supersite-dev-backup-2026-02-10.tar.gz
+HANDOVER.md
+handover/

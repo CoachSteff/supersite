@@ -9,9 +9,23 @@ interface RootShellProps {
   body: ReactNode;
   footer: ReactNode;
   popupChat: ReactNode;
+  /**
+   * v0.5+: when the active theme uses `header.style: "embedded-in-hero"`,
+   * the page-level hero owns the top of the screen and the root header
+   * must not render on the home page (`/`). On other routes the page
+   * doesn't render the hero, so the root header is still needed.
+   */
+  suppressHeaderOnHome?: boolean;
 }
 
-export default function RootShell({ header, hero, body, footer, popupChat }: RootShellProps) {
+export default function RootShell({
+  header,
+  hero,
+  body,
+  footer,
+  popupChat,
+  suppressHeaderOnHome = false,
+}: RootShellProps) {
   const pathname = usePathname();
   const isHome = pathname === '/';
   const isChat = pathname === '/chat';
@@ -20,9 +34,11 @@ export default function RootShell({ header, hero, body, footer, popupChat }: Roo
     return <>{body}</>;
   }
 
+  const showHeader = !(suppressHeaderOnHome && isHome);
+
   return (
     <>
-      {header}
+      {showHeader && header}
       {isHome && hero}
       {body}
       {footer}

@@ -36,29 +36,54 @@
 
 /*
  * Theme CSS Variables
- * These are fallback defaults only. Actual theme colors are applied dynamically
- * by ThemeLoader component based on the active theme configuration.
+ * These are fallback defaults only. Actual theme tokens are applied dynamically
+ * by ThemeLoader based on the active theme configuration.
+ *
+ * v0.5+ canonical naming: --color-*, --font-*, --space-*, --radius-*, --shadow-*,
+ * --gradient-*, --motion-*. The pre-v0.5 names (--primary-color, --spacing-md,
+ * etc.) are kept as aliases for one minor version; they will be removed in v0.6.
  */
 :root {
-  --primary-color: #2563eb;
-  --secondary-color: #1e40af;
-  --text-color: #1f2937;
-  --text-light: #6b7280;
-  --background: #ffffff;
-  --background-secondary: #f9fafb;
-  --border-color: #e5e7eb;
-  --success-color: #10b981;
-  --error-color: #ef4444;
-  --on-primary: #ffffff;
-  --warning-color: #f59e0b;
-  --info-color: #8b5cf6;
+  /* — Canonical color tokens (v0.5+) — */
+  --color-primary: #2563eb;
+  --color-secondary: #1e40af;
+  --color-text: #1f2937;
+  --color-text-light: #6b7280;
+  --color-background: #ffffff;
+  --color-background-secondary: #f9fafb;
+  --color-border: #e5e7eb;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #8b5cf6;
+  --color-on-primary: #ffffff;
+
+  /* — Legacy color aliases (deprecated, removed in v0.6) — */
+  --primary-color: var(--color-primary);
+  --secondary-color: var(--color-secondary);
+  --text-color: var(--color-text);
+  --text-light: var(--color-text-light);
+  --background: var(--color-background);
+  --background-secondary: var(--color-background-secondary);
+  --border-color: var(--color-border);
+  --success-color: var(--color-success);
+  --error-color: var(--color-error);
+  --on-primary: var(--color-on-primary);
+  --warning-color: var(--color-warning);
+  --info-color: var(--color-info);
   --accent-light: #eff6ff;
   --header-bg: rgba(255, 255, 255, 0.95);
   --input-bg: #ffffff;
 
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  /* — Canonical typography tokens (v0.5+) — */
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --font-display: var(--font-body);
+  --font-mono: 'Courier New', Courier, monospace;
+
+  /* — Legacy typography aliases (deprecated, removed in v0.6) — */
+  --font-family: var(--font-body);
   --font-heading: inherit;
-  --font-family-mono: 'Courier New', Courier, monospace;
+  --font-family-mono: var(--font-mono);
 
   --font-size-base: 16px;
   --font-size-small: 14px;
@@ -66,15 +91,31 @@
   --font-size-xlarge: 24px;
   --font-size-xxlarge: 32px;
 
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-xxl: 3rem;
+  /* — Canonical spacing tokens (v0.5+) — */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 3rem;
 
-  --border-radius: 4px;
+  /* — Legacy spacing aliases (deprecated, removed in v0.6) — */
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-xxl: var(--space-xxl);
+
+  /* — Radius — */
+  --radius: 4px;
+  --border-radius: var(--radius);
   --max-width: 1200px;
+
+  /* — Motion (v0.5+) — */
+  --motion-duration: 220ms;
+  --motion-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-hover-duration: 160ms;
 
   /* Effects system — defaults (off). ThemeLoader overrides these. */
   --card-surface-tint: 0%;

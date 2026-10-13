@@ -1,0 +1,12 @@
+default: "default"
+
+types:
+  default:
+    hero: "none"
+  home:
+    hero: "none"
+  chat:
+    hero: "none"
+    body: "chat-shell"
+  blog:
+    hero: "none"

@@ -1,8 +1,9 @@
 import { headers } from 'next/headers';
 import { getPageBySlug } from '@/lib/markdown';
 import { translatePageContent } from '@/lib/translation-service';
-import { getSiteConfig } from '@/lib/config';
+import { getSiteConfig, getActiveTheme } from '@/lib/config';
 import MarkdownContent from '@/components/MarkdownContent';
+import PageShell from '@/components/PageShell';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -56,13 +57,21 @@ export default async function HomePage() {
     }
   }
 
+  const theme = getActiveTheme();
+
+  // The home route implicitly binds to the `home` page-type when the page
+  // content doesn't declare its own. Frontmatter still wins if set.
+  const homePage = { ...translatedPage, pageType: translatedPage.pageType ?? 'home' };
+
   return (
-    <MarkdownContent 
-      title={translatedPage.title} 
-      content={translatedPage.content}
-      markdown={translatedPage.markdown}
-      path={translatedPage.path}
-      siteUrl={config.site.url}
-    />
+    <PageShell theme={theme} page={homePage}>
+      <MarkdownContent
+        title={translatedPage.title}
+        content={translatedPage.content}
+        markdown={translatedPage.markdown}
+        path={translatedPage.path}
+        siteUrl={config.site.url}
+      />
+    </PageShell>
   );
 }

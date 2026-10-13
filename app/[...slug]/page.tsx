@@ -1,8 +1,9 @@
 import { headers } from 'next/headers';
 import { getPageBySlug, getAllPages } from '@/lib/markdown';
 import { translatePageContent } from '@/lib/translation-service';
-import { getSiteConfig } from '@/lib/config';
+import { getSiteConfig, getActiveTheme } from '@/lib/config';
 import MarkdownContent from '@/components/MarkdownContent';
+import PageShell from '@/components/PageShell';
 import JsonLd, { buildBreadcrumbSchema } from '@/components/JsonLd';
 
 import { notFound } from 'next/navigation';
@@ -77,16 +78,20 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
     { name: translatedPage.title, url: `${siteUrl}${translatedPage.path}` },
   ];
 
+  const theme = getActiveTheme();
+
   return (
     <>
       <JsonLd data={buildBreadcrumbSchema(breadcrumbs)} />
-      <MarkdownContent
-        title={translatedPage.title}
-        content={translatedPage.content}
-        markdown={translatedPage.markdown}
-        path={translatedPage.path}
-        siteUrl={config.site.url}
-      />
+      <PageShell theme={theme} page={translatedPage}>
+        <MarkdownContent
+          title={translatedPage.title}
+          content={translatedPage.content}
+          markdown={translatedPage.markdown}
+          path={translatedPage.path}
+          siteUrl={config.site.url}
+        />
+      </PageShell>
     </>
   );
 }

@@ -11,7 +11,7 @@ import AuthButton from './AuthButton';
 import styles from '@/styles/Header.module.css';
 
 interface HeaderProps {
-  style?: 'full' | 'minimal' | 'centered' | 'none';
+  style?: 'full' | 'minimal' | 'centered' | 'none' | 'embedded-in-hero';
   sticky?: boolean;
   showLogo?: boolean;
   logoText?: string;
@@ -79,9 +79,14 @@ export default function Header({
     return null;
   }
 
+  // `embedded-in-hero` means "the page's hero owns the chrome on its own route".
+  // RootShell handles the home-page suppression; on every other route we render
+  // a normal header. Fall back to the `full` style for the actual paint.
+  const effectiveStyle = style === 'embedded-in-hero' ? 'full' : style;
+
   const headerClasses = [
     styles.header,
-    styles[`header-${style}`],
+    styles[`header-${effectiveStyle}`],
     sticky || scrollBehavior !== 'static' ? styles.sticky : '',
     scrolled ? styles.scrolled : '',
     hidden ? styles.hidden : '',
@@ -96,7 +101,7 @@ export default function Header({
           </div>
         )}
         
-        {style !== 'minimal' && <Navigation />}
+        {effectiveStyle !== 'minimal' && <Navigation />}
         
         <div className={styles.actions}>
           {showSearch && (
@@ -106,7 +111,7 @@ export default function Header({
               aria-label="Search"
             >
               <SearchIcon size={20} />
-              {style === 'full' && <span className={styles.searchText}>Search</span>}
+              {effectiveStyle === 'full' && <span className={styles.searchText}>Search</span>}
             </button>
           )}
           
