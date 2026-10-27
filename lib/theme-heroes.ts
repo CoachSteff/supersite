@@ -28,7 +28,6 @@ const THEME_HEROES: Record<string, HeroRegistry> = {};
 
 // Allow a gitignored local file to register additional theme heroes.
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const local = require('./theme-heroes.local');
   if (local?.themeHeroes && typeof local.themeHeroes === 'object') {
     Object.assign(THEME_HEROES, local.themeHeroes);
